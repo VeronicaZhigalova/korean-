@@ -4,7 +4,7 @@ import { StatusPill } from "@/components/ui/feedback";
 import { Container } from "@/components/ui/layout";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { cn } from "@/lib/cn";
-import { HangulObject } from "./hangul-object";
+import { HangulField, type FieldZone } from "./hangul-field";
 
 type Home = Dictionary["home"];
 type Href = (segment: string) => string;
@@ -36,14 +36,35 @@ const cardBase =
   "card-lit flex h-full min-w-0 flex-col rounded-(--radius-card) border border-border bg-surface " +
   "transition-[border-color,transform] duration-300 ease-(--ease-out-soft) hover:border-border-strong";
 
+/* Living Hangul fields --------------------------------------------------- */
+
+// Hero (desktop): rich on the right, barely there behind the copy.
+const heroZones: FieldZone[] = [
+  { x: [54, 97], y: [8, 92], weight: 8, maxOpacity: 0.9 },
+  { x: [4, 50], y: [4, 46], weight: 2, maxOpacity: 0.1 },
+];
+// Hero (tablet and phone): the in-flow block under the buttons.
+const heroBlockZones: FieldZone[] = [{ x: [6, 94], y: [8, 92], weight: 1, maxOpacity: 0.85 }];
+// Sections continue the language quietly, in margins away from the copy.
+const alphabetZones: FieldZone[] = [
+  { x: [2, 98], y: [2, 12], weight: 3, maxOpacity: 0.28 },
+  { x: [2, 98], y: [90, 98], weight: 3, maxOpacity: 0.28 },
+  { x: [1, 6], y: [12, 90], weight: 1, maxOpacity: 0.2 },
+];
+const teacherZones: FieldZone[] = [
+  { x: [58, 98], y: [4, 96], weight: 4, maxOpacity: 0.32 },
+  { x: [2, 98], y: [2, 10], weight: 1, maxOpacity: 0.2 },
+  { x: [2, 98], y: [92, 98], weight: 1, maxOpacity: 0.2 },
+];
+
 /* 1 · Hero ------------------------------------------------------------ */
 
 export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
   <section aria-labelledby="home-title" className="surface-night relative isolate overflow-hidden">
     {/* Desktop: the object sits beside the copy. Below lg it moves into the flow (see below). */}
     <div className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
-      <div className="absolute inset-y-0 right-[-3%] w-[56%]">
-        <HangulObject />
+      <div className="absolute inset-0">
+        <HangulField count={20} zones={heroZones} size={[1.1, 5]} seed={11} />
       </div>
       {/* Keeps copy legible if a glyph floats toward it. */}
       <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_60%,transparent)_30%,transparent_55%)]" />
@@ -77,7 +98,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
         </div>
 
         <div className="relative -mx-4 mt-2 h-[19rem] w-[calc(100%+2rem)] sm:mx-0 sm:h-[30rem] sm:w-full lg:hidden" aria-hidden="true">
-          <HangulObject />
+          <HangulField count={13} countTablet={13} countMobile={12} zones={heroBlockZones} size={[1.3, 4.6]} seed={23} presence={0.85} />
         </div>
 
         {/* Quiet facts row: stays in the text column so nothing covers the network. */}
@@ -229,7 +250,10 @@ const AlphabetVisual = ({ caption }: { caption: string }) => {
 };
 
 export const AlphabetSection = ({ t, href }: { t: Home["alphabet"]; href: Href }) => (
-  <section aria-labelledby="alphabet-title" className="surface-night py-24 lg:py-32">
+  <section aria-labelledby="alphabet-title" className="surface-night relative isolate overflow-hidden py-24 lg:py-32">
+    <div className="absolute inset-0 -z-10">
+      <HangulField count={10} countTablet={7} countMobile={4} zones={alphabetZones} size={[1, 3]} seed={37} quiet />
+    </div>
     <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
       <div className="order-2 lg:order-1 lg:col-span-5">
         <AlphabetVisual caption={t.visualCaption} />
@@ -317,7 +341,10 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
 /* 5 · Meet the teacher ------------------------------------------------- */
 
 export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) => (
-  <section aria-labelledby="teacher-title" className="surface-night relative overflow-hidden py-24 lg:py-36">
+  <section aria-labelledby="teacher-title" className="surface-night relative isolate overflow-hidden py-24 lg:py-36">
+    <div className="absolute inset-0 -z-10">
+      <HangulField count={11} countTablet={7} countMobile={4} zones={teacherZones} size={[1, 3.4]} seed={53} quiet />
+    </div>
     <Container className="grid items-center gap-12 lg:grid-cols-12">
       <div data-reveal className="flex flex-col items-start gap-6 lg:col-span-6">
         <Eyebrow index={4}>{t.eyebrow}</Eyebrow>

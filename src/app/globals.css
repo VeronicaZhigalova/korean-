@@ -224,238 +224,95 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* ------------------------------------------------------------------
-   Hangul object (hero)
-   One 3D scene: depth is translateZ inside a single perspective, so the
-   spring-driven tilt (--tx/--ty from HangulObjectMotion) gives real parallax.
+   Living Hangul field (HangulField drives transform/opacity per frame)
    ------------------------------------------------------------------ */
 
 :root,
 [data-theme="dark"] {
-  --ho-face-a: #fbeecb;
-  --ho-face-b: #d9b46a;
-  --ho-face-c: #9c7535;
-  --ho-depth: #8a6629;
-  --ho-depth-far: #2b2010;
-  --ho-warm: #e6c98a;
-  --ho-cool: #9dbeeb;
-  --ho-muted: rgb(245 240 230 / 0.42);
-  --ho-ring: rgb(217 180 106 / 0.22);
-  --ho-ring-cool: rgb(157 190 235 / 0.14);
-  --ho-glow: rgb(217 180 106 / 0.16);
-  --ho-glow-cool: rgb(33 58 91 / 0.6);
-  --ho-light: rgb(255 236 190 / 0.12);
+  --hf-near: #f5f0e6;
+  --hf-far: #8fa6c4;
+  --hf-gold: #f2ddaa;
+  --hf-gold-glow: rgb(217 180 106 / 0.75);
+  --hf-light: rgb(217 180 106 / 0.075);
+  --hf-light-cool: rgb(217 180 106 / 0.03);
 }
 
 [data-theme="light"] {
-  --ho-face-a: #b7883f;
-  --ho-face-b: #7a531b;
-  --ho-face-c: #4f3510;
-  --ho-depth: #c9b27f;
-  --ho-depth-far: #ece6d8;
-  --ho-warm: #8a5a1c;
-  --ho-cool: #3f6ea8;
-  --ho-muted: rgb(20 35 58 / 0.4);
-  --ho-ring: rgb(122 83 27 / 0.26);
-  --ho-ring-cool: rgb(63 110 168 / 0.16);
-  --ho-glow: rgb(217 180 106 / 0.22);
-  --ho-glow-cool: rgb(141 183 234 / 0.28);
-  --ho-light: rgb(255 255 255 / 0.5);
+  --hf-near: #14233a;
+  --hf-far: #6f84a3;
+  --hf-gold: #8a5a1c;
+  --hf-gold-glow: rgb(217 180 106 / 0.55);
+  --hf-light: rgb(217 180 106 / 0.14);
+  --hf-light-cool: rgb(255 255 255 / 0.3);
 }
 
-.hangul-object {
+.hangul-field {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
+  overflow: hidden;
   pointer-events: none;
   user-select: none;
+  contain: strict;
 }
 
-.ho-stage {
-  position: relative;
-  width: min(100%, 86svh, 46rem);
-  aspect-ratio: 1;
-  container-type: inline-size;
-  perspective: 1100px;
-  --tx: 0;
-  --ty: 0;
-  --max-tilt: 0deg;
-}
-
-.ho-stage::before {
-  /* Ambient night glow behind the object. */
-  content: "";
+.hf-light {
+  /* Soft atmospheric light, no hard edge: two wide falloffs layered. */
   position: absolute;
-  inset: 4%;
+  left: 0;
+  top: 0;
+  width: 46rem;
+  height: 46rem;
   border-radius: 50%;
   background:
-    radial-gradient(38% 38% at 50% 50%, var(--ho-glow), transparent 70%),
-    radial-gradient(56% 56% at 52% 50%, var(--ho-glow-cool), transparent 72%);
+    radial-gradient(closest-side, var(--hf-light), transparent 72%),
+    radial-gradient(closest-side, var(--hf-light-cool), transparent);
+  opacity: 0;
+  will-change: transform, opacity;
 }
 
-.ho-light {
-  /* A soft light that leans toward the pointer. */
+.hangul-field-quiet .hf-light {
+  width: 34rem;
+  height: 34rem;
+}
+
+.hf-glyph {
   position: absolute;
-  inset: 18%;
-  border-radius: 50%;
-  background: radial-gradient(closest-side, var(--ho-light), transparent);
-  transform: translate3d(calc(var(--tx) * 16cqw), calc(var(--ty) * 16cqw), 0);
-}
-
-.ho-rings {
-  position: absolute;
-  inset: 0;
-  perspective: 1100px;
-}
-
-.ho-idle,
-.ho-scene {
-  position: absolute;
-  inset: 0;
-  transform-style: preserve-3d;
-}
-
-.ho-scene {
-  transform:
-    rotateX(calc(4deg - var(--ty) * var(--max-tilt)))
-    rotateY(calc(-10deg + var(--tx) * var(--max-tilt)));
-}
-
-.ho-orbit {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  border-radius: 50%;
-  border: 1px solid var(--ho-ring);
-  transform-style: preserve-3d;
-}
-
-.ho-orbit-a {
-  width: 84cqw;
-  height: 84cqw;
-  margin: -42cqw 0 0 -42cqw;
-  transform: rotateX(72deg) rotateZ(var(--spin, 0deg));
-  border-top-color: transparent;
-}
-
-.ho-orbit-b {
-  width: 66cqw;
-  height: 66cqw;
-  margin: -33cqw 0 0 -33cqw;
-  border-color: var(--ho-ring-cool);
-  transform: rotateY(68deg) rotateX(14deg) rotateZ(var(--spin, 0deg));
-  border-left-color: transparent;
-}
-
-.ho-glyph {
-  position: absolute;
-  transform: translate3d(-50%, -50%, var(--z, 0));
-  transform-style: preserve-3d;
+  transform: translate(-50%, -50%);
   font-family: var(--font-korean);
-  font-size: var(--size, 10cqw);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--hf-near) calc(var(--d, 0.5) * 100%), var(--hf-far));
+  will-change: transform, opacity;
 }
 
-.ho-float {
-  position: relative;
-  display: block;
-  transform-style: preserve-3d;
-}
-
-.ho-warm { color: var(--ho-warm); }
-.ho-cool { color: var(--ho-cool); opacity: 0.8; }
-.ho-muted { color: var(--ho-muted); font-weight: 600; }
-
-.ho-focal {
-  font-size: 36cqw;
-}
-
-.ho-focal .ho-depth,
-.ho-focal .ho-face {
+.hf-ink,
+.hf-glow {
   display: block;
 }
 
-.ho-focal .ho-depth {
-  /* Stacked back layers make a solid, extruded letter. */
+.hf-ink::before,
+.hf-glow::before {
+  content: attr(data-g);
+}
+
+.hf-glow {
+  /* Gold, glowing copy of the glyph; only its opacity changes near the pointer. */
   position: absolute;
   inset: 0;
-  color: color-mix(in srgb, var(--ho-depth) calc(100% - var(--layer) * 9%), var(--ho-depth-far));
-  transform: translateZ(calc(var(--layer) * -2.4px));
+  color: var(--hf-gold);
+  text-shadow: 0 0 0.35em var(--hf-gold-glow);
+  opacity: 0;
 }
 
-.ho-focal .ho-face {
-  position: relative;
-  background:
-    radial-gradient(60% 50% at calc(42% + var(--tx) * 30%) calc(30% + var(--ty) * 30%), rgb(255 255 255 / 0.55), transparent 60%),
-    linear-gradient(160deg, var(--ho-face-a) 0%, var(--ho-face-b) 48%, var(--ho-face-c) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  filter: drop-shadow(0 0 2.2cqw rgb(217 180 106 / 0.28));
-}
-
-[data-theme="light"] .ho-focal .ho-face {
-  filter: drop-shadow(0 1.2cqw 2cqw rgb(20 35 58 / 0.18));
-}
-
-@property --spin {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
-}
-
-@keyframes ho-float {
-  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
-  33% { transform: translate3d(0.6cqw, -1.6cqw, 14px) rotate(2.5deg); }
-  66% { transform: translate3d(-0.8cqw, 0.9cqw, -10px) rotate(-2deg); }
-}
-
-@keyframes ho-breathe {
-  0%, 100% { transform: rotateX(0deg) rotateY(0deg) translateY(0); }
-  50% { transform: rotateX(3deg) rotateY(5deg) translateY(-0.8cqw); }
-}
-
-@keyframes ho-sway {
-  /* Phones: an autonomous, slightly larger sway in place of pointer tilt. */
-  0%, 100% { transform: rotateX(2deg) rotateY(-9deg); }
-  50% { transform: rotateX(-4deg) rotateY(11deg); }
-}
-
-@keyframes ho-spin {
-  to { --spin: 360deg; }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .ho-float {
-    animation: ho-float var(--float, 9s) ease-in-out var(--float-delay, 0s) infinite;
-  }
-  .ho-focal .ho-float {
-    animation-duration: 11s;
-  }
-  .ho-idle {
-    animation: ho-breathe 12s ease-in-out infinite;
-  }
-  .ho-orbit-a {
-    animation: ho-spin 48s linear infinite;
-  }
-  .ho-orbit-b {
-    animation: ho-spin 64s linear infinite reverse;
-  }
-  .ho-stage[data-paused="true"] *,
-  .ho-stage[data-paused="true"] {
-    animation-play-state: paused;
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) and (max-width: 639px) {
-  .ho-idle {
-    animation: ho-sway 9s ease-in-out infinite;
+@media (max-width: 1023px) {
+  .hf-desktop-only {
+    display: none;
   }
 }
 
 @media (max-width: 639px) {
-  .ho-detail {
+  .hf-no-phone {
     display: none;
   }
 }
