@@ -224,92 +224,184 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* ------------------------------------------------------------------
-   Hangul current (HangulFlow / flow-engine.ts drives transform/opacity)
+   Hangul atmosphere (GlobalHangulAtmosphere / hangul-atmosphere.ts
+   drives transform and opacity)
    ------------------------------------------------------------------ */
 
 :root,
 [data-theme="dark"] {
-  --hf-near: #f5f0e6;
-  --hf-far: #8fa6c4;
-  --hf-gold: #f2ddaa;
-  --hf-gold-glow: rgb(217 180 106 / 0.75);
-  --hf-light: rgb(217 180 106 / 0.075);
-  --hf-light-cool: rgb(217 180 106 / 0.03);
-  /* The current: a cool night band and a thin gold line. */
-  --flow-band: rgb(120 150 196 / 0.07);
-  --flow-line: rgb(217 180 106 / 0.38);
+  /* Shooting characters: head colours and trail tones. */
+  --ha-white: rgb(240 238 234);
+  --ha-warm: rgb(250 234 202);
+  --ha-gold: rgb(228 194 126);
+  --ha-navy: rgb(150 174 212);
+  --ha-head-glow: rgb(242 221 169 / 0.5);
+  --ha-trail-glow: 0.45;
+  /* Midground and dust. */
+  --ha-near: #f5f0e6;
+  --ha-far: #8fa6c4;
+  --ha-dust: rgb(190 206 230 / 0.55);
+  /* Soft navy glows and the gold arc. */
+  --ha-nebula-a: rgb(70 102 156 / 0.34);
+  --ha-nebula-b: rgb(84 112 160 / 0.3);
+  --ha-nebula-warm: rgb(217 180 106 / 0.06);
+  --ha-glint: rgb(242 221 169 / 0.9);
+  --ha-light: rgb(217 180 106 / 0.07);
+  --ha-light-cool: rgb(150 174 212 / 0.04);
 }
 
 [data-theme="light"] {
-  --hf-near: #14233a;
-  --hf-far: #6f84a3;
-  --hf-gold: #8a5a1c;
-  --hf-gold-glow: rgb(217 180 106 / 0.55);
-  --hf-light: rgb(217 180 106 / 0.14);
-  --hf-light-cool: rgb(255 255 255 / 0.3);
-  /* Light: no glow, a faint navy wash and a deeper gold line. */
-  --flow-band: rgb(33 58 91 / 0.05);
-  --flow-line: rgb(176 138 69 / 0.45);
+  /* Light: navy characters, restrained gold, little glow. */
+  --ha-white: rgb(30 48 76);
+  --ha-warm: rgb(20 35 58);
+  --ha-gold: rgb(166 126 58);
+  --ha-navy: rgb(96 118 150);
+  --ha-head-glow: rgb(217 180 106 / 0.18);
+  --ha-trail-glow: 0.15;
+  --ha-near: #14233a;
+  --ha-far: #6f84a3;
+  --ha-dust: rgb(33 58 91 / 0.45);
+  --ha-nebula-a: rgb(33 58 91 / 0.045);
+  --ha-nebula-b: rgb(96 118 150 / 0.05);
+  --ha-nebula-warm: rgb(217 180 106 / 0.08);
+  --ha-glint: rgb(176 138 69 / 0.6);
+  --ha-light: rgb(217 180 106 / 0.14);
+  --ha-light-cool: rgb(255 255 255 / 0.3);
 }
 
 /* Sits under every section's content and above the section tones. */
-.hangul-flow {
+.hangul-atmosphere {
   position: absolute;
   inset: 0;
   z-index: -1;
-  overflow: hidden;
+  /* clip, not hidden: hidden would make a scroll container and stop the stage sticking. */
+  overflow: clip;
   pointer-events: none;
   user-select: none;
-  contain: strict;
   opacity: 0;
   transition: opacity 1.4s var(--ease-out-soft);
 }
 
-.hangul-flow[data-ready] {
+.hangul-atmosphere[data-ready] {
   opacity: 1;
 }
 
-.hf-band,
-.hf-line {
-  position: absolute;
-  left: 0;
+/* The sky: one viewport, pinned while the page scrolls past. */
+.ha-stage {
+  position: sticky;
   top: 0;
-  overflow: visible;
+  width: 100%;
+  height: 100vh;
+  overflow: clip;
+  contain: strict;
 }
 
-/* Own layers: the band (a static, blurred mist) is rasterised once, and
-   the line's scroll-drawing never repaints it. */
-.hf-band,
-.hf-line {
-  will-change: transform;
-}
-
-.hf-band {
-  filter: blur(26px);
-}
-
-@media (max-width: 639px) {
-  .hf-band {
-    filter: blur(14px);
-  }
-}
-
-.hf-light {
-  /* Soft atmospheric light, no hard edge: two wide falloffs layered. */
+.ha-nebulae {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 46rem;
-  height: 46rem;
-  border-radius: 50%;
-  background:
-    radial-gradient(closest-side, var(--hf-light), transparent 72%),
-    radial-gradient(closest-side, var(--hf-light-cool), transparent);
-  opacity: 0;
+  inset: 0;
+  transition: opacity 1.2s var(--ease-out-soft);
+}
+
+.ha-nebula {
+  /* Each glow fills the whole stage, so no edge ever shows. */
+  position: absolute;
+  inset: -8%;
   will-change: transform, opacity;
 }
 
-.hf-glyph {
+.ha-nebula-a {
+  background:
+    radial-gradient(ellipse 58% 62% at 14% 100%, var(--ha-nebula-a), transparent 72%),
+    radial-gradient(ellipse 30% 34% at 22% 88%, var(--ha-nebula-warm), transparent 70%);
+  transform-origin: 14% 100%;
+  animation: ha-breathe 17s ease-in-out infinite alternate;
+}
+
+.ha-nebula-b {
+  background: radial-gradient(ellipse 48% 56% at 90% 0%, var(--ha-nebula-b), transparent 72%);
+  transform-origin: 90% 0%;
+  animation: ha-breathe 13s ease-in-out -6s infinite alternate;
+}
+
+@keyframes ha-breathe {
+  from {
+    opacity: 0.7;
+    transform: scale(1);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+}
+
+.ha-dust {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  will-change: transform;
+  transition: opacity 1.2s var(--ease-out-soft);
+}
+
+.ha-speck {
+  position: absolute;
+  font-family: var(--font-korean);
+  font-weight: 600;
+  line-height: 1;
+  color: var(--ha-dust);
+}
+
+.ha-drift {
+  position: absolute;
+  left: 0;
+  top: 0;
+  font-family: var(--font-korean);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--ha-near) calc(var(--d, 0.5) * 100%), var(--ha-far));
+  will-change: transform, opacity;
+}
+
+.ha-drift::before,
+.ha-head::before {
+  content: attr(data-g);
+}
+
+/* A shooting character: the head at the origin, the trail behind it. */
+.ha-shot {
+  --tc: var(--ha-warm);
+  position: absolute;
+  left: 0;
+  top: 0;
+  will-change: transform, opacity;
+}
+
+.ha-shot[data-tone="white"] {
+  --tc: var(--ha-white);
+}
+
+.ha-shot[data-tone="gold"] {
+  --tc: var(--ha-gold);
+}
+
+.ha-shot[data-tone="navy"] {
+  --tc: var(--ha-navy);
+}
+
+.ha-trail {
+  position: absolute;
+  right: 0;
+  top: -0.75px;
+  height: 1.5px;
+  border-radius: 1px;
+  transform-origin: 100% 50%;
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--tc) 40%, transparent) 62%, var(--tc));
+  box-shadow: 0 0 6px color-mix(in srgb, var(--tc) calc(var(--ha-trail-glow) * 100%), transparent);
+  will-change: transform;
+}
+
+.ha-head {
   position: absolute;
   left: 0;
   top: 0;
@@ -318,34 +410,59 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   font-weight: 600;
   line-height: 1;
   white-space: nowrap;
-  color: color-mix(in srgb, var(--hf-near) calc(var(--d, 0.5) * 100%), var(--hf-far));
+  color: color-mix(in srgb, var(--tc) 70%, var(--ha-white));
+  text-shadow:
+    0 0 0.35em var(--ha-head-glow),
+    0 0 1.1em color-mix(in srgb, var(--tc) calc(var(--ha-trail-glow) * 60%), transparent);
+}
+
+/* The arc glint: a thin circle masked down to one short, tapering segment. */
+.ha-glint {
+  position: absolute;
+  border-radius: 50%;
+  border: 1.5px solid var(--ha-glint);
+  -webkit-mask: conic-gradient(transparent 0deg 300deg, rgb(0 0 0 / 0.35) 330deg, #000 351deg, transparent 353deg);
+  mask: conic-gradient(transparent 0deg 300deg, rgb(0 0 0 / 0.35) 330deg, #000 351deg, transparent 353deg);
+  opacity: 0;
   will-change: transform, opacity;
 }
 
-.hf-ink,
-.hf-glow {
-  display: block;
+.hangul-atmosphere[data-still] .ha-glint {
+  opacity: 0.3;
 }
 
-.hf-ink::before,
-.hf-glow::before {
-  content: attr(data-g);
-}
-
-.hf-glow {
-  /* Gold, glowing copy of the glyph; only its opacity changes near the pointer. */
+.ha-light {
+  /* Soft atmospheric light, no hard edge: two wide falloffs layered. */
   position: absolute;
-  inset: 0;
-  color: var(--hf-gold);
-  text-shadow: 0 0 0.35em var(--hf-gold-glow);
+  left: 0;
+  top: 0;
+  width: 46rem;
+  height: 46rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, var(--ha-light), transparent 72%),
+    radial-gradient(closest-side, var(--ha-light-cool), transparent);
   opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Still composition: nothing breathes. */
+.hangul-atmosphere[data-still] .ha-nebula {
+  animation: none;
+  opacity: 0.85;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ha-nebula {
+    animation: none;
+  }
 }
 
 /* ------------------------------------------------------------------
    Home surfaces
    ------------------------------------------------------------------ */
 
-/* Section tones paint on a layer beneath the Hangul current (HangulFlow). */
+/* Section tones paint on a layer beneath the Hangul atmosphere (GlobalHangulAtmosphere). */
 .surface-night,
 .surface-raised {
   position: relative;
@@ -368,7 +485,7 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 
 /* ------------------------------------------------------------------
    Glass panels: course and service cards, the alphabet panel.
-   Mostly clear so the current shows through, a light blur, a thin
+   Mostly clear so the Hangul sky shows through, a light blur, a thin
    luminous rim and a soft inner light. .glass-lead (General Korean)
    carries a warmer rim, more inner light and more depth.
    ------------------------------------------------------------------ */
