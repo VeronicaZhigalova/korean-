@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "title": "SAID IN KOREAN · Learn Korean online",
+    "description": "Learn Korean online with General Korean A1–C2 and TOPIK preparation courses, an optional level quiz, coaching and Speaking Chat."
+  },
+  "brand": {
+    "name": "SAID IN KOREAN",
+    "tagline": "say what matters to you",
+    "homeLabel": "SAID IN KOREAN, home"
+  },
+  "nav": {
+    "label": "Main",
+    "courses": "Courses",
+    "quiz": "Level quiz",
+    "coaching": "Coaching",
+    "speakingChat": "Speaking Chat",
+    "about": "About",
+    "account": "Account",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "skipToContent": "Skip to main content"
+  },
+  "language": {
+    "label": "Language",
+    "switchTo": "Switch to {language}"
+  },
+  "theme": {
+    "label": "Colour theme",
+    "toDark": "Use dark theme",
+    "toLight": "Use light theme"
+  },
+  "footer": {
+    "label": "Footer",
+    "explore": "Explore",
+    "legal": "Legal",
+    "contact": "Contact",
+    "imprint": "Imprint",
+    "privacy": "Privacy",
+    "terms": "Terms",
+    "copyright": "© {year} SAID IN KOREAN"
+  },
+  "home": {
+    "eyebrow": "Learn Korean online · A1⁠–⁠C2 · TOPIK",
+    "title": "Learn Korean with online courses",
+    "lede": "Choose General Korean or TOPIK preparation. New learners can start with a free alphabet course; the level quiz is optional.",
+    "primaryCta": "Explore courses",
+    "secondaryCta": "Take level quiz"
+  },
+  "notFound": {
+    "title": "This page isn’t here yet",
+    "body": "The page may have moved, or it is still being built.",
+    "cta": "Back to home"
+  },
+  "common": {
+    "loading": "Loading",
+    "required": "Required",
+    "optional": "optional"
+  }
+}

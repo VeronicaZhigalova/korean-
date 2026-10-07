@@ -1,0 +1,59 @@
+{
+  "meta": {
+    "title": "SAID IN KOREAN · Koreanisch online lernen",
+    "description": "Koreanisch online lernen: Allgemeines Koreanisch A1–C2 und TOPIK-Vorbereitung, optionaler Einstufungstest, Coaching und Speaking Chat."
+  },
+  "brand": {
+    "name": "SAID IN KOREAN",
+    "tagline": "say what matters to you",
+    "homeLabel": "SAID IN KOREAN, Startseite"
+  },
+  "nav": {
+    "label": "Hauptnavigation",
+    "courses": "Kurse",
+    "quiz": "Einstufungstest",
+    "coaching": "Coaching",
+    "speakingChat": "Speaking Chat",
+    "about": "Über mich",
+    "account": "Konto",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen",
+    "skipToContent": "Zum Hauptinhalt springen"
+  },
+  "language": {
+    "label": "Sprache",
+    "switchTo": "Zu {language} wechseln"
+  },
+  "theme": {
+    "label": "Farbschema",
+    "toDark": "Dunkles Farbschema verwenden",
+    "toLight": "Helles Farbschema verwenden"
+  },
+  "footer": {
+    "label": "Fußzeile",
+    "explore": "Entdecken",
+    "legal": "Rechtliches",
+    "contact": "Kontakt",
+    "imprint": "Impressum",
+    "privacy": "Datenschutz",
+    "terms": "AGB",
+    "copyright": "© {year} SAID IN KOREAN"
+  },
+  "home": {
+    "eyebrow": "Koreanisch online lernen · A1⁠–⁠C2 · TOPIK",
+    "title": "Koreanisch lernen mit Online-Kursen",
+    "lede": "Wähle Allgemeines Koreanisch oder TOPIK-Vorbereitung. Neue Lernende können mit einem kostenlosen Alphabet-Kurs beginnen; der Einstufungstest ist optional.",
+    "primaryCta": "Kurse entdecken",
+    "secondaryCta": "Einstufungstest machen"
+  },
+  "notFound": {
+    "title": "Diese Seite gibt es noch nicht",
+    "body": "Die Seite wurde verschoben oder wird gerade erstellt.",
+    "cta": "Zur Startseite"
+  },
+  "common": {
+    "loading": "Wird geladen",
+    "required": "Pflichtfeld",
+    "optional": "optional"
+  }
+}

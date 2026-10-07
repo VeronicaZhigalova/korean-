@@ -1,0 +1,194 @@
+@import "tailwindcss";
+
+/*
+  SAID IN KOREAN design tokens (DESIGN.md §1, §2, §7).
+  Dark is the cinematic default; light mode stays fully usable.
+  Components read semantic tokens only, never raw hex values.
+*/
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #060b16;
+  --bg-raised: #0b1729;
+  --surface: #10213a;
+  --surface-strong: #142844;
+  --text: #f5f0e6;
+  --text-muted: #b2bccb;
+  --border: #38506b;
+  --border-strong: #5a7391;
+
+  --gold: #d9b46a;
+  --gold-light: #f2ddaa;
+  --accent-text: #f2ddaa;
+
+  --primary-bg: #d9b46a;
+  --primary-bg-hover: #e6c47e;
+  --primary-bg-pressed: #c9a258;
+  --primary-fg: #060b16;
+
+  --focus: #f2ddaa;
+
+  --success: #8cc9b4;
+  --warning: #e9be6a;
+  --error: #f29a86;
+  --info: #9dbeeb;
+
+  --nav-glass: rgb(11 23 41 / 0.72);
+  --overlay: rgb(6 11 22 / 0.8);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f8f7f3;
+  --bg-raised: #f1efe8;
+  --surface: #ffffff;
+  --surface-strong: #f6f4ee;
+  --text: #14233a;
+  --text-muted: #47566a;
+  --border: #c9cfd8;
+  --border-strong: #8592a3;
+
+  --gold: #b08a45;
+  --gold-light: #e9d6ab;
+  --accent-text: #7a531b;
+
+  --primary-bg: #1b3657;
+  --primary-bg-hover: #234570;
+  --primary-bg-pressed: #132842;
+  --primary-fg: #ffffff;
+
+  --focus: #1b3657;
+
+  --success: #166534;
+  --warning: #8a5a00;
+  --error: #b42318;
+  --info: #1b3657;
+
+  --nav-glass: rgb(248 247 243 / 0.82);
+  --overlay: rgb(248 247 243 / 0.88);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-accent: var(--accent-text);
+  --color-primary: var(--primary-bg);
+  --color-primary-hover: var(--primary-bg-hover);
+  --color-primary-pressed: var(--primary-bg-pressed);
+  --color-on-primary: var(--primary-fg);
+  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-korean: var(--font-noto-serif-kr), "Apple SD Gothic Neo", serif;
+
+  /* Type scale: functional UI in Inter, editorial display in Instrument Serif. */
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.25rem;
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.5rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.625rem;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75rem;
+
+  --radius-control: 0.75rem;
+  --radius-card: 1.25rem;
+
+  --container-content: 72rem;
+  --container-prose: 44rem;
+
+  --ease-out-soft: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.625;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  [lang="ko"] {
+    font-family: var(--font-korean);
+  }
+
+  ::selection {
+    background: var(--gold);
+    color: #060b16;
+  }
+}
+
+/* Motion is decoration: content is fully present without it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Glass never costs contrast. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--bg-raised) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--nav-glass);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+      background: var(--bg-raised);
+    }
+  }
+}
