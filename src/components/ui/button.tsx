@@ -14,6 +14,8 @@ type CommonProps = {
   icon?: ReactNode;
   /** Trailing arrow that nudges forward on hover (DESIGN.md §5). */
   arrow?: boolean;
+  /** Keeps a faint light beam circling at rest. Reserve for the one hero CTA. */
+  beamIdle?: boolean;
   className?: string;
   children: ReactNode;
 };
@@ -23,9 +25,9 @@ type ButtonAsLink = CommonProps & Omit<ComponentProps<typeof Link>, keyof Common
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-pressed",
+    "btn-beam bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-pressed",
   secondary:
-    "bg-transparent text-text shadow-[inset_0_0_0_1px_var(--border-strong)] hover:shadow-[inset_0_0_0_1px_var(--text)]",
+    "btn-arc bg-transparent text-text shadow-[inset_0_0_0_1px_var(--border-strong)] hover:shadow-[inset_0_0_0_1px_var(--text)]",
   ghost: "bg-transparent text-text-muted hover:text-text",
 };
 
@@ -48,8 +50,8 @@ const Spinner = () => (
 );
 
 export const Button = (props: ButtonAsButton | ButtonAsLink) => {
-  const { variant = "primary", size = "md", loading = false, loadingLabel, icon, arrow = false, className, children, ...rest } = props;
-  const classes = cn(base, variants[variant], sizes[size], loading && "pointer-events-none", className);
+  const { variant = "primary", size = "md", loading = false, loadingLabel, icon, arrow = false, beamIdle = false, className, children, ...rest } = props;
+  const classes = cn(base, variants[variant], sizes[size], beamIdle && "btn-beam-idle", loading && "pointer-events-none", className);
   const content = (
     <>
       {loading ? <Spinner /> : icon}

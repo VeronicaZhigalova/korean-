@@ -4,7 +4,7 @@ import { StatusPill } from "@/components/ui/feedback";
 import { Container } from "@/components/ui/layout";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { cn } from "@/lib/cn";
-import { HangulNetwork } from "./hangul-network";
+import { HangulObject } from "./hangul-object";
 
 type Home = Dictionary["home"];
 type Href = (segment: string) => string;
@@ -40,12 +40,13 @@ const cardBase =
 
 export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
   <section aria-labelledby="home-title" className="surface-night relative isolate overflow-hidden">
-    <div className="pointer-events-none absolute inset-0 -z-10 hidden sm:block">
-      <div className="absolute inset-y-0 right-[-26%] w-[86%] opacity-40 md:right-[-16%] md:w-[76%] md:opacity-55 lg:right-[-3%] lg:w-[56%] lg:opacity-100">
-        <HangulNetwork />
+    {/* Desktop: the object sits beside the copy. Below lg it moves into the flow (see below). */}
+    <div className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
+      <div className="absolute inset-y-0 right-[-3%] w-[56%]">
+        <HangulObject />
       </div>
-      {/* Keeps copy legible where the network passes behind it on tablets. */}
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,var(--bg)_42%,color-mix(in_srgb,var(--bg)_70%,transparent)_62%,transparent_88%)] lg:bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_60%,transparent)_30%,transparent_55%)]" />
+      {/* Keeps copy legible if a glyph floats toward it. */}
+      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_60%,transparent)_30%,transparent_55%)]" />
     </div>
 
     <Container className="grid gap-12 pb-14 pt-14 sm:min-h-[calc(100svh-4.5rem)] sm:content-center sm:py-20 lg:grid-cols-12 lg:items-center lg:gap-8">
@@ -67,7 +68,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
           {t.lede}
         </p>
         <div className="enter-up mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row" style={enter(3)}>
-          <Button href={href("courses")} arrow>
+          <Button href={href("courses")} arrow beamIdle>
             {t.primaryCta}
           </Button>
           <Button href={href("quiz")} variant="secondary">
@@ -75,8 +76,8 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
           </Button>
         </div>
 
-        <div className="relative -mx-4 mt-2 h-[17rem] w-[calc(100%+2rem)] sm:hidden" aria-hidden="true">
-          <HangulNetwork />
+        <div className="relative -mx-4 mt-2 h-[19rem] w-[calc(100%+2rem)] sm:mx-0 sm:h-[30rem] sm:w-full lg:hidden" aria-hidden="true">
+          <HangulObject />
         </div>
 
         {/* Quiet facts row: stays in the text column so nothing covers the network. */}

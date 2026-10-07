@@ -224,177 +224,239 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* ------------------------------------------------------------------
-   Hangul light network (DESIGN.md §6)
+   Hangul object (hero)
+   One 3D scene: depth is translateZ inside a single perspective, so the
+   spring-driven tilt (--tx/--ty from HangulObjectMotion) gives real parallax.
    ------------------------------------------------------------------ */
 
 :root,
 [data-theme="dark"] {
-  --hn-warm: #d9b46a;
-  --hn-cool: #8db7ea;
-  --hn-node: rgb(242 221 170 / 0.18);
-  --hn-glyph: rgb(245 240 230 / 0.78);
-  --hn-glyph-focal: #f2ddaa;
-  --hn-glow-a: rgb(33 58 91 / 0.55);
-  --hn-glow-b: rgb(217 180 106 / 0.1);
+  --ho-face-a: #fbeecb;
+  --ho-face-b: #d9b46a;
+  --ho-face-c: #9c7535;
+  --ho-depth: #8a6629;
+  --ho-depth-far: #2b2010;
+  --ho-warm: #e6c98a;
+  --ho-cool: #9dbeeb;
+  --ho-muted: rgb(245 240 230 / 0.42);
+  --ho-ring: rgb(217 180 106 / 0.22);
+  --ho-ring-cool: rgb(157 190 235 / 0.14);
+  --ho-glow: rgb(217 180 106 / 0.16);
+  --ho-glow-cool: rgb(33 58 91 / 0.6);
+  --ho-light: rgb(255 236 190 / 0.12);
 }
 
 [data-theme="light"] {
-  --hn-warm: #a67c35;
-  --hn-cool: #3f6ea8;
-  --hn-node: rgb(166 124 53 / 0.14);
-  --hn-glyph: rgb(20 35 58 / 0.62);
-  --hn-glyph-focal: #7a531b;
-  --hn-glow-a: rgb(141 183 234 / 0.28);
-  --hn-glow-b: rgb(217 180 106 / 0.16);
+  --ho-face-a: #b7883f;
+  --ho-face-b: #7a531b;
+  --ho-face-c: #4f3510;
+  --ho-depth: #c9b27f;
+  --ho-depth-far: #ece6d8;
+  --ho-warm: #8a5a1c;
+  --ho-cool: #3f6ea8;
+  --ho-muted: rgb(20 35 58 / 0.4);
+  --ho-ring: rgb(122 83 27 / 0.26);
+  --ho-ring-cool: rgb(63 110 168 / 0.16);
+  --ho-glow: rgb(217 180 106 / 0.22);
+  --ho-glow-cool: rgb(141 183 234 / 0.28);
+  --ho-light: rgb(255 255 255 / 0.5);
 }
 
-.hangul-network {
+.hangul-object {
   position: absolute;
   inset: 0;
+  display: grid;
+  place-items: center;
   pointer-events: none;
   user-select: none;
 }
 
-.hn-glow {
-  position: absolute;
-  inset: 4% 0 0 8%;
-  background:
-    radial-gradient(42% 46% at 56% 46%, var(--hn-glow-b), transparent 70%),
-    radial-gradient(60% 62% at 58% 48%, var(--hn-glow-a), transparent 72%);
+.ho-stage {
+  position: relative;
+  width: min(100%, 86svh, 46rem);
+  aspect-ratio: 1;
+  container-type: inline-size;
+  perspective: 1100px;
+  --tx: 0;
+  --ty: 0;
+  --max-tilt: 0deg;
 }
 
-.hn-stage {
+.ho-stage::before {
+  /* Ambient night glow behind the object. */
+  content: "";
+  position: absolute;
+  inset: 4%;
+  border-radius: 50%;
+  background:
+    radial-gradient(38% 38% at 50% 50%, var(--ho-glow), transparent 70%),
+    radial-gradient(56% 56% at 52% 50%, var(--ho-glow-cool), transparent 72%);
+}
+
+.ho-light {
+  /* A soft light that leans toward the pointer. */
+  position: absolute;
+  inset: 18%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--ho-light), transparent);
+  transform: translate3d(calc(var(--tx) * 16cqw), calc(var(--ty) * 16cqw), 0);
+}
+
+.ho-rings {
   position: absolute;
   inset: 0;
-  --px: 0;
-  --py: 0;
+  perspective: 1100px;
 }
 
-.hn-svg {
-  width: 100%;
-  height: 100%;
-  overflow: visible;
+.ho-idle,
+.ho-scene {
+  position: absolute;
+  inset: 0;
+  transform-style: preserve-3d;
 }
 
-.hn-layer {
-  transition: transform 1.1s var(--ease-out-soft);
-  will-change: transform;
+.ho-scene {
+  transform:
+    rotateX(calc(4deg - var(--ty) * var(--max-tilt)))
+    rotateY(calc(-10deg + var(--tx) * var(--max-tilt)));
 }
 
-.hn-depth-paths {
-  transform: translate3d(calc(var(--px) * 8px), calc(var(--py) * 6px), 0);
-}
-.hn-depth-0 {
-  transform: translate3d(calc(var(--px) * 5px), calc(var(--py) * 4px), 0);
-  opacity: 0.5;
-}
-.hn-depth-1 {
-  transform: translate3d(calc(var(--px) * 12px), calc(var(--py) * 9px), 0);
-  opacity: 0.85;
-}
-.hn-depth-2 {
-  transform: translate3d(calc(var(--px) * 20px), calc(var(--py) * 14px), 0);
+.ho-orbit {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  border-radius: 50%;
+  border: 1px solid var(--ho-ring);
+  transform-style: preserve-3d;
 }
 
-.hn-path {
-  fill: none;
-  stroke-width: 1;
-  vector-effect: non-scaling-stroke;
-  opacity: 0.55;
+.ho-orbit-a {
+  width: 84cqw;
+  height: 84cqw;
+  margin: -42cqw 0 0 -42cqw;
+  transform: rotateX(72deg) rotateZ(var(--spin, 0deg));
+  border-top-color: transparent;
 }
 
-.hn-pulse {
-  fill: none;
-  stroke-width: 1.6;
-  stroke-linecap: round;
-  vector-effect: non-scaling-stroke;
-  stroke-dasharray: 7 93;
-  stroke-dashoffset: 100;
-  opacity: 0;
-}
-.hn-pulse-warm {
-  stroke: var(--hn-warm);
-}
-.hn-pulse-cool {
-  stroke: var(--hn-cool);
+.ho-orbit-b {
+  width: 66cqw;
+  height: 66cqw;
+  margin: -33cqw 0 0 -33cqw;
+  border-color: var(--ho-ring-cool);
+  transform: rotateY(68deg) rotateX(14deg) rotateZ(var(--spin, 0deg));
+  border-left-color: transparent;
 }
 
-.hn-glyph {
-  fill: var(--hn-glyph);
+.ho-glyph {
+  position: absolute;
+  transform: translate3d(-50%, -50%, var(--z, 0));
+  transform-style: preserve-3d;
   font-family: var(--font-korean);
-  font-weight: 600;
-}
-
-.hn-glyph-focal {
-  fill: var(--hn-glyph-focal);
+  font-size: var(--size, 10cqw);
   font-weight: 800;
-  filter: drop-shadow(0 0 28px rgb(217 180 106 / 0.35));
+  line-height: 1;
 }
 
-[data-theme="light"] .hn-glyph-focal {
-  filter: none;
+.ho-float {
+  position: relative;
+  display: block;
+  transform-style: preserve-3d;
 }
 
-@keyframes hn-drift {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -9px, 0);
-  }
+.ho-warm { color: var(--ho-warm); }
+.ho-cool { color: var(--ho-cool); opacity: 0.8; }
+.ho-muted { color: var(--ho-muted); font-weight: 600; }
+
+.ho-focal {
+  font-size: 36cqw;
 }
 
-@keyframes hn-travel {
-  0% {
-    stroke-dashoffset: 100;
-    opacity: 0;
-  }
-  12% {
-    opacity: 0.9;
-  }
-  70% {
-    opacity: 0.9;
-  }
-  100% {
-    stroke-dashoffset: 0;
-    opacity: 0;
-  }
+.ho-focal .ho-depth,
+.ho-focal .ho-face {
+  display: block;
 }
 
-@keyframes hn-breathe {
-  0%,
-  100% {
-    opacity: 0.7;
-  }
-  50% {
-    opacity: 1;
-  }
+.ho-focal .ho-depth {
+  /* Stacked back layers make a solid, extruded letter. */
+  position: absolute;
+  inset: 0;
+  color: color-mix(in srgb, var(--ho-depth) calc(100% - var(--layer) * 9%), var(--ho-depth-far));
+  transform: translateZ(calc(var(--layer) * -2.4px));
 }
 
-@media (prefers-reduced-motion: no-preference) and (min-width: 640px) {
-  .hn-node {
-    animation: hn-drift var(--hn-drift, 13s) ease-in-out var(--hn-drift-delay, 0s) infinite;
+.ho-focal .ho-face {
+  position: relative;
+  background:
+    radial-gradient(60% 50% at calc(42% + var(--tx) * 30%) calc(30% + var(--ty) * 30%), rgb(255 255 255 / 0.55), transparent 60%),
+    linear-gradient(160deg, var(--ho-face-a) 0%, var(--ho-face-b) 48%, var(--ho-face-c) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  filter: drop-shadow(0 0 2.2cqw rgb(217 180 106 / 0.28));
+}
+
+[data-theme="light"] .ho-focal .ho-face {
+  filter: drop-shadow(0 1.2cqw 2cqw rgb(20 35 58 / 0.18));
+}
+
+@property --spin {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+@keyframes ho-float {
+  0%, 100% { transform: translate3d(0, 0, 0) rotate(0deg); }
+  33% { transform: translate3d(0.6cqw, -1.6cqw, 14px) rotate(2.5deg); }
+  66% { transform: translate3d(-0.8cqw, 0.9cqw, -10px) rotate(-2deg); }
+}
+
+@keyframes ho-breathe {
+  0%, 100% { transform: rotateX(0deg) rotateY(0deg) translateY(0); }
+  50% { transform: rotateX(3deg) rotateY(5deg) translateY(-0.8cqw); }
+}
+
+@keyframes ho-sway {
+  /* Phones: an autonomous, slightly larger sway in place of pointer tilt. */
+  0%, 100% { transform: rotateX(2deg) rotateY(-9deg); }
+  50% { transform: rotateX(-4deg) rotateY(11deg); }
+}
+
+@keyframes ho-spin {
+  to { --spin: 360deg; }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ho-float {
+    animation: ho-float var(--float, 9s) ease-in-out var(--float-delay, 0s) infinite;
   }
-  .hn-pulse {
-    animation: hn-travel 5.2s ease-in-out var(--hn-delay, 0s) infinite;
+  .ho-focal .ho-float {
+    animation-duration: 11s;
   }
-  .hn-halo {
-    animation: hn-breathe 6s ease-in-out infinite;
+  .ho-idle {
+    animation: ho-breathe 12s ease-in-out infinite;
   }
-  .hn-stage[data-paused="true"] * {
+  .ho-orbit-a {
+    animation: ho-spin 48s linear infinite;
+  }
+  .ho-orbit-b {
+    animation: ho-spin 64s linear infinite reverse;
+  }
+  .ho-stage[data-paused="true"] *,
+  .ho-stage[data-paused="true"] {
     animation-play-state: paused;
   }
 }
 
-/* Phones get a simple static arrangement (DESIGN.md §6). */
-@media (max-width: 639px) {
-  .hn-detail {
-    display: none;
+@media (prefers-reduced-motion: no-preference) and (max-width: 639px) {
+  .ho-idle {
+    animation: ho-sway 9s ease-in-out infinite;
   }
-  .hn-layer {
-    transform: none;
-    transition: none;
+}
+
+@media (max-width: 639px) {
+  .ho-detail {
+    display: none;
   }
 }
 
@@ -444,4 +506,139 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 [data-theme="light"] .card-lit::before {
   background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgb(27 54 87 / 0.06), transparent 70%);
+}
+
+/* ------------------------------------------------------------------
+   Button light (DESIGN.md §5 motion hierarchy)
+   .btn-beam  primary: a gold beam circles the border on hover/focus, and a
+              sheen crosses the face. .btn-beam-idle keeps a faint beam
+              circling for the one hero CTA.
+   .btn-arc   secondary: a quieter thin arc on hover/focus only.
+   Colour and border still say "button" without any of this.
+   ------------------------------------------------------------------ */
+
+@property --beam {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+:root,
+[data-theme="dark"] {
+  --beam-core: #fff4d6;
+  --beam-edge: #f2ddaa;
+  --beam-arc: rgb(242 221 170 / 0.9);
+  --beam-sheen: rgb(255 255 255 / 0.38);
+  --beam-glow: rgb(217 180 106 / 0.45);
+}
+
+[data-theme="light"] {
+  --beam-core: #ffe7b0;
+  --beam-edge: #d9b46a;
+  --beam-arc: rgb(166 124 53 / 0.95);
+  --beam-sheen: rgb(255 255 255 / 0.22);
+  --beam-glow: rgb(27 54 87 / 0.35);
+}
+
+.btn-beam,
+.btn-arc {
+  position: relative;
+  isolation: isolate;
+}
+
+.btn-beam > *,
+.btn-arc > * {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-beam::before,
+.btn-arc::before {
+  /* A ring: the conic gradient is masked down to the border band. */
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-out-soft);
+  pointer-events: none;
+}
+
+.btn-beam::before {
+  background: conic-gradient(from var(--beam), transparent 0 58%, var(--beam-edge) 74%, var(--beam-core) 82%, var(--beam-edge) 88%, transparent 96%);
+}
+
+.btn-arc::before {
+  padding: 1px;
+  inset: -1px;
+  background: conic-gradient(from var(--beam), transparent 0 72%, var(--beam-arc) 86%, transparent 97%);
+}
+
+.btn-beam::after {
+  /* Sheen: a soft diagonal light that crosses the face once per hover. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 35%, var(--beam-sheen) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%;
+  background-position: 130% 0;
+  pointer-events: none;
+}
+
+.btn-beam {
+  transition-property: background-color, box-shadow, color, scale;
+}
+
+.btn-beam:hover,
+.btn-beam:focus-visible {
+  box-shadow: 0 10px 34px -14px var(--beam-glow);
+}
+
+.btn-beam:hover::before,
+.btn-beam:focus-visible::before {
+  opacity: 1;
+}
+
+.btn-arc:hover::before,
+.btn-arc:focus-visible::before {
+  opacity: 0.85;
+}
+
+.btn-beam-idle::before {
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn-beam::before {
+    animation: beam-spin 2.6s linear infinite;
+  }
+  .btn-beam-idle::before {
+    animation-duration: 5.5s;
+  }
+  .btn-arc::before {
+    animation: beam-spin 3.4s linear infinite;
+  }
+  .btn-beam::after {
+    transition: background-position 0.9s var(--ease-out-soft);
+  }
+  .btn-beam:hover::after,
+  .btn-beam:focus-visible::after {
+    background-position: -30% 0;
+  }
+  .btn-beam:not(:hover):not(:focus-visible)::before,
+  .btn-arc:not(:hover):not(:focus-visible)::before {
+    animation-play-state: paused;
+  }
+  .btn-beam-idle:not(:hover):not(:focus-visible)::before {
+    animation-play-state: running;
+  }
+}
+
+@keyframes beam-spin {
+  to { --beam: 360deg; }
 }
