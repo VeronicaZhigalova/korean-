@@ -224,7 +224,7 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* ------------------------------------------------------------------
-   Living Hangul field (HangulField drives transform/opacity per frame)
+   Hangul current (HangulFlow / flow-engine.ts drives transform/opacity)
    ------------------------------------------------------------------ */
 
 :root,
@@ -235,6 +235,9 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   --hf-gold-glow: rgb(217 180 106 / 0.75);
   --hf-light: rgb(217 180 106 / 0.075);
   --hf-light-cool: rgb(217 180 106 / 0.03);
+  /* The current: a cool night band and a thin gold line. */
+  --flow-band: rgb(120 150 196 / 0.07);
+  --flow-line: rgb(217 180 106 / 0.38);
 }
 
 [data-theme="light"] {
@@ -244,15 +247,51 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   --hf-gold-glow: rgb(217 180 106 / 0.55);
   --hf-light: rgb(217 180 106 / 0.14);
   --hf-light-cool: rgb(255 255 255 / 0.3);
+  /* Light: no glow, a faint navy wash and a deeper gold line. */
+  --flow-band: rgb(33 58 91 / 0.05);
+  --flow-line: rgb(176 138 69 / 0.45);
 }
 
-.hangul-field {
+/* Sits under every section's content and above the section tones. */
+.hangul-flow {
   position: absolute;
   inset: 0;
+  z-index: -1;
   overflow: hidden;
   pointer-events: none;
   user-select: none;
   contain: strict;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease-out-soft);
+}
+
+.hangul-flow[data-ready] {
+  opacity: 1;
+}
+
+.hf-band,
+.hf-line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  overflow: visible;
+}
+
+/* Own layers: the band (a static, blurred mist) is rasterised once, and
+   the line's scroll-drawing never repaints it. */
+.hf-band,
+.hf-line {
+  will-change: transform;
+}
+
+.hf-band {
+  filter: blur(26px);
+}
+
+@media (max-width: 639px) {
+  .hf-band {
+    filter: blur(14px);
+  }
 }
 
 .hf-light {
@@ -270,13 +309,10 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   will-change: transform, opacity;
 }
 
-.hangul-field-quiet .hf-light {
-  width: 34rem;
-  height: 34rem;
-}
-
 .hf-glyph {
   position: absolute;
+  left: 0;
+  top: 0;
   transform: translate(-50%, -50%);
   font-family: var(--font-korean);
   font-weight: 600;
@@ -305,30 +341,111 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   opacity: 0;
 }
 
-@media (max-width: 1023px) {
-  .hf-desktop-only {
-    display: none;
-  }
-}
-
-@media (max-width: 639px) {
-  .hf-no-phone {
-    display: none;
-  }
-}
-
 /* ------------------------------------------------------------------
    Home surfaces
    ------------------------------------------------------------------ */
 
-.surface-night {
+/* Section tones paint on a layer beneath the Hangul current (HangulFlow). */
+.surface-night,
+.surface-raised {
+  position: relative;
+}
+
+.surface-night::before,
+.surface-raised::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -2;
   background: var(--bg);
 }
 
-.surface-raised {
+.surface-raised::before {
   background:
     linear-gradient(to bottom, var(--bg) 0, transparent 7rem),
     var(--bg-raised);
+}
+
+/* ------------------------------------------------------------------
+   Glass panels: course and service cards, the alphabet panel.
+   Mostly clear so the current shows through, a light blur, a thin
+   luminous rim and a soft inner light. .glass-lead (General Korean)
+   carries a warmer rim, more inner light and more depth.
+   ------------------------------------------------------------------ */
+
+:root,
+[data-theme="dark"] {
+  --pane-fill: rgb(13 27 48 / 0.46);
+  --pane-sheen: rgb(255 255 255 / 0.055);
+  --pane-rim: rgb(186 206 235 / 0.16);
+  --pane-rim-hover: rgb(186 206 235 / 0.28);
+  --pane-edge: rgb(255 255 255 / 0.09);
+  --pane-shadow: 0 28px 60px -34px rgb(0 0 0 / 0.75);
+  --pane-glow: rgb(217 180 106 / 0);
+  --lead-rim: rgb(217 180 106 / 0.38);
+  --lead-rim-hover: rgb(217 180 106 / 0.6);
+  --lead-glow: rgb(217 180 106 / 0.1);
+  --lead-shadow: 0 40px 80px -36px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(217 180 106 / 0.05);
+}
+
+[data-theme="light"] {
+  --pane-fill: rgb(255 255 255 / 0.34);
+  --pane-sheen: rgb(255 255 255 / 0.55);
+  --pane-rim: rgb(33 58 91 / 0.13);
+  --pane-rim-hover: rgb(33 58 91 / 0.26);
+  --pane-edge: rgb(255 255 255 / 0.9);
+  --pane-shadow: 0 24px 50px -30px rgb(20 35 58 / 0.28);
+  --pane-glow: rgb(217 180 106 / 0);
+  --lead-rim: rgb(176 138 69 / 0.5);
+  --lead-rim-hover: rgb(176 138 69 / 0.75);
+  --lead-glow: rgb(217 180 106 / 0.12);
+  --lead-shadow: 0 36px 70px -34px rgb(20 35 58 / 0.36);
+}
+
+.glass-panel {
+  --glow: var(--pane-glow);
+  border: 1px solid var(--pane-rim);
+  background:
+    radial-gradient(120% 70% at 0% 0%, var(--glow), transparent 60%),
+    linear-gradient(160deg, var(--pane-sheen), transparent 45%),
+    var(--pane-fill);
+  box-shadow:
+    inset 0 1px 0 var(--pane-edge),
+    var(--pane-shadow);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  backdrop-filter: blur(10px) saturate(125%);
+  transition: border-color 0.3s var(--ease-out-soft);
+}
+
+.glass-lead {
+  --glow: var(--lead-glow);
+  border-color: var(--lead-rim);
+  box-shadow:
+    inset 0 1px 0 var(--pane-edge),
+    var(--lead-shadow);
+}
+
+@media (hover: hover) {
+  .glass-panel:hover {
+    border-color: var(--pane-rim-hover);
+  }
+  .glass-lead:hover {
+    border-color: var(--lead-rim-hover);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel {
+    --pane-fill: color-mix(in srgb, var(--bg-raised) 88%, transparent);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-panel {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 .glyph-soft {

@@ -4,7 +4,6 @@ import { StatusPill } from "@/components/ui/feedback";
 import { Container } from "@/components/ui/layout";
 import type { Dictionary } from "@/i18n/dictionaries";
 import { cn } from "@/lib/cn";
-import { HangulField, type FieldZone } from "./hangul-field";
 
 type Home = Dictionary["home"];
 type Href = (segment: string) => string;
@@ -32,43 +31,13 @@ const SectionIntro = ({ id, index, eyebrow, title, lede }: { id: string; index: 
   </div>
 );
 
-const cardBase =
-  "card-lit flex h-full min-w-0 flex-col rounded-(--radius-card) border border-border bg-surface " +
-  "transition-[border-color,transform] duration-300 ease-(--ease-out-soft) hover:border-border-strong";
-
-/* Living Hangul fields --------------------------------------------------- */
-
-// Hero (desktop): rich on the right, barely there behind the copy.
-const heroZones: FieldZone[] = [
-  { x: [54, 97], y: [8, 92], weight: 8, maxOpacity: 0.9 },
-  { x: [4, 50], y: [4, 46], weight: 2, maxOpacity: 0.1 },
-];
-// Hero (tablet and phone): the in-flow block under the buttons.
-const heroBlockZones: FieldZone[] = [{ x: [6, 94], y: [8, 92], weight: 1, maxOpacity: 0.85 }];
-// Sections continue the language quietly, in margins away from the copy.
-const alphabetZones: FieldZone[] = [
-  { x: [2, 98], y: [2, 12], weight: 3, maxOpacity: 0.28 },
-  { x: [2, 98], y: [90, 98], weight: 3, maxOpacity: 0.28 },
-  { x: [1, 6], y: [12, 90], weight: 1, maxOpacity: 0.2 },
-];
-const teacherZones: FieldZone[] = [
-  { x: [58, 98], y: [4, 96], weight: 4, maxOpacity: 0.32 },
-  { x: [2, 98], y: [2, 10], weight: 1, maxOpacity: 0.2 },
-  { x: [2, 98], y: [92, 98], weight: 1, maxOpacity: 0.2 },
-];
+// Glass panels: the Hangul current shows softly through them (see .glass-panel).
+const cardBase = "card-lit glass-panel flex h-full min-w-0 flex-col rounded-(--radius-card)";
 
 /* 1 · Hero ------------------------------------------------------------ */
 
 export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
-  <section aria-labelledby="home-title" className="surface-night relative isolate overflow-hidden">
-    {/* Desktop: the object sits beside the copy. Below lg it moves into the flow (see below). */}
-    <div className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
-      <div className="absolute inset-0">
-        <HangulField count={20} zones={heroZones} size={[1.1, 5]} seed={11} />
-      </div>
-      {/* Keeps copy legible if a glyph floats toward it. */}
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_60%,transparent)_30%,transparent_55%)]" />
-    </div>
+  <section data-flow="hero" aria-labelledby="home-title" className="surface-night overflow-hidden">
 
     <Container className="grid gap-12 pb-14 pt-14 sm:min-h-[calc(100svh-4.5rem)] sm:content-center sm:py-20 lg:grid-cols-12 lg:items-center lg:gap-8">
       <div className="flex flex-col items-start gap-6 sm:max-w-[36rem] lg:col-span-7 lg:max-w-none">
@@ -97,9 +66,8 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
           </Button>
         </div>
 
-        <div className="relative -mx-4 mt-2 h-[19rem] w-[calc(100%+2rem)] sm:mx-0 sm:h-[30rem] sm:w-full lg:hidden" aria-hidden="true">
-          <HangulField count={13} countTablet={13} countMobile={9} zones={heroBlockZones} size={[1.3, 4.6]} seed={23} presence={0.85} />
-        </div>
+        {/* Below lg the Hangul current opens here, under the buttons (HangulFlow). */}
+        <div data-flow="hero-block" className="mt-2 h-[19rem] w-full sm:h-[30rem] lg:hidden" aria-hidden="true" />
 
         {/* Quiet facts row: stays in the text column so nothing covers the network. */}
         <dl
@@ -157,13 +125,13 @@ const LevelStair = ({ label }: { label: string }) => (
 );
 
 export const LearningPathsSection = ({ t, href }: { t: Home["paths"]; href: Href }) => (
-  <section aria-labelledby="paths-title" className="surface-raised py-24 lg:py-32">
+  <section data-flow="paths" aria-labelledby="paths-title" className="surface-raised py-24 lg:py-32">
     <Container className="flex flex-col gap-12 lg:gap-16">
       <SectionIntro id="paths-title" index={1} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
 
       <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-12 lg:grid-rows-[auto_auto]">
         <div data-reveal style={delay(0)} className="md:col-span-2 lg:col-span-7 lg:row-span-2">
-          <article className={cn(cardBase, "gap-8 p-6 sm:p-9")}>
+          <article data-flow="general" data-flow-glass className={cn(cardBase, "glass-lead gap-8 p-6 sm:p-9")}>
             <header className="flex flex-col gap-2">
               <h3 className="font-display text-[clamp(2rem,3.4vw,2.75rem)] leading-tight text-text">{t.general.title}</h3>
               <p className="text-body-sm text-text-muted">{t.general.meta}</p>
@@ -182,7 +150,7 @@ export const LearningPathsSection = ({ t, href }: { t: Home["paths"]; href: Href
         </div>
 
         <div data-reveal style={delay(1)} className="lg:col-span-5">
-          <article className={cn(cardBase, "gap-5 p-6 sm:p-7")}>
+          <article data-flow="topik" data-flow-glass className={cn(cardBase, "gap-5 p-6 sm:p-7")}>
             <header className="flex items-start justify-between gap-4">
               <h3 className="font-display text-[1.875rem] leading-tight text-text">{t.topik.title}</h3>
               <span className="pt-2 text-caption font-semibold uppercase tracking-[0.16em] text-text-muted">{t.topik.levelsLabel}</span>
@@ -205,7 +173,7 @@ export const LearningPathsSection = ({ t, href }: { t: Home["paths"]; href: Href
         </div>
 
         <div data-reveal style={delay(2)} className="lg:col-span-5">
-          <article className="card-lit flex h-full flex-col gap-4 rounded-(--radius-card) border border-dashed border-border-strong p-6 transition-colors duration-300 hover:border-gold sm:p-7">
+          <article data-flow="quiz" className="card-lit flex h-full flex-col gap-4 rounded-(--radius-card) border border-dashed border-border-strong p-6 transition-colors duration-300 hover:border-gold sm:p-7">
             <span className="w-fit rounded-full border border-border px-3 py-0.5 text-caption font-semibold text-text-muted">{t.quiz.meta}</span>
             <h3 className="text-xl font-semibold text-text">{t.quiz.title}</h3>
             <p className="text-body-sm text-text-muted">{t.quiz.body}</p>
@@ -224,7 +192,12 @@ export const LearningPathsSection = ({ t, href }: { t: Home["paths"]; href: Href
 const AlphabetVisual = ({ caption }: { caption: string }) => {
   const jamo = ["ㅎ", "ㅏ", "ㄴ"];
   return (
-    <figure className="relative flex flex-col items-center gap-6 rounded-(--radius-card) border border-border bg-bg-raised/60 px-6 py-10 sm:py-14" aria-label={caption}>
+    <figure
+      data-flow="alphabet-visual"
+      data-flow-glass
+      className="glass-panel relative flex flex-col items-center gap-6 rounded-(--radius-card) px-6 py-10 sm:py-14"
+      aria-label={caption}
+    >
       <div className="flex items-center gap-3 sm:gap-5" aria-hidden="true">
         {jamo.map((letter, index) => (
           <span key={letter} data-reveal style={delay(index, 120)} className="flex items-center gap-3 sm:gap-5">
@@ -250,10 +223,7 @@ const AlphabetVisual = ({ caption }: { caption: string }) => {
 };
 
 export const AlphabetSection = ({ t, href }: { t: Home["alphabet"]; href: Href }) => (
-  <section aria-labelledby="alphabet-title" className="surface-night relative isolate overflow-hidden py-24 lg:py-32">
-    <div className="absolute inset-0 -z-10">
-      <HangulField count={10} countTablet={7} countMobile={4} zones={alphabetZones} size={[1, 3]} seed={37} quiet />
-    </div>
+  <section data-flow="alphabet" aria-labelledby="alphabet-title" className="surface-night overflow-hidden py-24 lg:py-32">
     <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
       <div className="order-2 lg:order-1 lg:col-span-5">
         <AlphabetVisual caption={t.visualCaption} />
@@ -287,13 +257,13 @@ export const AlphabetSection = ({ t, href }: { t: Home["alphabet"]; href: Href }
 /* 4 · Coaching and Speaking Chat -------------------------------------- */
 
 export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }) => (
-  <section aria-labelledby="services-title" className="surface-raised py-24 lg:py-32">
+  <section data-flow="services" aria-labelledby="services-title" className="surface-raised py-24 lg:py-32">
     <Container className="flex flex-col gap-12 lg:gap-16">
       <SectionIntro id="services-title" index={3} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
 
       <div className="grid gap-5 md:grid-cols-2">
         <div data-reveal style={delay(0)}>
-          <article className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
+          <article data-flow="coaching" data-flow-glass className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
             <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
             <header className="flex flex-col items-start gap-3">
               <StatusPill tone="warning">{t.coaching.requirement}</StatusPill>
@@ -315,7 +285,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
         </div>
 
         <div data-reveal style={delay(1)}>
-          <article className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
+          <article data-flow="chat" data-flow-glass className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
             <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-info to-transparent" />
             <header className="flex flex-col items-start gap-3">
               <StatusPill tone="success">{t.chat.requirement}</StatusPill>
@@ -341,10 +311,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
 /* 5 · Meet the teacher ------------------------------------------------- */
 
 export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) => (
-  <section aria-labelledby="teacher-title" className="surface-night relative isolate overflow-hidden py-24 lg:py-36">
-    <div className="absolute inset-0 -z-10">
-      <HangulField count={11} countTablet={7} countMobile={4} zones={teacherZones} size={[1, 3.4]} seed={53} quiet />
-    </div>
+  <section data-flow="teacher" aria-labelledby="teacher-title" className="surface-night overflow-hidden py-24 lg:py-36">
     <Container className="grid items-center gap-12 lg:grid-cols-12">
       <div data-reveal className="flex flex-col items-start gap-6 lg:col-span-6">
         <Eyebrow index={4}>{t.eyebrow}</Eyebrow>
@@ -356,8 +323,8 @@ export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) 
           {t.cta}
         </Button>
       </div>
-      <figure data-reveal style={delay(1)} className="flex flex-col items-center gap-4 lg:col-span-5 lg:col-start-8" aria-hidden="true">
-        <span lang="ko" className="glyph-soft font-korean text-[clamp(10rem,24vw,18rem)] font-extrabold leading-none">
+      <figure data-flow="teacher-glyph" data-reveal style={delay(1)} className="flex flex-col items-center gap-4 lg:col-span-5 lg:col-start-8" aria-hidden="true">
+        <span data-flow-quiet lang="ko" className="glyph-soft font-korean text-[clamp(10rem,24vw,18rem)] font-extrabold leading-none">
           말
         </span>
         <figcaption lang="ko" className="text-caption tracking-[0.14em] text-text-muted">
