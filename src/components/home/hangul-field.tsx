@@ -37,7 +37,13 @@ export const HangulField = ({ count, countTablet, countMobile, zones, size = [1.
   }, [count, countTablet, countMobile, zones, size, seed, quiet, presence]);
 
   return (
-    <div ref={ref} className={quiet ? "hangul-field hangul-field-quiet" : "hangul-field"} aria-hidden="true">
+    <div
+      ref={ref}
+      className={quiet ? "hangul-field hangul-field-quiet" : "hangul-field"}
+      // Options travel with the markup so the static review preview can start the same engine.
+      data-field={JSON.stringify({ count, countTablet, countMobile, zones, size, seed, quiet, presence })}
+      aria-hidden="true"
+    >
       <div data-light className="hf-light" />
       {seeded.map((p, index) => (
         <span
