@@ -1,0 +1,501 @@
+@import "tailwindcss";
+
+/*
+  SAID IN KOREAN design tokens (DESIGN.md §1, §2, §7).
+  Dark is the cinematic default; light mode stays fully usable.
+  Components read semantic tokens only, never raw hex values.
+*/
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  --bg: #060b16;
+  --bg-raised: #0b1729;
+  --surface: #10213a;
+  --surface-strong: #142844;
+  --text: #f5f0e6;
+  --text-muted: #b2bccb;
+  --border: #38506b;
+  --border-strong: #5a7391;
+
+  --gold: #d9b46a;
+  --gold-light: #f2ddaa;
+  --accent-text: #f2ddaa;
+
+  --primary-bg: #d9b46a;
+  --primary-bg-hover: #e6c47e;
+  --primary-bg-pressed: #c9a258;
+  --primary-fg: #060b16;
+
+  --focus: #f2ddaa;
+
+  --success: #8cc9b4;
+  --warning: #e9be6a;
+  --error: #f29a86;
+  --info: #9dbeeb;
+
+  --nav-glass: rgb(11 23 41 / 0.72);
+  --overlay: rgb(6 11 22 / 0.8);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --bg: #f8f7f3;
+  --bg-raised: #f1efe8;
+  --surface: #ffffff;
+  --surface-strong: #f6f4ee;
+  --text: #14233a;
+  --text-muted: #47566a;
+  --border: #c9cfd8;
+  --border-strong: #8592a3;
+
+  --gold: #b08a45;
+  --gold-light: #e9d6ab;
+  --accent-text: #7a531b;
+
+  --primary-bg: #1b3657;
+  --primary-bg-hover: #234570;
+  --primary-bg-pressed: #132842;
+  --primary-fg: #ffffff;
+
+  --focus: #1b3657;
+
+  --success: #166534;
+  --warning: #8a5a00;
+  --error: #b42318;
+  --info: #1b3657;
+
+  --nav-glass: rgb(248 247 243 / 0.82);
+  --overlay: rgb(248 247 243 / 0.88);
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-bg-raised: var(--bg-raised);
+  --color-surface: var(--surface);
+  --color-surface-strong: var(--surface-strong);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-gold: var(--gold);
+  --color-gold-light: var(--gold-light);
+  --color-accent: var(--accent-text);
+  --color-primary: var(--primary-bg);
+  --color-primary-hover: var(--primary-bg-hover);
+  --color-primary-pressed: var(--primary-bg-pressed);
+  --color-on-primary: var(--primary-fg);
+  --color-focus: var(--focus);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-error: var(--error);
+  --color-info: var(--info);
+
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-display: var(--font-instrument-serif), Georgia, serif;
+  --font-korean: var(--font-noto-serif-kr), "Apple SD Gothic Neo", serif;
+
+  /* Type scale: functional UI in Inter, editorial display in Instrument Serif. */
+  --text-caption: 0.8125rem;
+  --text-caption--line-height: 1.25rem;
+  --text-body-sm: 0.9375rem;
+  --text-body-sm--line-height: 1.5rem;
+  --text-body: 1rem;
+  --text-body--line-height: 1.625rem;
+  --text-body-lg: 1.125rem;
+  --text-body-lg--line-height: 1.75rem;
+
+  --radius-control: 0.75rem;
+  --radius-card: 1.25rem;
+
+  --container-content: 72rem;
+  --container-prose: 44rem;
+
+  --ease-out-soft: cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+@layer base {
+  html {
+    background: var(--bg);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 1rem;
+    line-height: 1.625;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  [lang="ko"] {
+    font-family: var(--font-korean);
+  }
+
+  ::selection {
+    background: var(--gold);
+    color: #060b16;
+  }
+}
+
+/* Motion is decoration: content is fully present without it. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Glass never costs contrast. */
+@media (prefers-reduced-transparency: reduce) {
+  .glass {
+    background: var(--bg-raised) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+}
+
+@layer components {
+  .glass {
+    background: var(--nav-glass);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .glass {
+      background: var(--bg-raised);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------
+   Motion primitives (DESIGN.md §5)
+   ------------------------------------------------------------------ */
+
+/* Section reveal: hidden only after RevealObserver has hydrated. */
+html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+}
+
+[data-reveal] {
+  transition:
+    opacity 0.7s var(--ease-out-soft) var(--reveal-delay, 0ms),
+    transform 0.7s var(--ease-out-soft) var(--reveal-delay, 0ms);
+}
+
+@keyframes enter-up {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 22px, 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .enter-up {
+    animation: enter-up 0.75s var(--ease-out-soft) both;
+    animation-delay: var(--enter-delay, 0ms);
+  }
+}
+
+/* ------------------------------------------------------------------
+   Living Hangul field (HangulField drives transform/opacity per frame)
+   ------------------------------------------------------------------ */
+
+:root,
+[data-theme="dark"] {
+  --hf-near: #f5f0e6;
+  --hf-far: #8fa6c4;
+  --hf-gold: #f2ddaa;
+  --hf-gold-glow: rgb(217 180 106 / 0.75);
+  --hf-light: rgb(217 180 106 / 0.075);
+  --hf-light-cool: rgb(217 180 106 / 0.03);
+}
+
+[data-theme="light"] {
+  --hf-near: #14233a;
+  --hf-far: #6f84a3;
+  --hf-gold: #8a5a1c;
+  --hf-gold-glow: rgb(217 180 106 / 0.55);
+  --hf-light: rgb(217 180 106 / 0.14);
+  --hf-light-cool: rgb(255 255 255 / 0.3);
+}
+
+.hangul-field {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  user-select: none;
+  contain: strict;
+}
+
+.hf-light {
+  /* Soft atmospheric light, no hard edge: two wide falloffs layered. */
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 46rem;
+  height: 46rem;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, var(--hf-light), transparent 72%),
+    radial-gradient(closest-side, var(--hf-light-cool), transparent);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.hangul-field-quiet .hf-light {
+  width: 34rem;
+  height: 34rem;
+}
+
+.hf-glyph {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-korean);
+  font-weight: 600;
+  line-height: 1;
+  white-space: nowrap;
+  color: color-mix(in srgb, var(--hf-near) calc(var(--d, 0.5) * 100%), var(--hf-far));
+  will-change: transform, opacity;
+}
+
+.hf-ink,
+.hf-glow {
+  display: block;
+}
+
+.hf-ink::before,
+.hf-glow::before {
+  content: attr(data-g);
+}
+
+.hf-glow {
+  /* Gold, glowing copy of the glyph; only its opacity changes near the pointer. */
+  position: absolute;
+  inset: 0;
+  color: var(--hf-gold);
+  text-shadow: 0 0 0.35em var(--hf-gold-glow);
+  opacity: 0;
+}
+
+@media (max-width: 1023px) {
+  .hf-desktop-only {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .hf-no-phone {
+    display: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Home surfaces
+   ------------------------------------------------------------------ */
+
+.surface-night {
+  background: var(--bg);
+}
+
+.surface-raised {
+  background:
+    linear-gradient(to bottom, var(--bg) 0, transparent 7rem),
+    var(--bg-raised);
+}
+
+.glyph-soft {
+  /* A quiet, solid glyph: gradient fill fades from the border tone into the night. */
+  background: linear-gradient(170deg, color-mix(in srgb, var(--gold) 34%, var(--border)) 0%, color-mix(in srgb, var(--border) 55%, transparent) 70%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  user-select: none;
+  pointer-events: none;
+}
+
+/* Card light follows the pointer; purely decorative and only on hover devices. */
+.card-lit {
+  position: relative;
+  isolation: isolate;
+}
+.card-lit::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgb(242 221 170 / 0.09), transparent 70%);
+}
+@media (hover: hover) {
+  .card-lit:hover::before {
+    opacity: 1;
+  }
+}
+[data-theme="light"] .card-lit::before {
+  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgb(27 54 87 / 0.06), transparent 70%);
+}
+
+/* ------------------------------------------------------------------
+   Button light (DESIGN.md §5 motion hierarchy)
+   .btn-beam  primary: a gold beam circles the border on hover/focus, and a
+              sheen crosses the face. .btn-beam-idle keeps a faint beam
+              circling for the one hero CTA.
+   .btn-arc   secondary: a quieter thin arc on hover/focus only.
+   Colour and border still say "button" without any of this.
+   ------------------------------------------------------------------ */
+
+@property --beam {
+  syntax: "<angle>";
+  inherits: false;
+  initial-value: 0deg;
+}
+
+:root,
+[data-theme="dark"] {
+  --beam-core: #fff4d6;
+  --beam-edge: #f2ddaa;
+  --beam-arc: rgb(242 221 170 / 0.9);
+  --beam-sheen: rgb(255 255 255 / 0.38);
+  --beam-glow: rgb(217 180 106 / 0.45);
+}
+
+[data-theme="light"] {
+  --beam-core: #ffe7b0;
+  --beam-edge: #d9b46a;
+  --beam-arc: rgb(166 124 53 / 0.95);
+  --beam-sheen: rgb(255 255 255 / 0.22);
+  --beam-glow: rgb(27 54 87 / 0.35);
+}
+
+.btn-beam,
+.btn-arc {
+  position: relative;
+  isolation: isolate;
+}
+
+.btn-beam > *,
+.btn-arc > * {
+  position: relative;
+  z-index: 1;
+}
+
+.btn-beam::before,
+.btn-arc::before {
+  /* A ring: the conic gradient is masked down to the border band. */
+  content: "";
+  position: absolute;
+  inset: -1.5px;
+  border-radius: inherit;
+  padding: 1.5px;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity 0.45s var(--ease-out-soft);
+  pointer-events: none;
+}
+
+.btn-beam::before {
+  background: conic-gradient(from var(--beam), transparent 0 58%, var(--beam-edge) 74%, var(--beam-core) 82%, var(--beam-edge) 88%, transparent 96%);
+}
+
+.btn-arc::before {
+  padding: 1px;
+  inset: -1px;
+  background: conic-gradient(from var(--beam), transparent 0 72%, var(--beam-arc) 86%, transparent 97%);
+}
+
+.btn-beam::after {
+  /* Sheen: a soft diagonal light that crosses the face once per hover. */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 35%, var(--beam-sheen) 50%, transparent 65%) no-repeat;
+  background-size: 250% 100%;
+  background-position: 130% 0;
+  pointer-events: none;
+}
+
+.btn-beam {
+  transition-property: background-color, box-shadow, color, scale;
+}
+
+.btn-beam:hover,
+.btn-beam:focus-visible {
+  box-shadow: 0 10px 34px -14px var(--beam-glow);
+}
+
+.btn-beam:hover::before,
+.btn-beam:focus-visible::before {
+  opacity: 1;
+}
+
+.btn-arc:hover::before,
+.btn-arc:focus-visible::before {
+  opacity: 0.85;
+}
+
+.btn-beam-idle::before {
+  opacity: 0.45;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .btn-beam::before {
+    animation: beam-spin 2.6s linear infinite;
+  }
+  .btn-beam-idle::before {
+    animation-duration: 5.5s;
+  }
+  .btn-arc::before {
+    animation: beam-spin 3.4s linear infinite;
+  }
+  .btn-beam::after {
+    transition: background-position 0.9s var(--ease-out-soft);
+  }
+  .btn-beam:hover::after,
+  .btn-beam:focus-visible::after {
+    background-position: -30% 0;
+  }
+  .btn-beam:not(:hover):not(:focus-visible)::before,
+  .btn-arc:not(:hover):not(:focus-visible)::before {
+    animation-play-state: paused;
+  }
+  .btn-beam-idle:not(:hover):not(:focus-visible)::before {
+    animation-play-state: running;
+  }
+}
+
+@keyframes beam-spin {
+  to { --beam: 360deg; }
+}
