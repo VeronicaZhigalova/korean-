@@ -345,6 +345,7 @@ export const startHangulStory = (layer: HTMLElement, root: HTMLElement, options:
     if (next !== mode) {
       mode = next;
       if (!reduced) {
+        for (const part of parts) part.node.remove();
         parts = buildParts(mode, options.seed, object);
         fillWord(parts);
       }
@@ -372,7 +373,11 @@ export const startHangulStory = (layer: HTMLElement, root: HTMLElement, options:
 
   /** The two stops around scroll offset `s` and the eased mix between them. */
   const storyAt = (s: number) => {
-    if (s <= stops[0].at) return { a: stops[0], b: stops[0], t: 0 };
+    if (s <= stops[0].at) {
+      // Before the first stop the sculpture scrolls with its block, so it never sits over the copy above it.
+      const first = { ...stops[0], ty: stops[0].ty + stops[0].at - s };
+      return { a: first, b: first, t: 0 };
+    }
     for (let k = 0; k < stops.length - 1; k++) {
       const a = stops[k];
       const b = stops[k + 1];
