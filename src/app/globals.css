@@ -243,7 +243,11 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   --hs-g3: rgb(204 168 104);
   --hs-g4: rgb(222 190 128);
   --hs-g5: rgb(242 221 170);
-  --hs-ring: rgb(150 174 212 / 0.16);
+  --hs-ring: rgb(150 174 212 / 0.1);
+  /* The light behind the sculpture: warm white at the heart, a breath of gold, then navy dark. */
+  --hs-glow-core: rgb(247 240 226 / 0.09);
+  --hs-glow-warm: rgb(217 180 106 / 0.035);
+  --hs-glow-edge: rgb(38 58 94 / 0.07);
 }
 
 [data-theme="light"] {
@@ -260,7 +264,10 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   --hs-g3: rgb(172 138 78);
   --hs-g4: rgb(152 116 58);
   --hs-g5: rgb(138 90 28);
-  --hs-ring: rgb(33 58 91 / 0.12);
+  --hs-ring: rgb(33 58 91 / 0.08);
+  --hs-glow-core: rgb(255 253 248 / 0.42);
+  --hs-glow-warm: rgb(217 180 106 / 0.05);
+  --hs-glow-edge: rgb(255 253 248 / 0.14);
 }
 
 /* Sits under every section's content and above the section tones. */
@@ -316,14 +323,24 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   font-weight: 800;
 }
 
+/* Four depth layers; the farthest sinks into the dark with a soft blur. */
 .hs-glyph[data-z="0"] {
   z-index: 0;
+  filter: blur(1.1px);
 }
 .hs-glyph[data-z="1"] {
   z-index: 1;
 }
 .hs-glyph[data-z="2"] {
   z-index: 2;
+}
+.hs-glyph[data-z="3"] {
+  z-index: 3;
+}
+
+/* The five syllable anchors: the largest characters, set lighter so their size does not shout. */
+.hs-anchor {
+  font-weight: 500;
 }
 
 .hs-glyph[data-l="0"] {
@@ -363,7 +380,29 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   color: var(--hs-g5);
 }
 
-/* Hairline rings behind the sculpture, drawn large and only ever scaled down. */
+/* The light behind the sculpture, drawn large and only ever scaled down; its heart sits up and to the
+   left, where the key light comes from. */
+.hs-glow {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 1200px;
+  height: 1200px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 42% 40%,
+    var(--hs-glow-core) 0,
+    var(--hs-glow-warm) 18%,
+    var(--hs-glow-edge) 34%,
+    color-mix(in srgb, var(--hs-glow-edge) 40%, transparent) 46%,
+    color-mix(in srgb, var(--hs-glow-edge) 12%, transparent) 56%,
+    transparent 66%
+  );
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* One hairline arc behind the sculpture, fading in and out around its lit side. */
 .hs-rings {
   position: absolute;
   left: 0;
@@ -376,18 +415,10 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 
 .hs-rings span {
   position: absolute;
+  inset: 8%;
   border: 1px solid var(--hs-ring);
   border-radius: 50%;
-}
-
-.hs-rings span:nth-child(1) {
-  inset: 0;
-}
-.hs-rings span:nth-child(2) {
-  inset: 17%;
-}
-.hs-rings span:nth-child(3) {
-  inset: 31%;
+  mask-image: conic-gradient(from 230deg, transparent 0, #000 18%, #000 30%, transparent 52%, transparent 100%);
 }
 
 /* Reduced motion: still compositions in the page, not pinned. */

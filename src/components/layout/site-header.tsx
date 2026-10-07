@@ -24,7 +24,7 @@ export const SiteHeader = async () => {
       <ThemeToggle toDarkLabel={t.theme.toDark} toLightLabel={t.theme.toLight} />
       <Link
         href={path("account")}
-        className="inline-flex min-h-11 items-center rounded-full bg-primary px-5 text-body-sm font-semibold text-on-primary transition-colors hover:bg-primary-hover"
+        className="inline-flex min-h-11 items-center rounded-full border border-border-strong px-5 text-body-sm font-medium text-text transition-colors hover:border-gold/60 hover:text-accent"
       >
         {t.nav.account}
       </Link>

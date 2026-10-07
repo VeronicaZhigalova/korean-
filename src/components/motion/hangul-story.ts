@@ -3,12 +3,15 @@
   the scroll, framework-free so the site and its review preview run the
   same code.
 
-  The sculpture is built like a carved object: a dense core of small jamo,
-  three or four shells of larger characters (with the syllables 한 글 말 배 움)
-  wrapping it at different angles with gaps between their characters, and a
-  few loose fragments outside. One soft light from the upper left makes
-  characters facing it warm white and those turning away navy; a few
-  syllables carry gold.
+  The sculpture is built like a carved object with a clear scale hierarchy: a
+  core of small jamo, three or four shells of larger characters wrapping it
+  at different angles with gaps between their characters (each shell set a
+  step larger than the one inside it), five large syllables 한 글 말 배 움 as
+  anchors on the outside, and a short trail of fragments breaking off down
+  and to the right, towards where the journey goes. Depth reads through
+  perspective scale, opacity, a soft blur on the far layer and one soft
+  light from the upper left: characters facing it are warm white, those
+  turning away navy; gold stays on two anchors and a few syllables.
 
   It is drawn into a viewport-sized stage pinned behind the content (CSS
   sticky, so the page scrolls normally). The page defines stops, each tied to
@@ -58,9 +61,9 @@ type Mode = "desktop" | "tablet" | "mobile";
 
 /** Characters in the core, shells (count × characters each) and loose fragments. */
 const BUILD: Record<Mode, { core: number; shells: number; perShell: number; fragments: number }> = {
-  desktop: { core: 150, shells: 4, perShell: 24, fragments: 8 },
-  tablet: { core: 96, shells: 3, perShell: 20, fragments: 6 },
-  mobile: { core: 80, shells: 3, perShell: 15, fragments: 4 },
+  desktop: { core: 104, shells: 4, perShell: 19, fragments: 6 },
+  tablet: { core: 70, shells: 3, perShell: 15, fragments: 5 },
+  mobile: { core: 56, shells: 3, perShell: 12, fragments: 4 },
 };
 
 const JAMO = ["ㄱ", "ㄴ", "ㄷ", "ㄹ", "ㅁ", "ㅂ", "ㅅ", "ㅇ", "ㅈ", "ㅎ"];
@@ -144,7 +147,7 @@ const shadeAt = (shades: Shade[], x: number, y: number, radius: number) => {
 
 type Part = {
   node: HTMLElement;
-  kind: "core" | "shell" | "fragment";
+  kind: "core" | "shell" | "anchor" | "fragment";
   /** Size in em of the base size. */
   size: number;
   gold: boolean;
@@ -155,6 +158,8 @@ type Part = {
   drift: number;
   /** How far it lifts when the sculpture opens. */
   lift: number;
+  /** Phase of a fragment's slow bob. */
+  phase: number;
   ring: Vec;
   field: Vec;
   /** Position in the word 말, flat, unit half-height; filled once the font is ready. */
@@ -183,7 +188,7 @@ const buildParts = (mode: Mode, seed: number, parent: HTMLElement) => {
     node.style.fontSize = `${size.toFixed(2)}em`;
     node.style.opacity = "0";
     parent.appendChild(node);
-    parts.push({ node, kind, size, gold, base, axis, drift, lift, ring: [0, 0, 0], field: [0, 0, 0], word: [0, 0], light: -1, layer: -1 });
+    parts.push({ node, kind, size, gold, base, axis, drift, lift, phase: r() * Math.PI * 2, ring: [0, 0, 0], field: [0, 0, 0], word: [0, 0], light: -1, layer: -1 });
   };
 
   // Core: small jamo packed on a sphere (Fibonacci spread), dense enough to read as solid.
@@ -192,9 +197,9 @@ const buildParts = (mode: Mode, seed: number, parent: HTMLElement) => {
     const y = 1 - ((i + 0.5) / plan.core) * 2;
     const ring = Math.sqrt(1 - y * y);
     const a = i * golden;
-    const rad = 0.48 + (r() - 0.5) * 0.04;
+    const rad = 0.54 + (r() - 0.5) * 0.04;
     const pool = r() < 0.7 ? JAMO : VOWELS;
-    add("core", pool[Math.floor(r() * pool.length)], 0.78 + r() * 0.16, false, [Math.cos(a) * ring * rad, y * rad, Math.sin(a) * ring * rad], [0, 1, 0], 0, 0.25 + r() * 0.15);
+    add("core", pool[Math.floor(r() * pool.length)], 0.74 + r() * 0.14, false, [Math.cos(a) * ring * rad, y * rad, Math.sin(a) * ring * rad], [0, 1, 0], 0, 0.25 + r() * 0.15);
   }
 
   // Shells: bands around the core at different angles; runs of characters with gaps between them,
@@ -219,19 +224,33 @@ const buildParts = (mode: Mode, seed: number, parent: HTMLElement) => {
       const c = Math.cos(t) * radius;
       const sn = Math.sin(t) * radius;
       const base: Vec = [u[0] * c + v[0] * sn, u[1] * c + v[1] * sn, u[2] * c + v[2] * sn];
-      const syllable = r() < 0.2;
+      // Each shell a step larger than the one inside it; a few syllables among the jamo.
+      const step = 0.85 + s * 0.17;
+      const syllable = r() < 0.12;
       const glyph = syllable ? SYLLABLES[Math.floor(r() * SYLLABLES.length)] : JAMO[Math.floor(r() * JAMO.length)];
-      add("shell", glyph, syllable ? 1.1 + r() * 0.15 : 0.85 + r() * 0.15, syllable && r() < 0.22, base, axis, drift, 0.35 + r() * 0.35);
+      add("shell", glyph, syllable ? step * 1.3 : step + r() * 0.1, syllable && r() < 0.15, base, axis, drift, 0.35 + r() * 0.35);
       placed++;
     }
   }
 
-  // Fragments: single characters broken off the shells, floating just outside.
+  // Anchors: the five syllables, large, spread around the outside at different depths;
+  // two near the front carry gold.
+  const anchorAxis = normalize([0.25, 1, 0.15]);
+  SYLLABLES.forEach((glyph, i) => {
+    const a = (i / SYLLABLES.length) * Math.PI * 2 + 0.4 + (r() - 0.5) * 0.3;
+    const rad = 0.92 + r() * 0.08;
+    const y = [-0.5, 0.2, -0.15, 0.45, 0.05][i];
+    const base: Vec = [Math.cos(a) * rad, y, Math.sin(a) * rad];
+    add("anchor", glyph, 2.1 + r() * 0.5, i === 0 || i === 2, base, anchorAxis, 0.04, 0.5 + r() * 0.3);
+  });
+
+  // Fragments: a short trail breaking off the lower right and heading down the page, smaller
+  // and further back the further they travel, so they read as the start of the journey.
   for (let i = 0; i < plan.fragments; i++) {
-    const dir = normalize([r() - 0.5, r() - 0.5, r() - 0.5]);
-    const rad = 1.28 + r() * 0.22;
-    const glyph = r() < 0.4 ? SYLLABLES[Math.floor(r() * SYLLABLES.length)] : JAMO[Math.floor(r() * JAMO.length)];
-    add("fragment", glyph, 0.95 + r() * 0.25, r() < 0.2, [dir[0] * rad, dir[1] * rad, dir[2] * rad], normalize([r() - 0.5, 1, r() - 0.5]), 0.03 + r() * 0.03, 0.6 + r() * 0.4);
+    const k = (i + 0.6) / plan.fragments;
+    const base: Vec = [0.95 + k * 0.75 + (r() - 0.5) * 0.12, 0.75 + k * 1.25 + (r() - 0.5) * 0.12, 0.35 - k * 0.8];
+    const glyph = i === 1 ? SYLLABLES[3] : r() < 0.6 ? JAMO[Math.floor(r() * JAMO.length)] : VOWELS[Math.floor(r() * VOWELS.length)];
+    add("fragment", glyph, 1.25 - k * 0.45, false, base, [0, 1, 0], 0, 0.6 + r() * 0.4);
   }
 
   // Ring and field targets. The field is a loose grid on three depth planes, so it stays spatial and ordered.
@@ -306,12 +325,15 @@ export const startHangulStory = (layer: HTMLElement, root: HTMLElement, options:
 
   const stage = document.createElement("div");
   stage.className = "hs-stage";
+  // One soft light in the dark space behind the sculpture, and a single partial hairline arc.
+  const glow = document.createElement("div");
+  glow.className = "hs-glow";
   const rings = document.createElement("div");
   rings.className = "hs-rings";
-  rings.innerHTML = "<span></span><span></span><span></span>";
+  rings.innerHTML = "<span></span>";
   const object = document.createElement("div");
   object.className = "hs-object";
-  stage.append(rings, object);
+  stage.append(glow, rings, object);
   layer.replaceChildren(stage);
 
   // Read once while the stage is in the page (reduced motion removes it).
@@ -413,19 +435,31 @@ export const startHangulStory = (layer: HTMLElement, root: HTMLElement, options:
       let x = drifted[0] * lift * sculpt + p.ring[0] * ring + p.field[0] * field;
       let y = drifted[1] * lift * sculpt + p.ring[1] * ring + p.field[1] * field;
       let z = drifted[2] * lift * sculpt + p.ring[2] * ring + p.field[2] * field;
-      // Turn with the scroll around the vertical axis, then tilt towards the reader.
-      const x1 = x * cosY + z * sinY;
-      const z1 = -x * sinY + z * cosY;
-      const y2 = y * cosX - z1 * sinX;
-      const z2 = y * sinX + z1 * cosX;
-      x = x1;
-      y = y2;
-      z = z2;
+      if (p.kind === "fragment") {
+        // The trail keeps its direction on screen (down the page) and only bobs gently.
+        y += Math.sin(time * 0.5 + p.phase) * 0.025 * sculpt;
+        const flat = 1 - sculpt;
+        const x1 = x * cosY + z * sinY;
+        const z1 = -x * sinY + z * cosY;
+        x = lerp(x, x1, flat);
+        const y2 = y * cosX - z1 * sinX;
+        z = lerp(z, y * sinX + z1 * cosX, flat);
+        y = lerp(y, y2, flat);
+      } else {
+        // Turn with the scroll around the vertical axis, then tilt towards the reader.
+        const x1 = x * cosY + z * sinY;
+        const z1 = -x * sinY + z * cosY;
+        const y2 = y * cosX - z1 * sinX;
+        const z2 = y * sinX + z1 * cosX;
+        x = x1;
+        y = y2;
+        z = z2;
+      }
       // The word 말 is flat and faces the reader.
       x = lerp(x, p.word[0], word);
       y = lerp(y, p.word[1], word);
       z = lerp(z, 0.35, word);
-      const persp = 3.4 / (3.4 - z);
+      const persp = 3.1 / (3.1 - z);
       // Shell characters follow their band like letters on a ribbon (kept upright-ish), upright again as the form changes.
       let angle = 0;
       if (p.kind === "shell" && sculpt > 0 && word < 1) {
@@ -450,17 +484,20 @@ export const startHangulStory = (layer: HTMLElement, root: HTMLElement, options:
         p.light = level;
         p.node.dataset.l = String(level);
       }
-      // Front, middle and back: the near half paints over the far half.
-      const layerIndex = z > 0.3 ? 2 : z > -0.3 ? 1 : 0;
+      // Four depth layers, near over far; the farthest is softly blurred (CSS).
+      const layerIndex = z > 0.55 ? 3 : z > 0 ? 2 : z > -0.55 ? 1 : 0;
       if (layerIndex !== p.layer) {
         p.layer = layerIndex;
         p.node.dataset.z = String(layerIndex);
       }
 
       const depth = clamp01((z + 1.4) / 2.8);
-      const scale = grow * persp * (0.7 + 0.3 * depth) * lerp(1, 0.75, word);
+      const scale = grow * persp * (0.62 + 0.38 * depth) * lerp(1, p.kind === "anchor" ? 0.55 : 0.75, word);
       const shade = shadeAt(shades, px, py + offset, unit * 0.017 * p.size * scale);
-      const opacity = presence * (0.25 + 0.75 * depth) * shade;
+      // Far characters fade into the dark; near ones come forward.
+      // The core stays a solid mass; everything else fades with depth.
+      const fade = p.kind === "core" ? 0.35 + 0.65 * depth : 0.1 + 0.9 * depth * depth;
+      const opacity = presence * fade * shade;
       p.node.style.opacity = opacity.toFixed(3);
       p.node.style.transform = `translate3d(${px.toFixed(1)}px, ${py.toFixed(1)}px, 0) translate(-50%, -50%) rotate(${angle.toFixed(1)}deg) scale(${scale.toFixed(3)})`;
     }
@@ -543,9 +580,12 @@ export const startHangulStory = (layer: HTMLElement, root: HTMLElement, options:
     // About a quarter turn per section, from the scroll alone.
     const spin = -0.5 + s * 0.0013;
     const state = draw(parts, a, b, t, spin, time, offset);
-    // Hairline rings centred on the sculpture; they fade as it loosens into the field.
-    rings.style.transform = `translate3d(${state.cx.toFixed(1)}px, ${state.cy.toFixed(1)}px, 0) translate(-50%, -50%) scale(${((state.radius * 1.55) / 600).toFixed(4)})`;
+    // The light and the arc follow the sculpture; both fade as it loosens into the field.
+    const at = `translate3d(${state.cx.toFixed(1)}px, ${state.cy.toFixed(1)}px, 0) translate(-50%, -50%)`;
+    rings.style.transform = `${at} scale(${((state.radius * 1.55) / 600).toFixed(4)})`;
     rings.style.opacity = (state.presence * (1 - state.field) * 0.9).toFixed(3);
+    glow.style.transform = `${at} scale(${((state.radius * 1.9) / 600).toFixed(4)})`;
+    glow.style.opacity = (state.presence * (1 - state.field * 0.7)).toFixed(3);
     frame = running ? requestAnimationFrame(render) : 0;
   };
 
