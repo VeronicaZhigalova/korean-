@@ -42,9 +42,103 @@
   "home": {
     "eyebrow": "Koreanisch online lernen · A1⁠–⁠C2 · TOPIK",
     "title": "Koreanisch lernen mit Online-Kursen",
+    "titleBefore": "",
+    "titleAccent": "Koreanisch",
+    "titleAfter": " lernen mit Online-Kursen",
     "lede": "Wähle Allgemeines Koreanisch oder TOPIK-Vorbereitung. Neue Lernende können mit einem kostenlosen Alphabet-Kurs beginnen; der Einstufungstest ist optional.",
     "primaryCta": "Kurse entdecken",
-    "secondaryCta": "Einstufungstest machen"
+    "secondaryCta": "Einstufungstest machen",
+    "facts": [
+      {
+        "value": "A1⁠–⁠C2",
+        "label": "Allgemeines Koreanisch"
+      },
+      {
+        "value": "I⁠–⁠VI",
+        "label": "TOPIK-Vorbereitung"
+      },
+      {
+        "value": "한글",
+        "label": "Kostenloser Alphabet-Kurs"
+      }
+    ],
+    "factsLabel": "Auf einen Blick",
+    "paths": {
+      "eyebrow": "Lernwege",
+      "title": "Wähle deinen Lernweg",
+      "lede": "Wähle direkt einen Kurs für Allgemeines Koreanisch oder TOPIK. Bezahlte Lektionen stehen sechs Monate nach dem Kauf zur Verfügung; der Einstufungstest ist optional.",
+      "general": {
+        "title": "Allgemeines Koreanisch",
+        "levelsLabel": "Sechs Niveaus",
+        "meta": "Sechs Kurse · 15 Lektionen à 40 Minuten",
+        "access": "Sechs Monate Zugang",
+        "price": "39–59 €",
+        "cta": "Allgemeines Koreanisch ansehen"
+      },
+      "topik": {
+        "title": "TOPIK-Vorbereitung",
+        "levelsLabel": "Sechs Kurse",
+        "meta": "Sechs eigenständige Kurse · 10 Lektionen à 50 Minuten",
+        "price": "59–69 €",
+        "cta": "TOPIK-Kurse ansehen"
+      },
+      "quiz": {
+        "title": "Unsicher, wo du anfangen sollst?",
+        "body": "Prüfe Lesen, Hören und Schreiben über sechs Niveaus.",
+        "meta": "Optional · A1⁠–⁠C2",
+        "cta": "Optionalen Test starten"
+      }
+    },
+    "alphabet": {
+      "eyebrow": "Kostenloser Kurs",
+      "title": "Beginne mit dem koreanischen Alphabet",
+      "body": "Eine kostenlose Videolektion, eine Alphabet-Übersicht und ein Übungsquiz für alle. Materialien auf Englisch und Deutsch werden vorbereitet.",
+      "badge": "Kostenlos für alle",
+      "steps": [
+        "Videolektion",
+        "Alphabet-Übersicht",
+        "Übungsquiz"
+      ],
+      "stepsLabel": "Das enthält der Kurs",
+      "cta": "Kostenlosen Alphabet-Kurs ansehen",
+      "visualCaption": "ㅎ + ㅏ + ㄴ = 한"
+    },
+    "services": {
+      "eyebrow": "Mit der Lehrkraft",
+      "title": "Lerne mit der Lehrkraft",
+      "lede": "Coaching begleitet einen aktiven gekauften Kurs. Speaking Chat ist ein separates Gesprächsangebot.",
+      "coaching": {
+        "title": "Kurs-Coaching",
+        "body": "Für einen aktiven gekauften Kurs. Separat erhältlich.",
+        "options": [
+          {
+            "label": "3 × 50 Min.",
+            "price": "65 €"
+          },
+          {
+            "label": "5 × 50 Min.",
+            "price": "100 €"
+          }
+        ],
+        "requirement": "Aktiver Kurs erforderlich",
+        "cta": "Coaching ansehen"
+      },
+      "chat": {
+        "title": "Speaking Chat",
+        "body": "Ein 50-minütiges, lockeres Gespräch. Kein Kurskauf nötig.",
+        "duration": "50 Min.",
+        "price": "25 €",
+        "requirement": "Kein Kurs nötig",
+        "cta": "Speaking Chat ansehen"
+      }
+    },
+    "teacher": {
+      "eyebrow": "Über mich",
+      "title": "Lerne die Lehrkraft kennen",
+      "body": "Eine geprüfte Biografie und Qualifikationen erscheinen nach der Freigabe. Die Kontakt-E-Mail wird gerade eingerichtet.",
+      "cta": "Profil der Lehrkraft ansehen",
+      "glyphCaption": "말 · mal · Worte, Sprache"
+    }
   },
   "notFound": {
     "title": "Diese Seite gibt es noch nicht",

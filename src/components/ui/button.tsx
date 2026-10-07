@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import type { ComponentProps, ReactNode } from "react";
 import { cn } from "@/lib/cn";
 
@@ -11,6 +12,8 @@ type CommonProps = {
   loading?: boolean;
   loadingLabel?: string;
   icon?: ReactNode;
+  /** Trailing arrow that nudges forward on hover (DESIGN.md §5). */
+  arrow?: boolean;
   className?: string;
   children: ReactNode;
 };
@@ -32,7 +35,7 @@ const sizes: Record<Size, string> = {
 };
 
 const base =
-  "inline-flex items-center justify-center gap-2.5 rounded-full font-semibold text-center " +
+  "group/btn inline-flex items-center justify-center gap-2.5 rounded-full font-semibold text-center " +
   "transition-[background-color,box-shadow,color,scale] duration-200 ease-(--ease-out-soft) " +
   "active:scale-[0.97] disabled:cursor-not-allowed disabled:opacity-45 disabled:active:scale-100 " +
   "aria-disabled:cursor-not-allowed aria-disabled:opacity-45";
@@ -45,12 +48,18 @@ const Spinner = () => (
 );
 
 export const Button = (props: ButtonAsButton | ButtonAsLink) => {
-  const { variant = "primary", size = "md", loading = false, loadingLabel, icon, className, children, ...rest } = props;
+  const { variant = "primary", size = "md", loading = false, loadingLabel, icon, arrow = false, className, children, ...rest } = props;
   const classes = cn(base, variants[variant], sizes[size], loading && "pointer-events-none", className);
   const content = (
     <>
       {loading ? <Spinner /> : icon}
       <span>{children}</span>
+      {arrow && !loading ? (
+        <ArrowRight
+          aria-hidden="true"
+          className="size-4 shrink-0 transition-transform duration-300 ease-(--ease-out-soft) group-hover/btn:translate-x-[3px]"
+        />
+      ) : null}
       {loading && loadingLabel ? <span className="sr-only">{loadingLabel}</span> : null}
     </>
   );

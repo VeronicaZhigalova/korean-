@@ -1,28 +1,29 @@
-import { Button } from "@/components/ui/button";
-import { Container } from "@/components/ui/layout";
+import {
+  AlphabetSection,
+  HeroSection,
+  LearningPathsSection,
+  ServicesSection,
+  TeacherSection,
+} from "@/components/home/home-sections";
+import { CardLight } from "@/components/motion/card-light";
+import { RevealObserver } from "@/components/motion/reveal-observer";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 
-// Phase 1 shell: only the Home hero copy from Figma frame 01. The remaining
-// sections (learning paths, free alphabet, services, teacher) arrive in Phase 2.
+// Section order follows Figma frame 01 and CLAUDE.md: Hero → learning paths →
+// free alphabet → teacher-led services → teacher.
 export default async function HomePage() {
   const [locale, t] = await Promise.all([getLocale(), getDictionary()]);
+  const href = (segment: string) => `/${locale}/${segment}`;
 
   return (
-    <Container className="flex min-h-[calc(100svh-4.5rem)] flex-col justify-center gap-7 py-20">
-      <p className="flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
-        <span aria-hidden="true" className="h-px w-6 bg-gold" />
-        {t.home.eyebrow}
-      </p>
-      <h1 className="max-w-[14ch] font-display text-[clamp(2.75rem,7vw,5.25rem)] leading-[0.98] tracking-[-0.02em] text-text">
-        {t.home.title}
-      </h1>
-      <p className="max-w-[46ch] text-body-lg text-text-muted">{t.home.lede}</p>
-      <div className="flex flex-wrap gap-3">
-        <Button href={`/${locale}/courses`}>{t.home.primaryCta}</Button>
-        <Button href={`/${locale}/quiz`} variant="secondary">
-          {t.home.secondaryCta}
-        </Button>
-      </div>
-    </Container>
+    <>
+      <HeroSection t={t.home} href={href} />
+      <LearningPathsSection t={t.home.paths} href={href} />
+      <AlphabetSection t={t.home.alphabet} href={href} />
+      <ServicesSection t={t.home.services} href={href} />
+      <TeacherSection t={t.home.teacher} href={href} />
+      <RevealObserver />
+      <CardLight />
+    </>
   );
 }
