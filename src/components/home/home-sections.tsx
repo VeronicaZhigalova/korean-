@@ -64,7 +64,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
     {/* Desktop: the object sits beside the copy. Below lg it moves into the flow (see below). */}
     <div className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
       <div className="absolute inset-0">
-        <HangulField count={22} zones={heroZones} size={[1.2, 5.8]} seed={11} />
+        <HangulField count={20} zones={heroZones} size={[1.1, 5]} seed={11} />
       </div>
       {/* Keeps copy legible if a glyph floats toward it. */}
       <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_60%,transparent)_30%,transparent_55%)]" />
@@ -98,7 +98,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
         </div>
 
         <div className="relative -mx-4 mt-2 h-[19rem] w-[calc(100%+2rem)] sm:mx-0 sm:h-[30rem] sm:w-full lg:hidden" aria-hidden="true">
-          <HangulField count={13} countTablet={13} countMobile={12} zones={heroBlockZones} size={[1.3, 4.6]} seed={23} presence={0.85} />
+          <HangulField count={13} countTablet={13} countMobile={9} zones={heroBlockZones} size={[1.3, 4.6]} seed={23} presence={0.85} />
         </div>
 
         {/* Quiet facts row: stays in the text column so nothing covers the network. */}

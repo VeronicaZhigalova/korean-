@@ -224,32 +224,26 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* ------------------------------------------------------------------
-   Living Hangul field (hangul-engine.ts drives transform/opacity per frame)
-   Each character is a translucent body, a lit rim and a gold glow that only
-   appears near the pointer, after the Velara reference's lit glass plates.
+   Living Hangul field (HangulField drives transform/opacity per frame)
    ------------------------------------------------------------------ */
 
 :root,
 [data-theme="dark"] {
   --hf-near: #f5f0e6;
-  --hf-far: #7f97b8;
-  --hf-rim-mix: #ffffff;
-  --hf-halo: rgb(157 190 235 / 0.28);
+  --hf-far: #8fa6c4;
   --hf-gold: #f2ddaa;
-  --hf-gold-glow: rgb(217 180 106 / 0.7);
-  --hf-light: 217 180 106;
-  --hf-light-alpha: 0.07;
+  --hf-gold-glow: rgb(217 180 106 / 0.75);
+  --hf-light: rgb(217 180 106 / 0.075);
+  --hf-light-cool: rgb(217 180 106 / 0.03);
 }
 
 [data-theme="light"] {
   --hf-near: #14233a;
-  --hf-far: #7b8ea9;
-  --hf-rim-mix: #0b1729;
-  --hf-halo: rgb(27 54 87 / 0.14);
-  --hf-gold: #9a7330;
-  --hf-gold-glow: rgb(217 180 106 / 0.6);
-  --hf-light: 217 180 106;
-  --hf-light-alpha: 0.16;
+  --hf-far: #6f84a3;
+  --hf-gold: #8a5a1c;
+  --hf-gold-glow: rgb(217 180 106 / 0.55);
+  --hf-light: rgb(217 180 106 / 0.14);
+  --hf-light-cool: rgb(255 255 255 / 0.3);
 }
 
 .hangul-field {
@@ -262,103 +256,53 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 .hf-light {
-  /* Atmospheric light: a long, gaussian-like falloff with no visible edge. */
-  --a: var(--hf-light-alpha);
+  /* Soft atmospheric light, no hard edge: two wide falloffs layered. */
   position: absolute;
   left: 0;
   top: 0;
-  width: 52rem;
-  height: 52rem;
+  width: 46rem;
+  height: 46rem;
   border-radius: 50%;
-  background: radial-gradient(
-    closest-side,
-    rgb(var(--hf-light) / var(--a)) 0%,
-    rgb(var(--hf-light) / calc(var(--a) * 0.72)) 18%,
-    rgb(var(--hf-light) / calc(var(--a) * 0.42)) 38%,
-    rgb(var(--hf-light) / calc(var(--a) * 0.18)) 60%,
-    rgb(var(--hf-light) / calc(var(--a) * 0.05)) 82%,
-    transparent 100%
-  );
+  background:
+    radial-gradient(closest-side, var(--hf-light), transparent 72%),
+    radial-gradient(closest-side, var(--hf-light-cool), transparent);
   opacity: 0;
   will-change: transform, opacity;
 }
 
 .hangul-field-quiet .hf-light {
-  width: 36rem;
-  height: 36rem;
+  width: 34rem;
+  height: 34rem;
 }
 
 .hf-glyph {
-  /* Tone by depth: near characters are brighter, far ones sink into the night. */
-  --tone: color-mix(in srgb, var(--hf-near) calc(var(--d, 0.5) * 100%), var(--hf-far));
   position: absolute;
   transform: translate(-50%, -50%);
   font-family: var(--font-korean);
-  font-weight: 800;
+  font-weight: 600;
   line-height: 1;
   white-space: nowrap;
+  color: color-mix(in srgb, var(--hf-near) calc(var(--d, 0.5) * 100%), var(--hf-far));
   will-change: transform, opacity;
 }
 
-.hf-body,
-.hf-rim,
+.hf-ink,
 .hf-glow {
   display: block;
 }
 
-.hf-rim,
-.hf-glow {
-  position: absolute;
-  inset: 0;
-}
-
-.hf-body::before,
-.hf-rim::before,
+.hf-ink::before,
 .hf-glow::before {
   content: attr(data-g);
 }
 
-.hf-body::before {
-  /* Translucent body, lighter at the top edge like lit glass. */
-  background: linear-gradient(
-    168deg,
-    color-mix(in srgb, var(--tone) 62%, transparent) 0%,
-    color-mix(in srgb, var(--tone) 22%, transparent) 46%,
-    color-mix(in srgb, var(--tone) 10%, transparent) 78%,
-    color-mix(in srgb, var(--tone) 26%, transparent) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.hf-rim {
-  opacity: 0.55;
-}
-
-.hf-rim::before {
-  /* Lit edge with a soft halo; the fill stays transparent. */
-  color: transparent;
-  -webkit-text-stroke: max(0.6px, 0.016em) color-mix(in srgb, var(--tone) 78%, var(--hf-rim-mix));
-  text-shadow: 0 0 0.22em var(--hf-halo);
-}
-
 .hf-glow {
+  /* Gold, glowing copy of the glyph; only its opacity changes near the pointer. */
+  position: absolute;
+  inset: 0;
+  color: var(--hf-gold);
+  text-shadow: 0 0 0.35em var(--hf-gold-glow);
   opacity: 0;
-}
-
-.hf-glow::before {
-  /* Gold light picked up near the pointer. */
-  color: color-mix(in srgb, var(--hf-gold) 22%, transparent);
-  -webkit-text-stroke: max(0.7px, 0.02em) var(--hf-gold);
-  text-shadow: 0 0 0.3em var(--hf-gold-glow);
-}
-
-@media (min-width: 1024px) {
-  /* Far characters sit slightly out of focus, for depth. */
-  .hf-glyph {
-    filter: blur(var(--b, 0px));
-  }
 }
 
 @media (max-width: 1023px) {

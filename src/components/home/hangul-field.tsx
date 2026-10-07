@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
-import { glyphBlur, glyphFontSize, seedParticles, startHangulField, type FieldZone } from "./hangul-engine";
+import { glyphFontSize, positionAt, seedParticles, startHangulField, type FieldZone } from "./hangul-engine";
 
 /*
   A living field of Hangul (motion lives in hangul-engine.ts). The server
@@ -23,11 +23,11 @@ type Props = {
   seed: number;
   /** Section fields are quieter versions of the hero. */
   quiet?: boolean;
-  /** Peak opacity of the most prominent characters (hero default 0.9). */
+  /** Peak opacity of the most prominent characters (hero default 0.58). */
   presence?: number;
 };
 
-export const HangulField = ({ count, countTablet, countMobile, zones, size = [1.2, 5.5], seed, quiet = false, presence = 0.9 }: Props) => {
+export const HangulField = ({ count, countTablet, countMobile, zones, size = [1.2, 5.5], seed, quiet = false, presence = 0.58 }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
   const seeded = seedParticles({ count, countTablet, countMobile, zones, size, seed, quiet, presence });
 
@@ -45,35 +45,37 @@ export const HangulField = ({ count, countTablet, countMobile, zones, size = [1.
       aria-hidden="true"
     >
       <div data-light className="hf-light" />
-      {seeded.map((p, index) => (
-        <span
-          key={index}
-          data-glyph
-          lang="ko"
-          className={
-            index >= (countMobile ?? countTablet ?? count)
-              ? index >= (countTablet ?? count)
-                ? "hf-glyph hf-desktop-only"
-                : "hf-glyph hf-no-phone"
-              : "hf-glyph"
-          }
-          style={
-            {
-              left: `${p.x}%`,
-              top: `${p.y}%`,
-              fontSize: glyphFontSize(p.depth, size),
-              opacity: p.peak.toFixed(3),
-              "--d": p.depth.toFixed(2),
-              "--b": glyphBlur(p.depth),
-            } as CSSProperties
-          }
-        >
-          {/* Glyphs render through ::before so the decoration carries no text content. */}
-          <span className="hf-body" data-g={p.glyph} />
-          <span className="hf-rim" data-g={p.glyph} />
-          <span className="hf-glow" data-g={p.glyph} />
-        </span>
-      ))}
+      {seeded.map((p, index) => {
+        const start = positionAt(p, 0);
+        return (
+          <span
+            key={index}
+            data-glyph
+            lang="ko"
+            className={
+              index >= (countMobile ?? countTablet ?? count)
+                ? index >= (countTablet ?? count)
+                  ? "hf-glyph hf-desktop-only"
+                  : "hf-glyph hf-no-phone"
+                : "hf-glyph"
+            }
+            style={
+              {
+                // Rounded so the browser's normalised style matches the server attribute.
+                left: `${+start.x.toFixed(3)}%`,
+                top: `${+start.y.toFixed(3)}%`,
+                fontSize: glyphFontSize(p.depth, size),
+                opacity: +p.peak.toFixed(3),
+                "--d": p.depth.toFixed(2),
+              } as CSSProperties
+            }
+          >
+            {/* Glyphs render through ::before so the decoration carries no text content. */}
+            <span className="hf-ink" data-g={p.glyph} />
+            <span className="hf-glow" data-g={p.glyph} />
+          </span>
+        );
+      })}
     </div>
   );
 };
