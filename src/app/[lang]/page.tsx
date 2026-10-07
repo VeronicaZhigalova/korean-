@@ -5,8 +5,9 @@ import {
   ServicesSection,
   TeacherSection,
 } from "@/components/home/home-sections";
+import { homeStory } from "@/components/home/home-story";
 import { CardLight } from "@/components/motion/card-light";
-import { GlobalHangulAtmosphere } from "@/components/motion/global-hangul-atmosphere";
+import { HangulStory } from "@/components/motion/hangul-story-layer";
 import { RevealObserver } from "@/components/motion/reveal-observer";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 
@@ -18,14 +19,14 @@ export default async function HomePage() {
 
   return (
     <>
-      {/* One Hangul night sky behind all five sections; the hero lifts it to its fullest. */}
-      <GlobalHangulAtmosphere variant="strong">
+      {/* One Hangul object travels from the hero to the teacher as the page scrolls. */}
+      <HangulStory stops={homeStory.stops} seed={homeStory.seed}>
         <HeroSection t={t.home} href={href} />
         <LearningPathsSection t={t.home.paths} href={href} />
         <AlphabetSection t={t.home.alphabet} href={href} />
         <ServicesSection t={t.home.services} href={href} />
         <TeacherSection t={t.home.teacher} href={href} />
-      </GlobalHangulAtmosphere>
+      </HangulStory>
       <RevealObserver />
       <CardLight />
     </>

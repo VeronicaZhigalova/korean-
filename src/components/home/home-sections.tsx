@@ -31,13 +31,13 @@ const SectionIntro = ({ id, index, eyebrow, title, lede }: { id: string; index: 
   </div>
 );
 
-// Glass panels: the Hangul sky shows softly through them (see .glass-panel).
+// Glass panels: the Hangul object shows softly through them (see .glass-panel).
 const cardBase = "card-lit glass-panel flex h-full min-w-0 flex-col rounded-(--radius-card)";
 
 /* 1 · Hero ------------------------------------------------------------ */
 
 export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
-  <section data-atmosphere="hero" aria-labelledby="home-title" className="surface-night overflow-hidden">
+  <section data-story="hero" aria-labelledby="home-title" className="surface-night overflow-hidden">
 
     <Container className="grid gap-12 pb-14 pt-14 sm:min-h-[calc(100svh-4.5rem)] sm:content-center sm:py-20 lg:grid-cols-12 lg:items-center lg:gap-8">
       <div className="flex flex-col items-start gap-6 sm:max-w-[36rem] lg:col-span-7 lg:max-w-none">
@@ -66,8 +66,8 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
           </Button>
         </div>
 
-        {/* Below lg the Hangul sky opens here, under the buttons (GlobalHangulAtmosphere). */}
-        <div className="mt-2 h-[19rem] w-full sm:h-[30rem] lg:hidden" aria-hidden="true" />
+        {/* Below lg the Hangul object begins here, under the buttons (HangulStory). */}
+        <div data-story="hero-block" className="mt-2 h-[19rem] w-full sm:h-[30rem] lg:hidden" aria-hidden="true" />
 
         {/* Quiet facts row: stays in the text column so nothing covers the network. */}
         <dl
@@ -125,7 +125,7 @@ const LevelStair = ({ label }: { label: string }) => (
 );
 
 export const LearningPathsSection = ({ t, href }: { t: Home["paths"]; href: Href }) => (
-  <section aria-labelledby="paths-title" className="surface-raised py-24 lg:py-32">
+  <section data-story="paths" aria-labelledby="paths-title" className="surface-raised py-24 lg:py-32">
     <Container className="flex flex-col gap-12 lg:gap-16">
       <SectionIntro id="paths-title" index={1} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
 
@@ -193,7 +193,7 @@ const AlphabetVisual = ({ caption }: { caption: string }) => {
   const jamo = ["ㅎ", "ㅏ", "ㄴ"];
   return (
     <figure
-     
+      data-story="alphabet-visual"
       data-atmo-glass
       className="glass-panel relative flex flex-col items-center gap-6 rounded-(--radius-card) px-6 py-10 sm:py-14"
       aria-label={caption}
@@ -223,7 +223,7 @@ const AlphabetVisual = ({ caption }: { caption: string }) => {
 };
 
 export const AlphabetSection = ({ t, href }: { t: Home["alphabet"]; href: Href }) => (
-  <section aria-labelledby="alphabet-title" className="surface-night overflow-hidden py-24 lg:py-32">
+  <section data-story="alphabet" aria-labelledby="alphabet-title" className="surface-night overflow-hidden py-24 lg:py-32">
     <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
       <div className="order-2 lg:order-1 lg:col-span-5">
         <AlphabetVisual caption={t.visualCaption} />
@@ -257,7 +257,7 @@ export const AlphabetSection = ({ t, href }: { t: Home["alphabet"]; href: Href }
 /* 4 · Coaching and Speaking Chat -------------------------------------- */
 
 export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }) => (
-  <section aria-labelledby="services-title" className="surface-raised py-24 lg:py-32">
+  <section data-story="services" aria-labelledby="services-title" className="surface-raised py-24 lg:py-32">
     <Container className="flex flex-col gap-12 lg:gap-16">
       <SectionIntro id="services-title" index={3} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
 
@@ -311,7 +311,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
 /* 5 · Meet the teacher ------------------------------------------------- */
 
 export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) => (
-  <section aria-labelledby="teacher-title" className="surface-night overflow-hidden py-24 lg:py-36">
+  <section data-story="teacher" aria-labelledby="teacher-title" className="surface-night overflow-hidden py-24 lg:py-36">
     <Container className="grid items-center gap-12 lg:grid-cols-12">
       <div data-reveal className="flex flex-col items-start gap-6 lg:col-span-6">
         <Eyebrow index={4}>{t.eyebrow}</Eyebrow>
@@ -324,7 +324,7 @@ export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) 
         </Button>
       </div>
       <figure data-reveal style={delay(1)} className="flex flex-col items-center gap-4 lg:col-span-5 lg:col-start-8" aria-hidden="true">
-        <span data-atmo-quiet lang="ko" className="glyph-soft font-korean text-[clamp(10rem,24vw,18rem)] font-extrabold leading-none">
+        <span data-story="teacher-word" lang="ko" className="glyph-soft font-korean text-[clamp(10rem,24vw,18rem)] font-extrabold leading-none">
           말
         </span>
         <figcaption lang="ko" className="text-caption tracking-[0.14em] text-text-muted">

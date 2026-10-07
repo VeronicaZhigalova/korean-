@@ -224,53 +224,47 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* ------------------------------------------------------------------
-   Hangul atmosphere (GlobalHangulAtmosphere / hangul-atmosphere.ts
-   drives transform and opacity)
+   Hangul story (HangulStory / hangul-story.ts drives transform,
+   opacity and the light level of each character)
    ------------------------------------------------------------------ */
 
 :root,
 [data-theme="dark"] {
-  /* Shooting characters: head colours and trail tones. */
-  --ha-white: rgb(240 238 234);
-  --ha-warm: rgb(250 234 202);
-  --ha-gold: rgb(228 194 126);
-  --ha-navy: rgb(150 174 212);
-  --ha-head-glow: rgb(242 221 169 / 0.5);
-  --ha-trail-glow: 0.45;
-  /* Midground and dust. */
-  --ha-near: #f5f0e6;
-  --ha-far: #8fa6c4;
-  --ha-dust: rgb(190 206 230 / 0.55);
-  /* Soft navy glows and the gold arc. */
-  --ha-nebula-a: rgb(70 102 156 / 0.34);
-  --ha-nebula-b: rgb(84 112 160 / 0.3);
-  --ha-nebula-warm: rgb(217 180 106 / 0.06);
-  --ha-glint: rgb(242 221 169 / 0.9);
-  --ha-light: rgb(217 180 106 / 0.07);
-  --ha-light-cool: rgb(150 174 212 / 0.04);
+  /* Light levels 0 (turned away: navy) to 5 (facing the light: warm white). */
+  --hs-l0: rgb(38 58 94);
+  --hs-l1: rgb(60 84 124);
+  --hs-l2: rgb(96 120 158);
+  --hs-l3: rgb(152 170 198);
+  --hs-l4: rgb(214 216 220);
+  --hs-l5: rgb(247 240 226);
+  --hs-g0: rgb(104 84 50);
+  --hs-g1: rgb(140 112 64);
+  --hs-g2: rgb(176 142 84);
+  --hs-g3: rgb(204 168 104);
+  --hs-g4: rgb(222 190 128);
+  --hs-g5: rgb(242 221 170);
+  --hs-ring: rgb(150 174 212 / 0.16);
 }
 
 [data-theme="light"] {
-  /* Light: navy characters, restrained gold, little glow. */
-  --ha-white: rgb(30 48 76);
-  --ha-warm: rgb(20 35 58);
-  --ha-gold: rgb(166 126 58);
-  --ha-navy: rgb(96 118 150);
-  --ha-head-glow: rgb(217 180 106 / 0.18);
-  --ha-trail-glow: 0.15;
-  --ha-near: #14233a;
-  --ha-far: #6f84a3;
-  --ha-dust: rgb(33 58 91 / 0.45);
-  --ha-nebula-a: rgb(33 58 91 / 0.045);
-  --ha-nebula-b: rgb(96 118 150 / 0.05);
-  --ha-nebula-warm: rgb(217 180 106 / 0.08);
-  --ha-glint: rgb(176 138 69 / 0.6);
-  --ha-light: rgb(217 180 106 / 0.14);
-  --ha-light-cool: rgb(255 255 255 / 0.3);
+  /* Light: deep navy faces the light, pale blue-grey turns away; gold stays restrained. */
+  --hs-l0: rgb(196 206 220);
+  --hs-l1: rgb(160 174 196);
+  --hs-l2: rgb(118 136 164);
+  --hs-l3: rgb(78 98 130);
+  --hs-l4: rgb(44 64 96);
+  --hs-l5: rgb(20 35 58);
+  --hs-g0: rgb(222 206 172);
+  --hs-g1: rgb(208 184 136);
+  --hs-g2: rgb(190 160 104);
+  --hs-g3: rgb(172 138 78);
+  --hs-g4: rgb(152 116 58);
+  --hs-g5: rgb(138 90 28);
+  --hs-ring: rgb(33 58 91 / 0.12);
 }
 
 /* Sits under every section's content and above the section tones. */
-.hangul-atmosphere {
+.hangul-story {
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -279,15 +273,15 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   pointer-events: none;
   user-select: none;
   opacity: 0;
-  transition: opacity 1.4s var(--ease-out-soft);
+  transition: opacity 1.2s var(--ease-out-soft);
 }
 
-.hangul-atmosphere[data-ready] {
+.hangul-story[data-ready] {
   opacity: 1;
 }
 
-/* The sky: one viewport, pinned while the page scrolls past. */
-.ha-stage {
+/* One viewport, pinned while the page scrolls past. */
+.hs-stage {
   position: sticky;
   top: 0;
   width: 100%;
@@ -296,173 +290,116 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   contain: strict;
 }
 
-.ha-nebulae {
+.hs-object {
   position: absolute;
   inset: 0;
-  transition: opacity 1.2s var(--ease-out-soft);
-}
-
-.ha-nebula {
-  /* Each glow fills the whole stage, so no edge ever shows. */
-  position: absolute;
-  inset: -8%;
-  will-change: transform, opacity;
-}
-
-.ha-nebula-a {
-  background:
-    radial-gradient(ellipse 58% 62% at 14% 100%, var(--ha-nebula-a), transparent 72%),
-    radial-gradient(ellipse 30% 34% at 22% 88%, var(--ha-nebula-warm), transparent 70%);
-  transform-origin: 14% 100%;
-  animation: ha-breathe 17s ease-in-out infinite alternate;
-}
-
-.ha-nebula-b {
-  background: radial-gradient(ellipse 48% 56% at 90% 0%, var(--ha-nebula-b), transparent 72%);
-  transform-origin: 90% 0%;
-  animation: ha-breathe 13s ease-in-out -6s infinite alternate;
-}
-
-@keyframes ha-breathe {
-  from {
-    opacity: 0.7;
-    transform: scale(1);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.06);
-  }
-}
-
-.ha-dust {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 100%;
-  will-change: transform;
-  transition: opacity 1.2s var(--ease-out-soft);
-}
-
-.ha-speck {
-  position: absolute;
   font-family: var(--font-korean);
   font-weight: 600;
   line-height: 1;
-  color: var(--ha-dust);
 }
 
-.ha-drift {
+.hs-glyph {
   position: absolute;
   left: 0;
   top: 0;
-  font-family: var(--font-korean);
-  font-weight: 600;
-  line-height: 1;
   white-space: nowrap;
-  color: color-mix(in srgb, var(--ha-near) calc(var(--d, 0.5) * 100%), var(--ha-far));
+  color: var(--hs-l3);
   will-change: transform, opacity;
 }
 
-.ha-drift::before,
-.ha-head::before {
+.hs-glyph::before {
   content: attr(data-g);
 }
 
-/* A shooting character: the head at the origin, the trail behind it. */
-.ha-shot {
-  --tc: var(--ha-warm);
+/* The core is set heavier so it reads as one solid mass. */
+.hs-core {
+  font-weight: 800;
+}
+
+.hs-glyph[data-z="0"] {
+  z-index: 0;
+}
+.hs-glyph[data-z="1"] {
+  z-index: 1;
+}
+.hs-glyph[data-z="2"] {
+  z-index: 2;
+}
+
+.hs-glyph[data-l="0"] {
+  color: var(--hs-l0);
+}
+.hs-glyph[data-l="1"] {
+  color: var(--hs-l1);
+}
+.hs-glyph[data-l="2"] {
+  color: var(--hs-l2);
+}
+.hs-glyph[data-l="3"] {
+  color: var(--hs-l3);
+}
+.hs-glyph[data-l="4"] {
+  color: var(--hs-l4);
+}
+.hs-glyph[data-l="5"] {
+  color: var(--hs-l5);
+}
+.hs-gold[data-l="0"] {
+  color: var(--hs-g0);
+}
+.hs-gold[data-l="1"] {
+  color: var(--hs-g1);
+}
+.hs-gold[data-l="2"] {
+  color: var(--hs-g2);
+}
+.hs-gold[data-l="3"] {
+  color: var(--hs-g3);
+}
+.hs-gold[data-l="4"] {
+  color: var(--hs-g4);
+}
+.hs-gold[data-l="5"] {
+  color: var(--hs-g5);
+}
+
+/* Hairline rings behind the sculpture, drawn large and only ever scaled down. */
+.hs-rings {
   position: absolute;
   left: 0;
   top: 0;
-  will-change: transform, opacity;
-}
-
-.ha-shot[data-tone="white"] {
-  --tc: var(--ha-white);
-}
-
-.ha-shot[data-tone="gold"] {
-  --tc: var(--ha-gold);
-}
-
-.ha-shot[data-tone="navy"] {
-  --tc: var(--ha-navy);
-}
-
-.ha-trail {
-  position: absolute;
-  right: 0;
-  top: -0.75px;
-  height: 1.5px;
-  border-radius: 1px;
-  transform-origin: 100% 50%;
-  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--tc) 40%, transparent) 62%, var(--tc));
-  box-shadow: 0 0 6px color-mix(in srgb, var(--tc) calc(var(--ha-trail-glow) * 100%), transparent);
-  will-change: transform;
-}
-
-.ha-head {
-  position: absolute;
-  left: 0;
-  top: 0;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-korean);
-  font-weight: 600;
-  line-height: 1;
-  white-space: nowrap;
-  color: color-mix(in srgb, var(--tc) 70%, var(--ha-white));
-  text-shadow:
-    0 0 0.35em var(--ha-head-glow),
-    0 0 1.1em color-mix(in srgb, var(--tc) calc(var(--ha-trail-glow) * 60%), transparent);
-}
-
-/* The arc glint: a thin circle masked down to one short, tapering segment. */
-.ha-glint {
-  position: absolute;
-  border-radius: 50%;
-  border: 1.5px solid var(--ha-glint);
-  -webkit-mask: conic-gradient(transparent 0deg 300deg, rgb(0 0 0 / 0.35) 330deg, #000 351deg, transparent 353deg);
-  mask: conic-gradient(transparent 0deg 300deg, rgb(0 0 0 / 0.35) 330deg, #000 351deg, transparent 353deg);
+  width: 1200px;
+  height: 1200px;
   opacity: 0;
   will-change: transform, opacity;
 }
 
-.hangul-atmosphere[data-still] .ha-glint {
-  opacity: 0.3;
-}
-
-.ha-light {
-  /* Soft atmospheric light, no hard edge: two wide falloffs layered. */
+.hs-rings span {
   position: absolute;
-  left: 0;
-  top: 0;
-  width: 46rem;
-  height: 46rem;
+  border: 1px solid var(--hs-ring);
   border-radius: 50%;
-  background:
-    radial-gradient(closest-side, var(--ha-light), transparent 72%),
-    radial-gradient(closest-side, var(--ha-light-cool), transparent);
-  opacity: 0;
-  will-change: transform, opacity;
 }
 
-/* Still composition: nothing breathes. */
-.hangul-atmosphere[data-still] .ha-nebula {
-  animation: none;
-  opacity: 0.85;
+.hs-rings span:nth-child(1) {
+  inset: 0;
+}
+.hs-rings span:nth-child(2) {
+  inset: 17%;
+}
+.hs-rings span:nth-child(3) {
+  inset: 31%;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .ha-nebula {
-    animation: none;
-  }
+/* Reduced motion: still compositions in the page, not pinned. */
+.hs-still {
+  pointer-events: none;
 }
 
 /* ------------------------------------------------------------------
    Home surfaces
    ------------------------------------------------------------------ */
 
-/* Section tones paint on a layer beneath the Hangul atmosphere (GlobalHangulAtmosphere). */
+/* Section tones paint on a layer beneath the Hangul story (HangulStory). */
 .surface-night,
 .surface-raised {
   position: relative;
@@ -485,7 +422,7 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 
 /* ------------------------------------------------------------------
    Glass panels: course and service cards, the alphabet panel.
-   Mostly clear so the Hangul sky shows through, a light blur, a thin
+   Mostly clear so the Hangul sculpture shows through, a light blur, a thin
    luminous rim and a soft inner light. .glass-lead (General Korean)
    carries a warmer rim, more inner light and more depth.
    ------------------------------------------------------------------ */
