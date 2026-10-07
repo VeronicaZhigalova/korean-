@@ -2,7 +2,8 @@ import type { Metadata, Viewport } from "next";
 import { Inter, Instrument_Serif, Noto_Serif_KR } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { themeInitScript } from "@/components/layout/theme-toggle";
+import { glassRefractScript, themeInitScript } from "@/components/layout/head-scripts";
+import { GlassFilter, GlassLight } from "@/components/ui/liquid-glass";
 import { locales } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 import "../globals.css";
@@ -54,7 +55,7 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
       className={`${inter.variable} ${instrumentSerif.variable} ${notoSerifKr.variable}`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript + glassRefractScript }} />
       </head>
       <body className="flex min-h-svh flex-col">
         <a
@@ -68,6 +69,8 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           {children}
         </main>
         <SiteFooter />
+        <GlassFilter />
+        <GlassLight />
       </body>
     </html>
   );

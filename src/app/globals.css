@@ -224,26 +224,32 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* ------------------------------------------------------------------
-   Living Hangul field (HangulField drives transform/opacity per frame)
+   Living Hangul field (hangul-engine.ts drives transform/opacity per frame)
+   Each character is a translucent body, a lit rim and a gold glow that only
+   appears near the pointer, after the Velara reference's lit glass plates.
    ------------------------------------------------------------------ */
 
 :root,
 [data-theme="dark"] {
   --hf-near: #f5f0e6;
-  --hf-far: #8fa6c4;
+  --hf-far: #7f97b8;
+  --hf-rim-mix: #ffffff;
+  --hf-halo: rgb(157 190 235 / 0.28);
   --hf-gold: #f2ddaa;
-  --hf-gold-glow: rgb(217 180 106 / 0.75);
-  --hf-light: rgb(217 180 106 / 0.075);
-  --hf-light-cool: rgb(217 180 106 / 0.03);
+  --hf-gold-glow: rgb(217 180 106 / 0.7);
+  --hf-light: 217 180 106;
+  --hf-light-alpha: 0.07;
 }
 
 [data-theme="light"] {
   --hf-near: #14233a;
-  --hf-far: #6f84a3;
-  --hf-gold: #8a5a1c;
-  --hf-gold-glow: rgb(217 180 106 / 0.55);
-  --hf-light: rgb(217 180 106 / 0.14);
-  --hf-light-cool: rgb(255 255 255 / 0.3);
+  --hf-far: #7b8ea9;
+  --hf-rim-mix: #0b1729;
+  --hf-halo: rgb(27 54 87 / 0.14);
+  --hf-gold: #9a7330;
+  --hf-gold-glow: rgb(217 180 106 / 0.6);
+  --hf-light: 217 180 106;
+  --hf-light-alpha: 0.16;
 }
 
 .hangul-field {
@@ -256,53 +262,103 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 .hf-light {
-  /* Soft atmospheric light, no hard edge: two wide falloffs layered. */
+  /* Atmospheric light: a long, gaussian-like falloff with no visible edge. */
+  --a: var(--hf-light-alpha);
   position: absolute;
   left: 0;
   top: 0;
-  width: 46rem;
-  height: 46rem;
+  width: 52rem;
+  height: 52rem;
   border-radius: 50%;
-  background:
-    radial-gradient(closest-side, var(--hf-light), transparent 72%),
-    radial-gradient(closest-side, var(--hf-light-cool), transparent);
+  background: radial-gradient(
+    closest-side,
+    rgb(var(--hf-light) / var(--a)) 0%,
+    rgb(var(--hf-light) / calc(var(--a) * 0.72)) 18%,
+    rgb(var(--hf-light) / calc(var(--a) * 0.42)) 38%,
+    rgb(var(--hf-light) / calc(var(--a) * 0.18)) 60%,
+    rgb(var(--hf-light) / calc(var(--a) * 0.05)) 82%,
+    transparent 100%
+  );
   opacity: 0;
   will-change: transform, opacity;
 }
 
 .hangul-field-quiet .hf-light {
-  width: 34rem;
-  height: 34rem;
+  width: 36rem;
+  height: 36rem;
 }
 
 .hf-glyph {
+  /* Tone by depth: near characters are brighter, far ones sink into the night. */
+  --tone: color-mix(in srgb, var(--hf-near) calc(var(--d, 0.5) * 100%), var(--hf-far));
   position: absolute;
   transform: translate(-50%, -50%);
   font-family: var(--font-korean);
-  font-weight: 600;
+  font-weight: 800;
   line-height: 1;
   white-space: nowrap;
-  color: color-mix(in srgb, var(--hf-near) calc(var(--d, 0.5) * 100%), var(--hf-far));
   will-change: transform, opacity;
 }
 
-.hf-ink,
+.hf-body,
+.hf-rim,
 .hf-glow {
   display: block;
 }
 
-.hf-ink::before,
+.hf-rim,
+.hf-glow {
+  position: absolute;
+  inset: 0;
+}
+
+.hf-body::before,
+.hf-rim::before,
 .hf-glow::before {
   content: attr(data-g);
 }
 
+.hf-body::before {
+  /* Translucent body, lighter at the top edge like lit glass. */
+  background: linear-gradient(
+    168deg,
+    color-mix(in srgb, var(--tone) 62%, transparent) 0%,
+    color-mix(in srgb, var(--tone) 22%, transparent) 46%,
+    color-mix(in srgb, var(--tone) 10%, transparent) 78%,
+    color-mix(in srgb, var(--tone) 26%, transparent) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.hf-rim {
+  opacity: 0.55;
+}
+
+.hf-rim::before {
+  /* Lit edge with a soft halo; the fill stays transparent. */
+  color: transparent;
+  -webkit-text-stroke: max(0.6px, 0.016em) color-mix(in srgb, var(--tone) 78%, var(--hf-rim-mix));
+  text-shadow: 0 0 0.22em var(--hf-halo);
+}
+
 .hf-glow {
-  /* Gold, glowing copy of the glyph; only its opacity changes near the pointer. */
-  position: absolute;
-  inset: 0;
-  color: var(--hf-gold);
-  text-shadow: 0 0 0.35em var(--hf-gold-glow);
   opacity: 0;
+}
+
+.hf-glow::before {
+  /* Gold light picked up near the pointer. */
+  color: color-mix(in srgb, var(--hf-gold) 22%, transparent);
+  -webkit-text-stroke: max(0.7px, 0.02em) var(--hf-gold);
+  text-shadow: 0 0 0.3em var(--hf-gold-glow);
+}
+
+@media (min-width: 1024px) {
+  /* Far characters sit slightly out of focus, for depth. */
+  .hf-glyph {
+    filter: blur(var(--b, 0px));
+  }
 }
 
 @media (max-width: 1023px) {
@@ -366,136 +422,263 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* ------------------------------------------------------------------
-   Button light (DESIGN.md §5 motion hierarchy)
-   .btn-beam  primary: a gold beam circles the border on hover/focus, and a
-              sheen crosses the face. .btn-beam-idle keeps a faint beam
-              circling for the one hero CTA.
-   .btn-arc   secondary: a quieter thin arc on hover/focus only.
-   Colour and border still say "button" without any of this.
+   Liquid glass buttons (material after the Jiro liquid-glass reference)
+   .lg            shared material: translucent fill, top sheen, thin luminous
+                  rim, bright upper edge, soft depth, a specular highlight
+   .lg-primary    gold glass (navy in light mode), the strongest treatment
+   .lg-secondary  clear, quieter glass
+   .lg-prominent  the one hero CTA: background refraction (Chromium) and a
+                  highlight that follows the pointer (GlassLight)
+   Buttons never move with the pointer: hover adds light and depth, press
+   compresses, focus shows the ring. Without refraction (Safari, Firefox)
+   the blur, rim, highlight and shadow carry the glass on their own.
    ------------------------------------------------------------------ */
 
-@property --beam {
-  syntax: "<angle>";
+@property --gx {
+  syntax: "<percentage>";
   inherits: false;
-  initial-value: 0deg;
+  initial-value: 50%;
+}
+
+@property --gy {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+@property --gs {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.5;
 }
 
 :root,
 [data-theme="dark"] {
-  --beam-core: #fff4d6;
-  --beam-edge: #f2ddaa;
-  --beam-arc: rgb(242 221 170 / 0.9);
-  --beam-sheen: rgb(255 255 255 / 0.38);
-  --beam-glow: rgb(217 180 106 / 0.45);
+  --lg-p-fill: rgb(217 180 106 / 0.93);
+  --lg-p-fill-refract: rgb(217 180 106 / 0.86);
+  --lg-p-sheen: rgb(255 248 228 / 0.46);
+  --lg-p-sheen-mid: rgb(255 248 228 / 0.08);
+  --lg-p-deep: rgb(110 74 18 / 0.12);
+  --lg-p-rim: rgb(255 236 196 / 0.78);
+  --lg-p-rim-hover: rgb(255 246 222 / 0.95);
+  --lg-p-edge: rgb(255 255 255 / 0.9);
+  --lg-p-under: rgb(92 60 10 / 0.38);
+  --lg-p-glow: rgb(217 180 106 / 0.34);
+  --lg-p-glow-hover: rgb(217 180 106 / 0.5);
+  --lg-p-spec: 255 252 240;
+  --lg-p-caustic: rgb(255 244 214 / 0.42);
+
+  --lg-s-fill: rgb(22 42 70 / 0.32);
+  --lg-s-fill-hover: rgb(34 58 92 / 0.42);
+  --lg-s-sheen: rgb(255 255 255 / 0.12);
+  --lg-s-rim: rgb(245 240 230 / 0.26);
+  --lg-s-rim-hover: rgb(245 240 230 / 0.46);
+  --lg-s-edge: rgb(255 255 255 / 0.32);
+  --lg-s-spec: 242 221 170;
+  --lg-s-shadow: rgb(0 0 0 / 0.5);
+
+  --lg-drop: rgb(0 0 0 / 0.35);
+  --lg-press: rgb(0 0 0 / 0.26);
 }
 
 [data-theme="light"] {
-  --beam-core: #ffe7b0;
-  --beam-edge: #d9b46a;
-  --beam-arc: rgb(166 124 53 / 0.95);
-  --beam-sheen: rgb(255 255 255 / 0.22);
-  --beam-glow: rgb(27 54 87 / 0.35);
+  --lg-p-fill: rgb(27 54 87 / 0.93);
+  --lg-p-fill-refract: rgb(27 54 87 / 0.86);
+  --lg-p-sheen: rgb(255 255 255 / 0.26);
+  --lg-p-sheen-mid: rgb(255 255 255 / 0.05);
+  --lg-p-deep: rgb(6 14 28 / 0.22);
+  --lg-p-rim: rgb(14 32 56 / 0.95);
+  --lg-p-rim-hover: rgb(10 24 44 / 1);
+  --lg-p-edge: rgb(255 255 255 / 0.42);
+  --lg-p-under: rgb(0 0 0 / 0.3);
+  --lg-p-glow: rgb(27 54 87 / 0.32);
+  --lg-p-glow-hover: rgb(27 54 87 / 0.45);
+  --lg-p-spec: 255 255 255;
+  --lg-p-caustic: rgb(233 214 171 / 0.3);
+
+  --lg-s-fill: rgb(255 255 255 / 0.58);
+  --lg-s-fill-hover: rgb(255 255 255 / 0.78);
+  --lg-s-sheen: rgb(255 255 255 / 0.9);
+  --lg-s-rim: rgb(20 35 58 / 0.22);
+  --lg-s-rim-hover: rgb(20 35 58 / 0.42);
+  --lg-s-edge: rgb(255 255 255 / 1);
+  --lg-s-spec: 255 255 255;
+  --lg-s-shadow: rgb(20 35 58 / 0.2);
+
+  --lg-drop: rgb(20 35 58 / 0.12);
+  --lg-press: rgb(20 35 58 / 0.18);
 }
 
-.btn-beam,
-.btn-arc {
+.lg {
+  --gs: 0.5;
   position: relative;
   isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--lg-rim);
+  background:
+    radial-gradient(7rem 3.5rem at var(--gx) var(--gy), rgb(var(--lg-spec) / calc(var(--gs) * var(--lg-spec-max))), transparent 70%),
+    linear-gradient(180deg, var(--lg-sheen) 0%, var(--lg-sheen-mid) 45%, transparent 58%, var(--lg-deep) 100%),
+    var(--lg-fill);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0.5px var(--lg-edge),
+    inset 0 -1px 1px var(--lg-under),
+    0 1px 2px var(--lg-drop),
+    0 12px 26px -14px var(--lg-glow);
+  transition:
+    --gx 0.5s var(--ease-out-soft),
+    --gy 0.5s var(--ease-out-soft),
+    --gs 0.45s var(--ease-out-soft),
+    border-color 0.45s var(--ease-out-soft),
+    box-shadow 0.45s var(--ease-out-soft),
+    background-color 0.45s var(--ease-out-soft),
+    scale 0.45s var(--ease-out-soft);
+  -webkit-tap-highlight-color: transparent;
 }
 
-.btn-beam > *,
-.btn-arc > * {
+.lg > * {
   position: relative;
   z-index: 1;
+  transition: translate 0.45s var(--ease-out-soft);
 }
 
-.btn-beam::before,
-.btn-arc::before {
-  /* A ring: the conic gradient is masked down to the border band. */
-  content: "";
-  position: absolute;
-  inset: -1.5px;
-  border-radius: inherit;
-  padding: 1.5px;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  opacity: 0;
-  transition: opacity 0.45s var(--ease-out-soft);
-  pointer-events: none;
-}
-
-.btn-beam::before {
-  background: conic-gradient(from var(--beam), transparent 0 58%, var(--beam-edge) 74%, var(--beam-core) 82%, var(--beam-edge) 88%, transparent 96%);
-}
-
-.btn-arc::before {
-  padding: 1px;
-  inset: -1px;
-  background: conic-gradient(from var(--beam), transparent 0 72%, var(--beam-arc) 86%, transparent 97%);
-}
-
-.btn-beam::after {
-  /* Sheen: a soft diagonal light that crosses the face once per hover. */
+.lg::after {
+  /* Caustic: light gathering at the lower edge, as through a lens. */
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(105deg, transparent 35%, var(--beam-sheen) 50%, transparent 65%) no-repeat;
-  background-size: 250% 100%;
-  background-position: 130% 0;
+  background: radial-gradient(60% 55% at 50% 118%, var(--lg-caustic), transparent 72%);
+  opacity: 0.55;
+  transition: opacity 0.45s var(--ease-out-soft);
   pointer-events: none;
 }
 
-.btn-beam {
-  transition-property: background-color, box-shadow, color, scale;
+.lg-primary {
+  --lg-fill: var(--lg-p-fill);
+  --lg-sheen: var(--lg-p-sheen);
+  --lg-sheen-mid: var(--lg-p-sheen-mid);
+  --lg-deep: var(--lg-p-deep);
+  --lg-rim: var(--lg-p-rim);
+  --lg-edge: var(--lg-p-edge);
+  --lg-under: var(--lg-p-under);
+  --lg-glow: var(--lg-p-glow);
+  --lg-spec: var(--lg-p-spec);
+  --lg-spec-max: 0.6;
+  --lg-caustic: var(--lg-p-caustic);
 }
 
-.btn-beam:hover,
-.btn-beam:focus-visible {
-  box-shadow: 0 10px 34px -14px var(--beam-glow);
+[data-theme="light"] .lg-primary {
+  --lg-spec-max: 0.2;
 }
 
-.btn-beam:hover::before,
-.btn-beam:focus-visible::before {
-  opacity: 1;
+.lg-secondary {
+  --lg-fill: var(--lg-s-fill);
+  --lg-sheen: var(--lg-s-sheen);
+  --lg-sheen-mid: transparent;
+  --lg-deep: transparent;
+  --lg-rim: var(--lg-s-rim);
+  --lg-edge: var(--lg-s-edge);
+  --lg-under: transparent;
+  --lg-glow: var(--lg-s-shadow);
+  --lg-spec: var(--lg-s-spec);
+  --lg-spec-max: 0.16;
+  --lg-caustic: transparent;
+  --gs: 0;
 }
 
-.btn-arc:hover::before,
-.btn-arc:focus-visible::before {
-  opacity: 0.85;
-}
-
-.btn-beam-idle::before {
-  opacity: 0.45;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .btn-beam::before {
-    animation: beam-spin 2.6s linear infinite;
+/* Hover and keyboard focus: a little more light, rim and depth. */
+@media (hover: hover) {
+  .lg:hover {
+    --gs: 1;
+    box-shadow:
+      inset 0 1px 0.5px var(--lg-edge),
+      inset 0 -1px 1px var(--lg-under),
+      0 2px 4px var(--lg-drop),
+      0 16px 32px -14px var(--lg-glow);
   }
-  .btn-beam-idle::before {
-    animation-duration: 5.5s;
+  .lg-primary:hover {
+    --lg-rim: var(--lg-p-rim-hover);
+    --lg-glow: var(--lg-p-glow-hover);
   }
-  .btn-arc::before {
-    animation: beam-spin 3.4s linear infinite;
+  .lg-secondary:hover {
+    --lg-rim: var(--lg-s-rim-hover);
+    --lg-fill: var(--lg-s-fill-hover);
   }
-  .btn-beam::after {
-    transition: background-position 0.9s var(--ease-out-soft);
+  .lg:hover::after {
+    opacity: 1;
   }
-  .btn-beam:hover::after,
-  .btn-beam:focus-visible::after {
-    background-position: -30% 0;
-  }
-  .btn-beam:not(:hover):not(:focus-visible)::before,
-  .btn-arc:not(:hover):not(:focus-visible)::before {
-    animation-play-state: paused;
-  }
-  .btn-beam-idle:not(:hover):not(:focus-visible)::before {
-    animation-play-state: running;
+  .lg:hover > :first-child {
+    translate: 0 -0.5px;
   }
 }
 
-@keyframes beam-spin {
-  to { --beam: 360deg; }
+.lg:focus-visible {
+  --gs: 1;
+  outline-offset: 4px;
+}
+
+.lg-primary:focus-visible {
+  --lg-rim: var(--lg-p-rim-hover);
+}
+
+.lg-secondary:focus-visible {
+  --lg-rim: var(--lg-s-rim-hover);
+}
+
+/* Press (touch included): the glass compresses and the light sinks inward. */
+.lg:active {
+  --gs: 0.35;
+  scale: 0.965;
+  box-shadow:
+    inset 0 1px 0.5px var(--lg-edge),
+    inset 0 2px 7px var(--lg-press),
+    0 1px 1px var(--lg-drop),
+    0 6px 14px -10px var(--lg-glow);
+  transition-duration: 0.12s;
+}
+
+.lg:active::after {
+  opacity: 0.35;
+  transition-duration: 0.12s;
+}
+
+.lg:active > :first-child {
+  translate: 0 0.5px;
+  transition-duration: 0.12s;
+}
+
+/* Refraction: only where SVG backdrop filters render (data-refract, Chromium). */
+html[data-refract] .lg-prominent {
+  backdrop-filter: url(#lg-refract) blur(2.5px) saturate(1.35);
+}
+
+html[data-refract] .lg-prominent.lg-primary {
+  --lg-fill: var(--lg-p-fill-refract);
+}
+
+/* Glass never costs contrast. */
+@media (prefers-reduced-transparency: reduce) {
+  .lg {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .lg-primary {
+    --lg-fill: var(--primary-bg) !important;
+  }
+  .lg-secondary {
+    --lg-fill: var(--bg-raised) !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .lg {
+    border-color: ButtonText;
+  }
+}
+
+.lg:is(:disabled, [aria-disabled="true"]) {
+  --gs: 0 !important;
+  scale: 1 !important;
 }

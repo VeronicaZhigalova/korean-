@@ -2,8 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useSyncExternalStore } from "react";
-
-export const themeStorageKey = "sik-theme";
+import { themeStorageKey } from "./head-scripts";
 
 type Theme = "dark" | "light";
 
@@ -46,5 +45,3 @@ export const ThemeToggle = ({ toDarkLabel, toLightLabel }: ThemeToggleProps) => 
   );
 };
 
-/** Runs before paint so the stored theme never flashes. Dark is the default. */
-export const themeInitScript = `try{var t=localStorage.getItem("${themeStorageKey}");document.documentElement.dataset.theme=t==="light"?"light":"dark"}catch(e){document.documentElement.dataset.theme="dark"}`;

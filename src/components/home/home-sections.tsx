@@ -64,7 +64,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
     {/* Desktop: the object sits beside the copy. Below lg it moves into the flow (see below). */}
     <div className="pointer-events-none absolute inset-0 -z-10 hidden lg:block">
       <div className="absolute inset-0">
-        <HangulField count={20} zones={heroZones} size={[1.1, 5]} seed={11} />
+        <HangulField count={22} zones={heroZones} size={[1.2, 5.8]} seed={11} />
       </div>
       {/* Keeps copy legible if a glyph floats toward it. */}
       <div className="absolute inset-0 bg-[linear-gradient(90deg,var(--bg)_0%,color-mix(in_srgb,var(--bg)_60%,transparent)_30%,transparent_55%)]" />
@@ -89,7 +89,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
           {t.lede}
         </p>
         <div className="enter-up mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row" style={enter(3)}>
-          <Button href={href("courses")} arrow beamIdle>
+          <Button href={href("courses")} arrow prominent>
             {t.primaryCta}
           </Button>
           <Button href={href("quiz")} variant="secondary">
