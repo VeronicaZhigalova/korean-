@@ -66,6 +66,15 @@ export const Button = (props: ButtonAsButton | ButtonAsLink) => {
   );
 
   if ("href" in rest && rest.href !== undefined) {
+    // In-page anchors stay plain links, so the browser scrolls and moves keyboard focus to the target.
+    if (rest.href.startsWith("#")) {
+      const { href, prefetch: _prefetch, replace: _replace, scroll: _scroll, ...anchorProps } = rest as Omit<ButtonAsLink, keyof CommonProps>;
+      return (
+        <a {...(anchorProps as ComponentProps<"a">)} href={href} className={classes}>
+          {content}
+        </a>
+      );
+    }
     return (
       <Link {...(rest as Omit<ButtonAsLink, keyof CommonProps>)} className={classes}>
         {content}

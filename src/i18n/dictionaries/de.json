@@ -47,12 +47,9 @@
     "titleAfter": " lernen, Schritt für Schritt",
     "lede": "Kurse von den ersten Hangul-Buchstaben bis zu fortgeschrittenem Koreanisch und TOPIK-Vorbereitung. Beginne mit dem Alphabet oder finde mit dem optionalen Einstufungstest deinen Einstieg.",
     "primaryCta": "Kurse entdecken",
-    "secondaryCta": "Zum Einstufungstest",
-    "scrollCue": "Scrollen",
     "paths": {
       "eyebrow": "Lernwege",
       "title": "Finde deinen Weg ins Koreanische",
-      "lede": "Ob du deine ersten koreanischen Buchstaben lernst oder dich auf TOPIK vorbereitest: Hier findest du deinen Anfang.",
       "pathsLabel": "Lernwege",
       "previous": "Zurück",
       "next": "Weiter",
@@ -60,7 +57,6 @@
       "selected": "{name} ausgewählt",
       "lessonsLabel": "Lektionen",
       "accessLabel": "Zugang",
-      "priceLabel": "Preis",
       "forLabel": "Für",
       "aboutLabel": "Der Kurs",
       "pending": "Eine Beschreibung folgt, sobald die Lehrkraft sie freigegeben hat.",
@@ -191,7 +187,7 @@
       "lede": "Coaching-Stunden begleiten einen Kurs, den du gerade belegst. Speaking Chat steht allen offen, die Konversation üben möchten.",
       "coaching": {
         "title": "Kurs-Coaching",
-        "body": "Stunden zu einem gekauften Kurs, auf den du noch Zugriff hast.",
+        "body": "Stunden mit der Lehrkraft zu dem Kurs, den du gerade belegst.",
         "options": [
           {
             "label": "3 × 50 Min.",
@@ -207,7 +203,7 @@
       },
       "chat": {
         "title": "Speaking Chat",
-        "body": "Ein lockeres Gespräch von 50 Minuten. Kein Kurs nötig.",
+        "body": "Ein lockeres Gespräch mit der Lehrkraft.",
         "duration": "50 Min.",
         "price": "25 €",
         "requirement": "Kein Kurs nötig",

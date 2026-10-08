@@ -446,7 +446,6 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               <footer className="flex flex-col gap-4 border-t border-border pt-6">
                 <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <span className="price-figure">{t.free.price}</span>
-                  <span className="course-free-badge">{t.free.badge}</span>
                   <span className="text-body-sm text-text-muted">{t.free.how}</span>
                 </p>
                 <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
@@ -462,8 +461,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
           ) : path === "general" ? (
             <article key="general" data-atmo-glass className="glass-panel course-info flex flex-col gap-6 rounded-(--radius-card) p-6 sm:p-9">
               <header key={general.code} className="course-swap flex flex-col gap-1.5">
-                <p className="course-eyebrow">{t.general.title}</p>
-                <h3 className="display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">
+                                <h3 className="display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">
                   {general.code} <span className="text-text-muted">{general.name}</span>
                 </h3>
               </header>
@@ -479,7 +477,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               </div>
               <footer className="flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6">
                 <div className="flex flex-col gap-1">
-                  <span className="course-label">{t.priceLabel}</span>
+                  
                   <span key={general.price + general.code} className="course-swap price-figure">
                     {general.price}
                   </span>
@@ -492,8 +490,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
           ) : (
             <article key="topik" data-atmo-glass className="glass-panel course-info flex flex-col gap-6 rounded-(--radius-card) p-6 sm:p-9">
               <header key={topik.code} className="course-swap flex flex-col gap-1.5">
-                <p className="course-eyebrow">{t.topik.title}</p>
-                <h3 className="display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">
+                                <h3 className="display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">
                   {t.topik.courseWord} {topik.code}
                 </h3>
               </header>
@@ -510,7 +507,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               <p className="text-caption text-text-muted">{t.topik.note}</p>
               <footer className="flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6">
                 <div className="flex flex-col gap-1">
-                  <span className="course-label">{t.priceLabel}</span>
+                  
                   <span key={topik.price + topik.code} className="course-swap price-figure">
                     {topik.price}
                   </span>

@@ -24,7 +24,7 @@ export const LanguageSwitch = ({ current, label, switchToTemplate }: LanguageSwi
   const pathname = usePathname();
 
   return (
-    <nav aria-label={label} className="flex items-center text-caption">
+    <nav aria-label={label} className="flex items-center text-[0.8125rem]">
       {locales.map((locale, index) => (
         <span key={locale} className="flex items-center">
           {index > 0 ? (
@@ -40,7 +40,7 @@ export const LanguageSwitch = ({ current, label, switchToTemplate }: LanguageSwi
             aria-label={locale === current ? undefined : format(switchToTemplate, { language: localeNames[locale] })}
             onClick={() => remember(locale)}
             className={cn(
-              "inline-grid min-h-11 min-w-9 place-items-center rounded-md font-semibold uppercase tracking-[0.06em] transition-colors",
+              "inline-grid min-h-11 min-w-9 place-items-center rounded-sm font-medium uppercase tracking-[0.08em] transition-colors duration-150",
               locale === current ? "text-text" : "text-text-muted hover:text-text",
             )}
           >

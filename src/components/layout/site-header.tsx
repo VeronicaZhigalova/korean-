@@ -24,7 +24,7 @@ export const SiteHeader = async () => {
       <ThemeToggle toDarkLabel={t.theme.toDark} toLightLabel={t.theme.toLight} />
       <Link
         href={path("account")}
-        className="inline-flex min-h-11 items-center rounded-full border border-border-strong px-5 text-body-sm font-medium text-text transition-colors hover:border-gold/60 hover:text-accent"
+        className="header-control inline-flex min-h-11 items-center px-4 text-[0.875rem] font-medium tracking-[0.01em]"
       >
         {t.nav.account}
       </Link>
@@ -32,9 +32,9 @@ export const SiteHeader = async () => {
   );
 
   return (
-    <header className="glass sticky top-0 z-40 border-b border-border/60">
-      <div className="relative mx-auto flex min-h-[4.5rem] w-full max-w-(--container-content) items-center justify-between gap-6 px-4 sm:px-8 lg:px-12">
-        <div className="flex items-center gap-10">
+    <header className="site-header sticky top-0 z-40">
+      <div className="relative mx-auto flex min-h-[5rem] w-full max-w-(--container-content) items-center justify-between gap-6 px-4 sm:px-8 lg:px-12">
+        <div className="flex items-center gap-12">
           <BrandLockup
             href={`/${locale}`}
             name={t.brand.name}
@@ -43,7 +43,7 @@ export const SiteHeader = async () => {
           />
           <DesktopNav items={items} label={t.nav.label} />
         </div>
-        <div className="hidden items-center gap-2 lg:flex">{utilities}</div>
+        <div className="hidden items-center gap-3 lg:flex">{utilities}</div>
         <MobileMenu
           items={items}
           navLabel={t.nav.label}

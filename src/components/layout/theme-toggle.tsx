@@ -38,9 +38,9 @@ export const ThemeToggle = ({ toDarkLabel, toLightLabel }: ThemeToggleProps) => 
       type="button"
       onClick={apply}
       aria-label={next === "dark" ? toDarkLabel : toLightLabel}
-      className="inline-grid size-11 place-items-center rounded-full border border-border text-text transition-colors hover:border-border-strong"
+      className="header-control inline-grid size-11 place-items-center"
     >
-      {theme === "dark" ? <Sun aria-hidden="true" className="size-[18px]" /> : <Moon aria-hidden="true" className="size-[18px]" />}
+      {theme === "dark" ? <Sun aria-hidden="true" className="size-4" /> : <Moon aria-hidden="true" className="size-4" />}
     </button>
   );
 };

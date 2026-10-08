@@ -53,7 +53,7 @@ export const MobileMenu = ({ items, navLabel, openLabel, closeLabel, utilities }
         aria-controls={panelId}
         aria-label={isOpen ? closeLabel : openLabel}
         onClick={toggle}
-        className="inline-grid size-11 place-items-center rounded-full border border-border text-text transition-colors hover:border-border-strong"
+        className="header-control inline-grid size-11 place-items-center"
       >
         {isOpen ? <X aria-hidden="true" className="size-5" /> : <Menu aria-hidden="true" className="size-5" />}
       </button>
@@ -62,19 +62,19 @@ export const MobileMenu = ({ items, navLabel, openLabel, closeLabel, utilities }
         id={panelId}
         ref={panelRef}
         hidden={!isOpen}
-        className="absolute inset-x-0 top-full border-b border-border bg-bg-raised px-4 pb-6 pt-2 sm:px-8"
+        className="header-panel absolute inset-x-0 top-full px-4 pb-6 pt-2 sm:px-8"
       >
         <nav aria-label={navLabel}>
           <ul className="flex flex-col">
             {items.map((item) => {
               const current = pathname === item.href || pathname.startsWith(`${item.href}/`);
               return (
-                <li key={item.href} className="border-b border-border last:border-b-0">
+                <li key={item.href}>
                   <Link
                     href={item.href}
                     aria-current={current ? "page" : undefined}
                     className={cn(
-                      "flex min-h-14 items-center text-body-lg font-medium",
+                      "nav-link relative flex min-h-12 w-fit items-center !text-[1.0625rem]",
                       current ? "text-text" : "text-text-muted hover:text-text",
                     )}
                   >
@@ -85,7 +85,7 @@ export const MobileMenu = ({ items, navLabel, openLabel, closeLabel, utilities }
             })}
           </ul>
         </nav>
-        <div className="mt-5 flex flex-wrap items-center gap-3">{utilities}</div>
+        <div className="mt-4 flex flex-wrap items-center gap-3 border-t border-border pt-5">{utilities}</div>
       </div>
     </div>
   );

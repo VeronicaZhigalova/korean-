@@ -47,12 +47,9 @@
     "titleAfter": ", step by step",
     "lede": "Courses from your first Hangul letters to advanced Korean and TOPIK preparation. Begin with the alphabet, or take the optional level quiz to find your place.",
     "primaryCta": "Explore courses",
-    "secondaryCta": "Take the level quiz",
-    "scrollCue": "Scroll",
     "paths": {
       "eyebrow": "Learning paths",
       "title": "Find your way into Korean",
-      "lede": "Whether you’re learning your first Korean letters or preparing for TOPIK, there’s a place to begin.",
       "pathsLabel": "Learning paths",
       "previous": "Previous",
       "next": "Next",
@@ -60,7 +57,6 @@
       "selected": "{name} selected",
       "lessonsLabel": "Lessons",
       "accessLabel": "Access",
-      "priceLabel": "Price",
       "forLabel": "For",
       "aboutLabel": "The course",
       "pending": "A description will follow once the teacher has approved it.",
@@ -191,7 +187,7 @@
       "lede": "Coaching sessions support a course you’re taking. Speaking Chat is open to anyone who wants to practise conversation.",
       "coaching": {
         "title": "Course coaching",
-        "body": "Sessions alongside a course you’ve purchased and can still access.",
+        "body": "Sessions with the teacher to support the course you’re taking.",
         "options": [
           {
             "label": "3 × 50 min",
@@ -207,7 +203,7 @@
       },
       "chat": {
         "title": "Speaking Chat",
-        "body": "An informal 50-minute conversation. No course needed.",
+        "body": "An informal conversation with the teacher.",
         "duration": "50 min",
         "price": "€25",
         "requirement": "No course needed",

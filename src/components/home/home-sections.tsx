@@ -10,9 +10,8 @@ type Home = Dictionary["home"];
 type Href = (segment: string) => string;
 
 const Eyebrow = ({ index, children }: { index: number; children: ReactNode }) => (
-  <p className="flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
+  <p className="flex items-center gap-4 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
     <span className="tabular-nums text-text-muted">{String(index).padStart(2, "0")}</span>
-    <span aria-hidden="true" className="h-px w-6 bg-gold" />
     {children}
   </p>
 );
@@ -37,37 +36,18 @@ const cardBase = "glass-panel flex h-full min-w-0 flex-col rounded-(--radius-car
 export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
   <section data-story="hero" aria-labelledby="home-title" className="overflow-hidden">
     {/* Centred so the Hangul universe can surround the copy on every side (8 Oct 2026). */}
-    <Container className="flex min-h-[calc(100svh-4.5rem)] flex-col items-center justify-center gap-7 py-20 text-center sm:py-24">
-      <p className="flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
-        <span aria-hidden="true" className="h-px w-6 bg-gold" />
-        {t.eyebrow}
-        <span aria-hidden="true" className="h-px w-6 bg-gold" />
-      </p>
-      <h1
-        id="home-title"
-        className="display-headline hero-headline text-balance text-text"
-      >
+    <Container className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-7 py-20 text-center sm:py-24">
+      <p className="text-caption font-semibold uppercase tracking-[0.2em] text-accent">{t.eyebrow}</p>
+      <h1 id="home-title" className="display-headline hero-headline text-balance text-text">
         {t.titleBefore}
         <i className="text-accent">{t.titleAccent}</i>
         {t.titleAfter}
       </h1>
       <p className="max-w-[44ch] text-body-lg text-text-muted">{t.lede}</p>
-      <div className="mt-3 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
-        <Button href={href("courses")} arrow prominent>
-          {t.primaryCta}
-        </Button>
-        <Button href={href("quiz")} variant="secondary">
-          {t.secondaryCta}
-        </Button>
-      </div>
-
-      <a
-        href="#paths-title"
-        className="mt-10 inline-flex items-center gap-2 rounded-full px-3 py-2 sm:mt-14 text-caption font-semibold uppercase tracking-[0.2em] text-text-muted transition-colors hover:text-accent focus-visible:text-accent"
-      >
-        {t.scrollCue}
-        <span aria-hidden="true">↓</span>
-      </a>
+      {/* One clear action: straight to the course selector below. The quiz stays in the navigation and under the courses. */}
+      <Button href="#learning-paths" arrow prominent className="mt-3">
+        {t.primaryCta}
+      </Button>
     </Container>
   </section>
 );
@@ -75,9 +55,9 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
 /* 2 · Learning paths (with the free alphabet course) ----------------- */
 
 export const LearningPathsSection = ({ t, href, base }: { t: Home["paths"]; href: Href; base: string }) => (
-  <section data-story="paths" aria-labelledby="paths-title" className="py-24 lg:py-32">
-    <Container className="flex flex-col gap-10 lg:gap-14">
-      <SectionIntro id="paths-title" index={1} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
+  <section id="learning-paths" tabIndex={-1} data-story="paths" aria-labelledby="paths-title" className="py-24 outline-none lg:py-32">
+    <Container className="flex flex-col gap-8 lg:gap-10">
+      <SectionIntro id="paths-title" index={1} eyebrow={t.eyebrow} title={t.title} />
       <CourseShowcase t={t} base={base} />
       {/* Level quiz: optional help for choosing a course, set apart as its own quiet glass panel. */}
       <aside aria-labelledby="quiz-cta-title" data-atmo-glass className="glass-panel quiz-cta rounded-(--radius-card)">

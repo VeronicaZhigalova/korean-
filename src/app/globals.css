@@ -361,7 +361,7 @@
 
 /* Smooth anchor scrolling; wheel, touch and keys stay native, so the Hangul universe reads the true position. */
 html {
-  scroll-padding-top: 5.5rem;
+  scroll-padding-top: 6rem;
 }
 @media (prefers-reduced-motion: no-preference) {
   html {
@@ -1375,4 +1375,71 @@ html[data-refract] .lg-prominent.lg-primary {
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   color: var(--text);
+}
+
+/* ------------------------------------------------------------------
+   Header (8 Oct 2026): quiet editorial navigation. A thin translucent
+   veil in the page's own colour, one hairline beneath, sans labels at a
+   reading size, a short underline for the current page.
+   ------------------------------------------------------------------ */
+.site-header {
+  background: color-mix(in srgb, var(--bg) 62%, transparent);
+  -webkit-backdrop-filter: blur(14px) saturate(130%);
+  backdrop-filter: blur(14px) saturate(130%);
+  border-bottom: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+}
+@media (prefers-reduced-transparency: reduce) {
+  .site-header {
+    background: var(--bg);
+  }
+}
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: color 0.15s ease-out;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.625rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+.nav-link:hover::after {
+  opacity: 0.3;
+}
+.nav-link[aria-current="page"]::after {
+  background: var(--gold);
+  opacity: 1;
+}
+.nav-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+/* Account, theme and menu buttons share one thin outline. */
+.header-control {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--text);
+  transition:
+    border-color 0.15s ease-out,
+    background-color 0.15s ease-out;
+}
+.header-control:hover {
+  border-color: var(--border-strong);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+.header-control:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+/* Solid: a backdrop filter cannot nest inside the header's own. */
+.header-panel {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
 }
