@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif, Noto_Serif_KR } from "next/font/google";
+import { Cinzel, Inter, Instrument_Serif, Noto_Serif_KR } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
 import { glassRefractScript, themeInitScript } from "@/components/layout/head-scripts";
@@ -16,6 +16,15 @@ const instrumentSerif = Instrument_Serif({
   style: ["normal", "italic"],
   variable: "--font-instrument-serif",
   display: "swap",
+});
+
+// Cinzel (SIL Open Font License) is a headline proposal awaiting approval (8 Oct 2026):
+// one variable file, not preloaded, so nothing downloads unless a headline uses it.
+const cinzel = Cinzel({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-cinzel",
+  display: "swap",
+  preload: false,
 });
 
 // Korean glyphs load by unicode range only when a page uses them.
@@ -51,8 +60,9 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     <html
       lang={locale}
       data-theme="dark"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={`${inter.variable} ${instrumentSerif.variable} ${notoSerifKr.variable}`}
+      className={`${inter.variable} ${instrumentSerif.variable} ${notoSerifKr.variable} ${cinzel.variable}`}
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeInitScript + glassRefractScript }} />

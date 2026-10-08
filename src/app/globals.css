@@ -330,10 +330,98 @@
   background: var(--bg);
 }
 
-.surface-raised::before {
+/*
+  One continuous atmosphere down the Home (8 Oct 2026): each section starts on
+  the colour the previous one ended on, so there are no bands or edges. Near
+  black in the hero, the deepest navy around the courses, quieter again below,
+  with a trace of warm gold. Static, so it reads the same with motion off.
+  A faint grain keeps the long gradients from banding.
+*/
+:root,
+[data-theme="dark"] {
+  --atm-0: #020409;
+  --atm-1: #050a17;
+  --atm-2: #0a1834;
+  --atm-3: #07112a;
+  --atm-4: #060b16;
+  --atm-deep: rgb(20 44 92 / 0.32);
+  --atm-warm: rgb(217 180 106 / 0.055);
+  --atm-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="light"] {
+  /* Warm ivory, soft blue-grey depth around the courses, champagne light. */
+  --atm-0: #fcfaf5;
+  --atm-1: #f7f3ea;
+  --atm-2: #e8ecf1;
+  --atm-3: #f0eee8;
+  --atm-4: #f8f7f3;
+  --atm-deep: rgb(150 170 198 / 0.22);
+  --atm-warm: rgb(222 192 136 / 0.16);
+  --atm-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-story="hero"]::before {
   background:
-    linear-gradient(to bottom, var(--bg) 0, transparent 7rem),
-    var(--bg-raised);
+    var(--atm-grain),
+    radial-gradient(90% 55% at 50% 108%, var(--atm-deep), transparent 70%),
+    radial-gradient(60% 40% at 50% 0%, var(--atm-warm), transparent 70%),
+    linear-gradient(to bottom, var(--atm-0), var(--atm-1));
+}
+[data-story="paths"]::before {
+  background:
+    var(--atm-grain),
+    radial-gradient(75% 45% at 50% 52%, var(--atm-warm), transparent 72%),
+    radial-gradient(110% 60% at 50% 40%, var(--atm-deep), transparent 75%),
+    linear-gradient(to bottom, var(--atm-1), var(--atm-2) 38%, var(--atm-2) 66%, var(--atm-3));
+}
+[data-story="services"]::before {
+  background:
+    var(--atm-grain),
+    radial-gradient(60% 50% at 88% 30%, var(--atm-deep), transparent 72%),
+    linear-gradient(to bottom, var(--atm-3), color-mix(in srgb, var(--atm-3) 70%, var(--atm-2)) 50%, var(--atm-3));
+}
+[data-story="teacher"]::before {
+  background:
+    var(--atm-grain),
+    radial-gradient(55% 45% at 12% 78%, var(--atm-warm), transparent 72%),
+    linear-gradient(to bottom, var(--atm-3), var(--atm-4));
+}
+
+/* Smooth anchor scrolling; wheel, touch and keys stay native, so the Hangul universe reads the true position. */
+html {
+  scroll-padding-top: 5.5rem;
+}
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/*
+  Headline proposal (8 Oct 2026, awaiting approval): Cinzel for the hero and
+  section headlines only. Off unless <html data-headline="cinzel">; the
+  approved Instrument Serif stays the default.
+*/
+:root {
+  --font-headline-cinzel: var(--font-cinzel), "Cinzel", Georgia, serif;
+}
+[data-headline="cinzel"] .display-headline {
+  font-family: var(--font-headline-cinzel);
+  font-weight: 500;
+  font-kerning: normal;
+}
+[data-headline="cinzel"] .display-headline i {
+  font-style: normal;
+}
+[data-headline="cinzel"] .hero-headline {
+  max-width: 19ch;
+  font-size: clamp(2.05rem, 4.7vw, 3.85rem);
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+}
+[data-headline="cinzel"] .section-headline {
+  font-size: clamp(1.8rem, 3.3vw, 2.85rem);
+  line-height: 1.14;
+  letter-spacing: 0.015em;
 }
 
 /* ------------------------------------------------------------------
@@ -795,8 +883,10 @@ html[data-refract] .lg-prominent.lg-primary {
   height: 38%;
   translate: -50% 0;
   border-radius: 50%;
-  background: radial-gradient(closest-side, rgb(217 180 106 / 0.22), rgb(217 180 106 / 0.06) 60%, transparent);
-  filter: blur(6px);
+  background:
+    radial-gradient(closest-side, rgb(242 214 160 / 0.16), transparent 70%) 30% 50% / 70% 100% no-repeat,
+    radial-gradient(closest-side, rgb(140 176 230 / 0.1), transparent 70%) 72% 50% / 70% 100% no-repeat;
+  filter: blur(8px);
   pointer-events: none;
 }
 [data-theme="light"] .course-stage-light {
@@ -837,43 +927,110 @@ html[data-refract] .lg-prominent.lg-primary {
 .course-object-face {
   position: relative;
   display: block;
-  color: transparent;
-  /* Unlit neighbours fall back into navy shade; the selected one carries the light. */
-  filter: brightness(calc(0.5 + var(--lit) * 0.5)) saturate(calc(0.6 + var(--lit) * 0.4));
+  /* Thick strokes give the glass body to refract and bevel; Noto Serif KR 800 is already on the page. */
+  font-family: var(--font-korean);
+  font-weight: 800;
+  font-size: 0.86em;
+  letter-spacing: -0.02em;
+  /* Unlit neighbours step back but stay legible glass. */
+  filter: brightness(calc(0.72 + var(--lit) * 0.28)) saturate(calc(0.75 + var(--lit) * 0.25));
 }
-.course-object-face::before,
-.course-object-face::after {
+/* Contact shadow and caustic: light gathered by the glass falls on the floor beneath it. */
+.course-object-face::before {
   content: attr(data-text);
   position: absolute;
   inset: 0;
+  color: transparent;
+  text-shadow:
+    0 0.05em 0.06em var(--glass-shadow),
+    0.02em 0.11em 0.14em var(--glass-caustic);
 }
-.course-object-face::after {
-  background: var(--hu-gold-face);
+.course-object-glass {
+  position: relative;
+  display: block;
+  color: transparent;
+  /* The clear body: faint refracted bands of the page, champagne and cool blue. Highlights slide as the piece turns. */
+  background-image: var(--glass-body);
+  background-size: 260% 100%;
+  background-position: calc(50% + var(--turn, 0) * 22%) 0;
   -webkit-background-clip: text;
   background-clip: text;
+  filter: url(#course-glass);
+  transition: background-position 0.9s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.course-object-face::before {
-  color: var(--hu-gold-side);
-  text-shadow:
-    0.004em 0.006em 0 var(--hu-gold-side),
-    0.008em 0.012em 0 var(--hu-gold-side),
-    0.012em 0.018em 0 var(--hu-gold-side-deep),
-    0.016em 0.024em 0 var(--hu-gold-side-deep),
-    0.04em 0.08em 0.1em var(--hu-shadow);
+.course-object[data-tone="ivory"] .course-object-glass {
+  background-image: var(--glass-body-cool);
 }
-.course-object[data-tone="ivory"] .course-object-face::after {
-  background: var(--hu-ivory-face);
-  -webkit-background-clip: text;
-  background-clip: text;
+[data-theme="light"] .course-object-glass {
+  filter: url(#course-glass-light);
 }
-.course-object[data-tone="ivory"] .course-object-face::before {
-  color: var(--hu-ivory-side);
-  text-shadow:
-    0.004em 0.006em 0 var(--hu-ivory-side),
-    0.008em 0.012em 0 var(--hu-ivory-side),
-    0.012em 0.018em 0 var(--hu-ivory-side-deep),
-    0.016em 0.024em 0 var(--hu-ivory-side-deep),
-    0.04em 0.08em 0.1em var(--hu-shadow);
+/* Phones, coarse pointers and reduced transparency: a lighter glass drawn with a stroke instead of lighting. */
+@media (max-width: 639px), (pointer: coarse), (prefers-reduced-transparency: reduce) {
+  .course-object-glass,
+  [data-theme="light"] .course-object-glass {
+    filter: none;
+    -webkit-text-stroke: 0.012em var(--glass-stroke);
+  }
+}
+
+:root,
+[data-theme="dark"] {
+  --glass-body: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0.3) 0%,
+    rgb(214 226 246 / 0.12) 16%,
+    rgb(12 22 44 / 0.06) 30%,
+    rgb(242 214 160 / 0.28) 42%,
+    rgb(255 248 232 / 0.5) 47%,
+    rgb(120 156 214 / 0.12) 56%,
+    rgb(10 20 40 / 0.05) 70%,
+    rgb(232 204 150 / 0.22) 84%,
+    rgb(255 255 255 / 0.3) 100%
+  );
+  --glass-body-cool: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0.3) 0%,
+    rgb(150 182 232 / 0.16) 18%,
+    rgb(12 22 44 / 0.06) 32%,
+    rgb(200 220 250 / 0.3) 44%,
+    rgb(255 255 255 / 0.5) 48%,
+    rgb(232 204 150 / 0.16) 58%,
+    rgb(10 20 40 / 0.05) 72%,
+    rgb(150 182 232 / 0.2) 86%,
+    rgb(255 255 255 / 0.3) 100%
+  );
+  --glass-shadow: rgb(0 2 8 / 0.55);
+  --glass-caustic: rgb(217 180 106 / 0.16);
+  --glass-stroke: rgb(236 242 255 / 0.6);
+}
+[data-theme="light"] {
+  --glass-body: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0.7) 0%,
+    rgb(150 168 196 / 0.22) 16%,
+    rgb(255 255 255 / 0.2) 30%,
+    rgb(214 176 112 / 0.32) 42%,
+    rgb(255 255 255 / 0.85) 47%,
+    rgb(110 138 180 / 0.26) 56%,
+    rgb(255 255 255 / 0.2) 70%,
+    rgb(200 160 96 / 0.26) 84%,
+    rgb(255 255 255 / 0.7) 100%
+  );
+  --glass-body-cool: linear-gradient(
+    100deg,
+    rgb(255 255 255 / 0.7) 0%,
+    rgb(110 140 190 / 0.28) 18%,
+    rgb(255 255 255 / 0.2) 32%,
+    rgb(140 168 210 / 0.32) 44%,
+    rgb(255 255 255 / 0.85) 48%,
+    rgb(200 160 96 / 0.2) 58%,
+    rgb(255 255 255 / 0.2) 72%,
+    rgb(110 140 190 / 0.26) 86%,
+    rgb(255 255 255 / 0.7) 100%
+  );
+  --glass-shadow: rgb(20 35 58 / 0.22);
+  --glass-caustic: rgb(196 150 70 / 0.22);
+  --glass-stroke: rgb(29 53 86 / 0.45);
 }
 
 /* Position track with direct selection. */

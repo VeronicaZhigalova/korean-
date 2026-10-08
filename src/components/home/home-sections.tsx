@@ -21,7 +21,7 @@ const SectionIntro = ({ id, index, eyebrow, title, lede }: { id: string; index: 
   <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
     <div className="flex flex-col gap-4 lg:col-span-7">
       <Eyebrow index={index}>{eyebrow}</Eyebrow>
-      <h2 id={id} className="font-display text-[clamp(2.4rem,4.6vw,4rem)] leading-[1.02] tracking-[-0.015em] text-text">
+      <h2 id={id} className="display-headline section-headline font-display text-[clamp(2.4rem,4.6vw,4rem)] leading-[1.02] tracking-[-0.015em] text-text">
         {title}
       </h2>
     </div>
@@ -45,7 +45,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
       </p>
       <h1
         id="home-title"
-        className="max-w-[16ch] text-balance font-display text-[clamp(2.85rem,6.6vw,5.25rem)] leading-[0.98] tracking-[-0.02em] text-text"
+        className="display-headline hero-headline max-w-[16ch] text-balance font-display text-[clamp(2.85rem,6.6vw,5.25rem)] leading-[0.98] tracking-[-0.02em] text-text"
       >
         {t.titleBefore}
         <i className="text-accent">{t.titleAccent}</i>

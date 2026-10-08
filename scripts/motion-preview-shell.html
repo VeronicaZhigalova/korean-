@@ -27,6 +27,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
   <div class="name">SAID IN KOREAN<small>Home motion preview</small></div>
   <div class="group"><span>View</span><div class="seg" id="dev"><button data-w="1440" data-h="900">Desktop</button><button data-w="834" data-h="1112">Tablet</button><button data-w="390" data-h="844">Mobile</button></div></div>
   <div class="group"><span>Theme</span><div class="seg" id="theme"><button data-v="dark">Dark</button><button data-v="light">Light</button></div></div>
+  <div class="group"><span>Headline</span><div class="seg" id="headline"><button data-v="current">A · Current</button><button data-v="cinzel">B · Cinzel</button></div></div>
   <div class="group"><span>Motion</span><div class="seg" id="motion"><button data-v="full">Full</button><button data-v="reduced">Reduced</button></div></div>
   <button class="plain" id="replay" type="button">Replay from top</button>
 </div>
@@ -34,7 +35,7 @@ button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
 <p class="meta" id="meta"></p>
 <script>
 /*DOCS*/
-var state={w:1440,h:900,theme:'dark',motion:'full'};
+var state={w:1440,h:900,theme:'dark',motion:'full',headline:'current'};window.__headline='current';
 var frame=document.getElementById('frame'),device=document.getElementById('device'),stage=document.getElementById('stage');
 window.__theme=state.theme;
 function press(id,match){document.querySelectorAll('#'+id+' button').forEach(function(b){b.setAttribute('aria-pressed',match(b)?'true':'false')})}
@@ -43,9 +44,10 @@ function load(){window.__theme=state.theme;frame.srcdoc=DOCS[state.motion]}
 document.getElementById('dev').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;state.w=+b.dataset.w;state.h=+b.dataset.h;press('dev',function(x){return x===b});fit();load()});
 document.getElementById('theme').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;state.theme=b.dataset.v;window.__theme=state.theme;press('theme',function(x){return x===b});frame.contentWindow&&frame.contentWindow.postMessage({theme:state.theme},'*')});
 document.getElementById('motion').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;state.motion=b.dataset.v;press('motion',function(x){return x===b});load()});
+document.getElementById('headline').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;state.headline=b.dataset.v;window.__headline=state.headline;press('headline',function(x){return x===b});frame.contentWindow&&frame.contentWindow.postMessage({headline:state.headline},'*')});
 document.getElementById('replay').addEventListener('click',load);
 addEventListener('message',function(e){if(e.data&&e.data.themeChanged){state.theme=e.data.themeChanged;window.__theme=state.theme;press('theme',function(x){return x.dataset.v===state.theme})}});
-press('dev',function(x){return x.dataset.w==='1440'});press('theme',function(x){return x.dataset.v==='dark'});press('motion',function(x){return x.dataset.v==='full'});
+press('dev',function(x){return x.dataset.w==='1440'});press('theme',function(x){return x.dataset.v==='dark'});press('motion',function(x){return x.dataset.v==='full'});press('headline',function(x){return x.dataset.v==='current'});
 if(innerWidth<700){state.w=390;state.h=844;press('dev',function(x){return x.dataset.w==='390'})}
 addEventListener('resize',fit);fit();load();
 </script>

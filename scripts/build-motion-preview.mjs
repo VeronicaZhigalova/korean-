@@ -57,12 +57,15 @@ const htmlAttrs = page.match(/<html([^>]*)>/)[1].replace(/data-theme="[^"]*"/, '
 
 const fonts =
   '<link rel="preconnect" href="https://fonts.googleapis.com">' +
-  '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Serif+KR:wght@600;800&display=swap">';
+  '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&family=Noto+Serif+KR:wght@600;800&family=Cinzel:wght@500&display=swap">';
 
 const shims = String.raw`
 var RM = !!window.__RM, root = document.documentElement;
 try { var t = parent.__theme; if (t) root.dataset.theme = t; } catch (e) {}
-window.addEventListener('message', function (e) { if (e.data && e.data.theme) { root.dataset.theme = e.data.theme; syncToggle(); } });
+/* Headline comparison: A keeps the approved serif, B shows the Cinzel proposal. */
+function setHeadline(h) { if (h === 'cinzel') root.dataset.headline = 'cinzel'; else delete root.dataset.headline; }
+try { setHeadline(parent.__headline); } catch (e) {}
+window.addEventListener('message', function (e) { if (e.data && e.data.theme) { root.dataset.theme = e.data.theme; syncToggle(); } if (e.data && e.data.headline) setHeadline(e.data.headline); });
 
 /* Reduced motion: the preview frame answers the media query the way the OS would. */
 if (RM) { var mm = window.matchMedia.bind(window); window.matchMedia = function (q) { if (q.indexOf('prefers-reduced-motion') > -1) { return { matches: q.indexOf('reduce') > -1, media: q, addEventListener: function () {}, removeEventListener: function () {} }; } return mm(q); }; }

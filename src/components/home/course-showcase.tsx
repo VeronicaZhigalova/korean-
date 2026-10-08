@@ -37,6 +37,46 @@ const placement = (offset: number, spread: number) => {
   return { x, y, scale, rotate, opacity, light, z: Math.round(10 - distance * 3) };
 };
 
+/*
+  Sculptural glass for the level objects (8 Oct 2026). The letter's own shape is
+  turned into a soft height map and lit twice: a cool white key light from the
+  upper left and a champagne return from the right, plus a thin bright rim.
+  The fill underneath stays mostly clear, so the page shows through it.
+*/
+const glassFilter = (id: string, rim: string, rimOpacity: number, warm: string) => (
+  <filter id={id} x="-8%" y="-8%" width="116%" height="124%" colorInterpolationFilters="sRGB">
+    <feComponentTransfer in="SourceAlpha" result="shape">
+      <feFuncA type="linear" slope="40" />
+    </feComponentTransfer>
+    <feGaussianBlur in="shape" stdDeviation="5" result="height" />
+    <feSpecularLighting in="height" surfaceScale="9" specularConstant="1.25" specularExponent="38" lightingColor="#ffffff" result="key">
+      <feDistantLight azimuth="235" elevation="40" />
+    </feSpecularLighting>
+    <feComposite in="key" in2="shape" operator="in" result="keyLight" />
+    <feSpecularLighting in="height" surfaceScale="9" specularConstant="0.85" specularExponent="16" lightingColor={warm} result="return">
+      <feDistantLight azimuth="20" elevation="28" />
+    </feSpecularLighting>
+    <feComposite in="return" in2="shape" operator="in" result="returnLight" />
+    <feMorphology in="shape" operator="erode" radius="2" result="inner" />
+    <feComposite in="shape" in2="inner" operator="out" result="edge" />
+    <feFlood floodColor={rim} floodOpacity={rimOpacity} />
+    <feComposite in2="edge" operator="in" result="rim" />
+    <feMerge>
+      <feMergeNode in="SourceGraphic" />
+      <feMergeNode in="rim" />
+      <feMergeNode in="returnLight" />
+      <feMergeNode in="keyLight" />
+    </feMerge>
+  </filter>
+);
+
+const GlassFilters = () => (
+  <svg aria-hidden="true" width="0" height="0" className="absolute">
+    {glassFilter("course-glass", "#eef4ff", 0.6, "#f2d29a")}
+    {glassFilter("course-glass-light", "#1d3556", 0.42, "#d6a95a")}
+  </svg>
+);
+
 type StageProps = {
   items: { key: string; label: string; kicker?: string }[];
   selected: number;
@@ -60,7 +100,7 @@ const LevelStage = ({ items, selected, onSelect, tone }: StageProps) => {
     return () => observer.disconnect();
   }, []);
 
-  const spread = Math.max(110, Math.min(width * 0.3, 250));
+  const spread = Math.max(120, Math.min(width * 0.34, 290));
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
     drag.current = { x: event.clientX, y: event.clientY, id: event.pointerId, horizontal: null, moved: false };
@@ -125,6 +165,7 @@ const LevelStage = ({ items, selected, onSelect, tone }: StageProps) => {
               opacity: p.opacity,
               zIndex: p.z,
               ["--lit" as string]: p.light.toFixed(3),
+              ["--turn" as string]: Math.max(-1.5, Math.min(1.5, index - position)).toFixed(3),
             }}
             onClick={() => {
               if (drag.current?.moved) return;
@@ -133,7 +174,7 @@ const LevelStage = ({ items, selected, onSelect, tone }: StageProps) => {
           >
             {item.kicker ? <span className="course-object-kicker">{item.kicker}</span> : null}
             <span className="course-object-face" data-text={item.label}>
-              {item.label}
+              <span className="course-object-glass">{item.label}</span>
             </span>
           </div>
         );
@@ -301,6 +342,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
 
   return (
     <div data-course-showcase className="course-showcase flex flex-col gap-8 lg:gap-10">
+      <GlassFilters />
       <div role="tablist" aria-label={t.pathsLabel} className="course-tabs">
         {PATHS.map((key, index) => (
           <button
