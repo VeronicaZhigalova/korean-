@@ -197,32 +197,6 @@
    Motion primitives (DESIGN.md §5)
    ------------------------------------------------------------------ */
 
-/* Section reveal: hidden only after RevealObserver has hydrated. */
-html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
-  opacity: 0;
-  transform: translate3d(0, 28px, 0);
-}
-
-[data-reveal] {
-  transition:
-    opacity 0.7s var(--ease-out-soft) var(--reveal-delay, 0ms),
-    transform 0.7s var(--ease-out-soft) var(--reveal-delay, 0ms);
-}
-
-@keyframes enter-up {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 22px, 0);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .enter-up {
-    animation: enter-up 0.75s var(--ease-out-soft) both;
-    animation-delay: var(--enter-delay, 0ms);
-  }
-}
-
 /* ------------------------------------------------------------------
    Hangul story (HangulStory / hangul-story.ts drives transform,
    opacity and the light level of each character)
@@ -243,11 +217,13 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   --hs-g3: rgb(204 168 104);
   --hs-g4: rgb(222 190 128);
   --hs-g5: rgb(242 221 170);
-  --hs-ring: rgb(150 174 212 / 0.1);
   /* The light behind the sculpture: warm white at the heart, a breath of gold, then navy dark. */
   --hs-glow-core: rgb(247 240 226 / 0.09);
   --hs-glow-warm: rgb(217 180 106 / 0.035);
-  --hs-glow-edge: rgb(38 58 94 / 0.07);
+  --hs-glow-edge: rgb(38 58 94 / 0.045);
+  --hs-syllable-glow: rgb(242 221 170 / 0.18);
+  --hs-spark-core: rgb(255 240 212 / 0.5);
+  --hs-spark-warm: rgb(217 180 106 / 0.12);
 }
 
 [data-theme="light"] {
@@ -264,10 +240,12 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   --hs-g3: rgb(172 138 78);
   --hs-g4: rgb(152 116 58);
   --hs-g5: rgb(138 90 28);
-  --hs-ring: rgb(33 58 91 / 0.08);
   --hs-glow-core: rgb(255 253 248 / 0.42);
   --hs-glow-warm: rgb(217 180 106 / 0.05);
   --hs-glow-edge: rgb(255 253 248 / 0.14);
+  --hs-syllable-glow: rgb(255 253 248 / 0.7);
+  --hs-spark-core: rgb(255 250 238 / 0.85);
+  --hs-spark-warm: rgb(217 180 106 / 0.14);
 }
 
 /* Sits under every section's content and above the section tones. */
@@ -318,8 +296,21 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   content: attr(data-g);
 }
 
-/* The core is set heavier so it reads as one solid mass. */
-.hs-core {
+/* The seed is set heavier so it reads as one luminous mass. */
+.hs-seed {
+  font-weight: 800;
+}
+
+/* 한 and 글 once the jamo have fused, and 말 at the end: the clearest forms, ivory with a soft light. */
+.hs-glyph.hs-syllable[data-l],
+.hs-glyph.hs-word[data-l] {
+  font-weight: 700;
+  color: var(--hs-l5);
+  text-shadow: 0 0 0.6em var(--hs-syllable-glow);
+}
+
+/* 말 matches the weight of the teacher's character it covers. */
+.hs-glyph.hs-word[data-l] {
   font-weight: 800;
 }
 
@@ -336,11 +327,6 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 .hs-glyph[data-z="3"] {
   z-index: 3;
-}
-
-/* The five syllable anchors: the largest characters, set lighter so their size does not shout. */
-.hs-anchor {
-  font-weight: 500;
 }
 
 .hs-glyph[data-l="0"] {
@@ -361,22 +347,22 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 .hs-glyph[data-l="5"] {
   color: var(--hs-l5);
 }
-.hs-gold[data-l="0"] {
+.hs-glyph[data-warm][data-l="0"] {
   color: var(--hs-g0);
 }
-.hs-gold[data-l="1"] {
+.hs-glyph[data-warm][data-l="1"] {
   color: var(--hs-g1);
 }
-.hs-gold[data-l="2"] {
+.hs-glyph[data-warm][data-l="2"] {
   color: var(--hs-g2);
 }
-.hs-gold[data-l="3"] {
+.hs-glyph[data-warm][data-l="3"] {
   color: var(--hs-g3);
 }
-.hs-gold[data-l="4"] {
+.hs-glyph[data-warm][data-l="4"] {
   color: var(--hs-g4);
 }
-.hs-gold[data-l="5"] {
+.hs-glyph[data-warm][data-l="5"] {
   color: var(--hs-g5);
 }
 
@@ -402,23 +388,24 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
   will-change: transform, opacity;
 }
 
-/* One hairline arc behind the sculpture, fading in and out around its lit side. */
-.hs-rings {
+/* The seed's own light: a small warm core, brightest before the bloom. */
+.hs-spark {
   position: absolute;
   left: 0;
   top: 0;
-  width: 1200px;
-  height: 1200px;
+  width: 600px;
+  height: 600px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    var(--hs-spark-core) 0,
+    color-mix(in srgb, var(--hs-spark-core) 45%, transparent) 14%,
+    var(--hs-spark-warm) 30%,
+    color-mix(in srgb, var(--hs-spark-warm) 30%, transparent) 50%,
+    transparent 70%
+  );
   opacity: 0;
   will-change: transform, opacity;
-}
-
-.hs-rings span {
-  position: absolute;
-  inset: 8%;
-  border: 1px solid var(--hs-ring);
-  border-radius: 50%;
-  mask-image: conic-gradient(from 230deg, transparent 0, #000 18%, #000 30%, transparent 52%, transparent 100%);
 }
 
 /* Reduced motion: still compositions in the page, not pinned. */
@@ -544,29 +531,6 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* Card light follows the pointer; purely decorative and only on hover devices. */
-.card-lit {
-  position: relative;
-  isolation: isolate;
-}
-.card-lit::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgb(242 221 170 / 0.09), transparent 70%);
-}
-@media (hover: hover) {
-  .card-lit:hover::before {
-    opacity: 1;
-  }
-}
-[data-theme="light"] .card-lit::before {
-  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgb(27 54 87 / 0.06), transparent 70%);
-}
-
 /* ------------------------------------------------------------------
    Liquid glass buttons (material after the Jiro liquid-glass reference)
    .lg            shared material: translucent fill, top sheen, thin luminous

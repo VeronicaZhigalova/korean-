@@ -7,8 +7,7 @@
 
   The motion code is not rewritten for the preview: hangul-story.ts and
   glass-light.ts are transpiled from src and run against the same markup.
-  Only small shims replace React for the theme toggle, mobile menu and
-  section reveal.
+  Only small shims replace React for the theme toggle and mobile menu.
 
   Usage:
     npm run build && npx next start -p 3200
@@ -86,19 +85,6 @@ document.querySelectorAll('button[aria-expanded]').forEach(function (btn) {
   document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true') { set(false); btn.focus(); } });
 });
 
-/* RevealObserver (mirrors src/components/motion/reveal-observer.tsx) */
-(function () {
-  if (RM) return;
-  var targets = Array.prototype.slice.call(document.body.querySelectorAll('[data-reveal]'));
-  var vh = innerHeight;
-  var pending = targets.filter(function (el) { if (el.getBoundingClientRect().top < vh * 0.92) { el.classList.add('is-revealed'); return false; } return true; });
-  root.dataset.reveal = 'on';
-  var io = new IntersectionObserver(function (entries) { entries.forEach(function (en) { if (en.isIntersecting) { en.target.classList.add('is-revealed'); io.unobserve(en.target); } }); }, { rootMargin: '0px 0px -6% 0px', threshold: 0 });
-  pending.forEach(function (el) { io.observe(el); });
-})();
-
-/* CardLight (mirrors src/components/motion/card-light.tsx) */
-if (matchMedia('(hover: hover) and (pointer: fine)').matches) document.addEventListener('pointermove', function (ev) { var c = ev.target.closest && ev.target.closest('.card-lit'); if (!c) return; var r = c.getBoundingClientRect(); c.style.setProperty('--mx', (ev.clientX - r.left) + 'px'); c.style.setProperty('--my', (ev.clientY - r.top) + 'px'); }, { passive: true });
 `;
 
 const boot = `
