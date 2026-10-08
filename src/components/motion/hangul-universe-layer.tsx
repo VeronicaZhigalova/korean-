@@ -10,9 +10,9 @@ import { startHangulUniverse, type UniverseOptions } from "./hangul-universe";
   it after hydration.
 */
 
-type Props = UniverseOptions & { children: ReactNode };
+type Props = UniverseOptions & { children: ReactNode; className?: string };
 
-export const HangulUniverse = ({ scenes, children }: Props) => {
+export const HangulUniverse = ({ scenes, children, className }: Props) => {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,7 +23,7 @@ export const HangulUniverse = ({ scenes, children }: Props) => {
   }, [scenes]);
 
   return (
-    <div className="relative isolate">
+    <div className={className ? `relative isolate ${className}` : "relative isolate"}>
       {children}
       <div
         ref={ref}

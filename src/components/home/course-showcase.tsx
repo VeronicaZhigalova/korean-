@@ -273,8 +273,14 @@ const JamoStage = ({ label, replay, run, onReplay }: { label: string; replay: st
       <span lang="ko" aria-hidden="true" className="jamo jamo-h">ㅎ</span>
       <span lang="ko" aria-hidden="true" className="jamo jamo-a">ㅏ</span>
       <span lang="ko" aria-hidden="true" className="jamo jamo-n">ㄴ</span>
-      <span lang="ko" aria-hidden="true" className="jamo-syllable" data-text="한">
-        한
+      {/* ㅎ ㅏ ㄴ become 한, then 글 joins: 한글 in the same glass as the level objects. */}
+      <span lang="ko" aria-hidden="true" className="jamo-word">
+        <span className="course-object-face jamo-syllable" data-text="한">
+          <span className="course-object-glass">한</span>
+        </span>
+        <span className="course-object-face jamo-syllable is-late" data-text="글">
+          <span className="course-object-glass">글</span>
+        </span>
       </span>
     </div>
     <p lang="ko" className="text-caption tracking-[0.14em] text-text-muted" aria-hidden="true">

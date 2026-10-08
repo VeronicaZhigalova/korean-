@@ -62,10 +62,7 @@ const fonts =
 const shims = String.raw`
 var RM = !!window.__RM, root = document.documentElement;
 try { var t = parent.__theme; if (t) root.dataset.theme = t; } catch (e) {}
-/* Headline comparison: A keeps the approved serif, B shows the Cinzel proposal. */
-function setHeadline(h) { if (h === 'cinzel') root.dataset.headline = 'cinzel'; else delete root.dataset.headline; }
-try { setHeadline(parent.__headline); } catch (e) {}
-window.addEventListener('message', function (e) { if (e.data && e.data.theme) { root.dataset.theme = e.data.theme; syncToggle(); } if (e.data && e.data.headline) setHeadline(e.data.headline); });
+window.addEventListener('message', function (e) { if (e.data && e.data.theme) { root.dataset.theme = e.data.theme; syncToggle(); } });
 
 /* Reduced motion: the preview frame answers the media query the way the OS would. */
 if (RM) { var mm = window.matchMedia.bind(window); window.matchMedia = function (q) { if (q.indexOf('prefers-reduced-motion') > -1) { return { matches: q.indexOf('reduce') > -1, media: q, addEventListener: function () {}, removeEventListener: function () {} }; } return mm(q); }; }

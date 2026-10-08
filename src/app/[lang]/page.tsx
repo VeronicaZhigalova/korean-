@@ -14,9 +14,10 @@ export default async function HomePage() {
   const [locale, t] = await Promise.all([getLocale(), getDictionary()]);
   const href = (segment: string) => `/${locale}/${segment}`;
 
+  // One continuous background (.home-canvas) runs behind every section.
   // Hangul characters fill the space around the hero and settle at the bottom of each section.
   return (
-    <HangulUniverse scenes={homeUniverse.scenes}>
+    <HangulUniverse scenes={homeUniverse.scenes} className="home-canvas">
       <HeroSection t={t.home} href={href} />
       <LearningPathsSection t={t.home.paths} href={href} base={`/${locale}`} />
       <ServicesSection t={t.home.services} href={href} />

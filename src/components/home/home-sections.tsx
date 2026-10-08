@@ -21,7 +21,7 @@ const SectionIntro = ({ id, index, eyebrow, title, lede }: { id: string; index: 
   <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
     <div className="flex flex-col gap-4 lg:col-span-7">
       <Eyebrow index={index}>{eyebrow}</Eyebrow>
-      <h2 id={id} className="display-headline section-headline font-display text-[clamp(2.4rem,4.6vw,4rem)] leading-[1.02] tracking-[-0.015em] text-text">
+      <h2 id={id} className="display-headline section-headline text-text">
         {title}
       </h2>
     </div>
@@ -35,7 +35,7 @@ const cardBase = "glass-panel flex h-full min-w-0 flex-col rounded-(--radius-car
 /* 1 · Hero ------------------------------------------------------------ */
 
 export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
-  <section data-story="hero" aria-labelledby="home-title" className="surface-night overflow-hidden">
+  <section data-story="hero" aria-labelledby="home-title" className="overflow-hidden">
     {/* Centred so the Hangul universe can surround the copy on every side (8 Oct 2026). */}
     <Container className="flex min-h-[calc(100svh-4.5rem)] flex-col items-center justify-center gap-7 py-20 text-center sm:py-24">
       <p className="flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
@@ -45,7 +45,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
       </p>
       <h1
         id="home-title"
-        className="display-headline hero-headline max-w-[16ch] text-balance font-display text-[clamp(2.85rem,6.6vw,5.25rem)] leading-[0.98] tracking-[-0.02em] text-text"
+        className="display-headline hero-headline text-balance text-text"
       >
         {t.titleBefore}
         <i className="text-accent">{t.titleAccent}</i>
@@ -75,17 +75,26 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
 /* 2 · Learning paths (with the free alphabet course) ----------------- */
 
 export const LearningPathsSection = ({ t, href, base }: { t: Home["paths"]; href: Href; base: string }) => (
-  <section data-story="paths" aria-labelledby="paths-title" className="surface-raised py-24 lg:py-32">
+  <section data-story="paths" aria-labelledby="paths-title" className="py-24 lg:py-32">
     <Container className="flex flex-col gap-10 lg:gap-14">
       <SectionIntro id="paths-title" index={1} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
       <CourseShowcase t={t} base={base} />
-      <p className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-6 text-body-sm text-text-muted">
-        <span className="font-semibold text-text">{t.quiz.title}</span>
-        <span>{t.quiz.body}</span>
-        <Button href={href("quiz")} variant="ghost" size="sm" arrow className="px-0 text-accent hover:text-accent">
-          {t.quiz.cta}
-        </Button>
-      </p>
+      {/* Level quiz: optional help for choosing a course, set apart as its own quiet glass panel. */}
+      <aside aria-labelledby="quiz-cta-title" data-atmo-glass className="glass-panel quiz-cta rounded-(--radius-card)">
+        <div className="flex max-w-[40rem] flex-col gap-3">
+          <p className="text-caption font-semibold uppercase tracking-[0.18em] text-accent">{t.quiz.eyebrow}</p>
+          <h3 id="quiz-cta-title" className="display-headline text-[clamp(1.6rem,2.6vw,2.15rem)] leading-tight text-text">
+            {t.quiz.title}
+          </h3>
+          <p className="text-body text-text">{t.quiz.body}</p>
+        </div>
+        <div className="flex flex-col items-stretch gap-2.5 sm:items-center">
+          <Button href={href("quiz")} arrow>
+            {t.quiz.cta}
+          </Button>
+          <p className="text-caption text-text-muted sm:text-center">{t.quiz.note}</p>
+        </div>
+      </aside>
     </Container>
   </section>
 );
@@ -93,7 +102,7 @@ export const LearningPathsSection = ({ t, href, base }: { t: Home["paths"]; href
 /* 3 · Coaching and Speaking Chat -------------------------------------- */
 
 export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }) => (
-  <section data-story="services" aria-labelledby="services-title" className="surface-raised py-24 lg:py-32">
+  <section data-story="services" aria-labelledby="services-title" className="py-24 lg:py-32">
     <Container className="flex flex-col gap-12 lg:gap-16">
       <SectionIntro id="services-title" index={2} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
 
@@ -103,7 +112,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
             <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
             <header className="flex flex-col items-start gap-3">
               <StatusPill tone="warning">{t.coaching.requirement}</StatusPill>
-              <h3 className="font-display text-[2.25rem] leading-tight text-text">{t.coaching.title}</h3>
+              <h3 className="display-headline text-[1.75rem] leading-tight text-text">{t.coaching.title}</h3>
               <p className="text-body-sm text-text-muted">{t.coaching.body}</p>
             </header>
             <dl className="flex flex-col border-t border-border">
@@ -125,7 +134,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
             <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-info to-transparent" />
             <header className="flex flex-col items-start gap-3">
               <StatusPill tone="success">{t.chat.requirement}</StatusPill>
-              <h3 className="font-display text-[2.25rem] leading-tight text-text">{t.chat.title}</h3>
+              <h3 className="display-headline text-[1.75rem] leading-tight text-text">{t.chat.title}</h3>
               <p className="text-body-sm text-text-muted">{t.chat.body}</p>
             </header>
             <dl className="flex flex-col border-t border-border">
@@ -148,7 +157,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
 
 // Every slot is ready for approved content; nothing about the teacher is invented.
 export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) => (
-  <section data-story="teacher" aria-labelledby="teacher-title" className="surface-night overflow-hidden py-24 lg:py-32">
+  <section data-story="teacher" aria-labelledby="teacher-title" className="overflow-hidden py-24 lg:py-32">
     <Container className="grid items-center gap-10 md:grid-cols-12 lg:gap-14">
       <figure className="md:col-span-5">
         <div
@@ -169,7 +178,7 @@ export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) 
 
       <div className="flex flex-col items-start gap-6 md:col-span-7 lg:col-span-6 lg:col-start-7">
         <Eyebrow index={3}>{t.eyebrow}</Eyebrow>
-        <h2 id="teacher-title" className="font-display text-[clamp(2.4rem,4.6vw,4rem)] leading-[1.02] tracking-[-0.015em] text-text">
+        <h2 id="teacher-title" className="display-headline section-headline text-text">
           {t.title}
         </h2>
         <StatusPill tone="warning">{t.status}</StatusPill>

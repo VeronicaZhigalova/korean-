@@ -18,13 +18,12 @@ const instrumentSerif = Instrument_Serif({
   display: "swap",
 });
 
-// Cinzel (SIL Open Font License) is a headline proposal awaiting approval (8 Oct 2026):
-// one variable file, not preloaded, so nothing downloads unless a headline uses it.
+// Cinzel (SIL Open Font License) for the hero and section headlines: one variable
+// file, preloaded because the hero headline is the first thing on the page.
 const cinzel = Cinzel({
   subsets: ["latin", "latin-ext"],
   variable: "--font-cinzel",
   display: "swap",
-  preload: false,
 });
 
 // Korean glyphs load by unicode range only when a page uses them.

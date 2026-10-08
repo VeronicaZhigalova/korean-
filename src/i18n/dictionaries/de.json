@@ -82,7 +82,7 @@
         "how": "Kostenlos für alle. Kein Konto und keine Zahlung: Der Kurs öffnet sich direkt.",
         "cta": "Kostenlosen Alphabet-Kurs starten",
         "continue": "Danach weiter mit Allgemeinem Koreanisch",
-        "visualLabel": "ㅎ + ㅏ + ㄴ = 한",
+        "visualLabel": "ㅎ + ㅏ + ㄴ = 한 · 한글",
         "replay": "한 noch einmal bilden",
         "kind": "Alphabet"
       },
@@ -178,9 +178,11 @@
         ]
       },
       "quiz": {
-        "title": "Unsicher, wo du anfangen sollst?",
-        "body": "Prüfe Lesen, Hören und Schreiben über sechs Niveaus.",
-        "cta": "Optionalen Test starten"
+        "eyebrow": "Unsicher, welches Niveau du hast?",
+        "title": "Finde deinen Einstieg.",
+        "body": "Mach den optionalen Einstufungstest. Er prüft Lesen, Hören und Schreiben über sechs Niveaus und schlägt vor, wo du beginnen könntest.",
+        "cta": "Zum Einstufungstest",
+        "note": "Optional · Unverbindlich"
       }
     },
     "services": {

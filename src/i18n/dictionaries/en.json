@@ -82,7 +82,7 @@
         "how": "Free for everyone. No account and no payment: the course opens directly.",
         "cta": "Start free alphabet course",
         "continue": "Then continue with General Korean",
-        "visualLabel": "ㅎ + ㅏ + ㄴ = 한",
+        "visualLabel": "ㅎ + ㅏ + ㄴ = 한 · 한글",
         "replay": "Form 한 again",
         "kind": "Alphabet"
       },
@@ -178,9 +178,11 @@
         ]
       },
       "quiz": {
-        "title": "Not sure where to start?",
-        "body": "Check reading, listening and writing across six levels.",
-        "cta": "Start optional quiz"
+        "eyebrow": "Not sure about your level?",
+        "title": "Find your starting point.",
+        "body": "Take the optional Korean level quiz. It checks reading, listening and writing across six levels and suggests where you could begin.",
+        "cta": "Take the level quiz",
+        "note": "Optional · No commitment"
       }
     },
     "services": {

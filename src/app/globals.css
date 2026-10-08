@@ -315,75 +315,48 @@
    Home surfaces
    ------------------------------------------------------------------ */
 
-/* Section tones paint on a layer beneath the Hangul universe (HangulUniverse). */
-.surface-night,
-.surface-raised {
-  position: relative;
-}
-
-.surface-night::before,
-.surface-raised::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -2;
-  background: var(--bg);
-}
-
 /*
-  One continuous atmosphere down the Home (8 Oct 2026): each section starts on
-  the colour the previous one ended on, so there are no bands or edges. Near
-  black in the hero, the deepest navy around the courses, quieter again below,
-  with a trace of warm gold. Static, so it reads the same with motion off.
-  A faint grain keeps the long gradients from banding.
+  One continuous canvas behind the whole Home (8 Oct 2026, after review).
+  The sections themselves are transparent: an earlier version painted a
+  gradient per section, and the hero ended on a navy glow that the next
+  section did not start with, which showed as a horizontal seam. Now a single
+  background spans hero to teacher, near black at the top, deepest navy around
+  the courses, and settles into the footer colour. Static, so it reads the same
+  with motion off. A faint grain keeps the long gradient from banding.
 */
 :root,
 [data-theme="dark"] {
   --atm-0: #020409;
-  --atm-1: #050a17;
-  --atm-2: #0a1834;
-  --atm-3: #07112a;
-  --atm-4: #060b16;
-  --atm-deep: rgb(20 44 92 / 0.32);
-  --atm-warm: rgb(217 180 106 / 0.055);
+  --atm-1: #050b19;
+  --atm-2: #091730;
+  --atm-3: #08132a;
+  --atm-end: var(--bg-raised);
+  --atm-warm: rgb(217 180 106 / 0.045);
   --atm-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 [data-theme="light"] {
-  /* Warm ivory, soft blue-grey depth around the courses, champagne light. */
+  /* Warm ivory, a soft blue-grey depth around the courses, champagne light. */
   --atm-0: #fcfaf5;
   --atm-1: #f7f3ea;
-  --atm-2: #e8ecf1;
-  --atm-3: #f0eee8;
-  --atm-4: #f8f7f3;
-  --atm-deep: rgb(150 170 198 / 0.22);
-  --atm-warm: rgb(222 192 136 / 0.16);
+  --atm-2: #eceef0;
+  --atm-3: #f2efe8;
+  --atm-end: var(--bg-raised);
+  --atm-warm: rgb(222 192 136 / 0.14);
   --atm-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
-[data-story="hero"]::before {
+.home-canvas {
   background:
     var(--atm-grain),
-    radial-gradient(90% 55% at 50% 108%, var(--atm-deep), transparent 70%),
-    radial-gradient(60% 40% at 50% 0%, var(--atm-warm), transparent 70%),
-    linear-gradient(to bottom, var(--atm-0), var(--atm-1));
-}
-[data-story="paths"]::before {
-  background:
-    var(--atm-grain),
-    radial-gradient(75% 45% at 50% 52%, var(--atm-warm), transparent 72%),
-    radial-gradient(110% 60% at 50% 40%, var(--atm-deep), transparent 75%),
-    linear-gradient(to bottom, var(--atm-1), var(--atm-2) 38%, var(--atm-2) 66%, var(--atm-3));
-}
-[data-story="services"]::before {
-  background:
-    var(--atm-grain),
-    radial-gradient(60% 50% at 88% 30%, var(--atm-deep), transparent 72%),
-    linear-gradient(to bottom, var(--atm-3), color-mix(in srgb, var(--atm-3) 70%, var(--atm-2)) 50%, var(--atm-3));
-}
-[data-story="teacher"]::before {
-  background:
-    var(--atm-grain),
-    radial-gradient(55% 45% at 12% 78%, var(--atm-warm), transparent 72%),
-    linear-gradient(to bottom, var(--atm-3), var(--atm-4));
+    radial-gradient(70% 900px at 50% 0, var(--atm-warm), transparent),
+    linear-gradient(
+      to bottom,
+      var(--atm-0) 0,
+      var(--atm-1) 18%,
+      var(--atm-2) 34%,
+      var(--atm-2) 52%,
+      var(--atm-3) 76%,
+      var(--atm-end) 100%
+    );
 }
 
 /* Smooth anchor scrolling; wheel, touch and keys stay native, so the Hangul universe reads the true position. */
@@ -397,28 +370,27 @@ html {
 }
 
 /*
-  Headline proposal (8 Oct 2026, awaiting approval): Cinzel for the hero and
-  section headlines only. Off unless <html data-headline="cinzel">; the
-  approved Instrument Serif stays the default.
+  Headlines in Cinzel (8 Oct 2026): the hero and the section headlines only.
+  Body, navigation, buttons, course details and forms stay in Inter; Korean
+  text keeps Noto Serif KR. Cinzel is an inscriptional capital face, wider
+  than the previous serif, so it runs smaller, with open tracking and a little
+  more leading. It has no italic: the accent word is set apart by colour.
 */
-:root {
-  --font-headline-cinzel: var(--font-cinzel), "Cinzel", Georgia, serif;
-}
-[data-headline="cinzel"] .display-headline {
-  font-family: var(--font-headline-cinzel);
+.display-headline {
+  font-family: var(--font-cinzel), "Cinzel", Georgia, serif;
   font-weight: 500;
   font-kerning: normal;
 }
-[data-headline="cinzel"] .display-headline i {
+.display-headline i {
   font-style: normal;
 }
-[data-headline="cinzel"] .hero-headline {
+.hero-headline {
   max-width: 19ch;
   font-size: clamp(2.05rem, 4.7vw, 3.85rem);
   line-height: 1.12;
   letter-spacing: 0.01em;
 }
-[data-headline="cinzel"] .section-headline {
+.section-headline {
   font-size: clamp(1.8rem, 3.3vw, 2.85rem);
   line-height: 1.14;
   letter-spacing: 0.015em;
@@ -1134,8 +1106,7 @@ html[data-refract] .lg-prominent.lg-primary {
   width: 100%;
   mask-image: none;
 }
-.jamo,
-.jamo-syllable {
+.jamo {
   position: absolute;
   left: 50%;
   top: 50%;
@@ -1160,44 +1131,36 @@ html[data-refract] .lg-prominent.lg-primary {
 }
 @keyframes jamo-h {
   from { transform: translateX(-2.6em); }
-  70% { transform: translate(-0.3em, -0.32em) scale(0.62); opacity: 1; }
-  to { transform: translate(-0.3em, -0.32em) scale(0.62); opacity: 0; }
+  70% { transform: translate(-1.2em, -0.32em) scale(0.62); opacity: 1; }
+  to { transform: translate(-1.2em, -0.32em) scale(0.62); opacity: 0; }
 }
 @keyframes jamo-a {
   from { transform: translateX(0); }
-  70% { transform: translate(0.32em, -0.32em) scale(0.62); opacity: 1; }
-  to { transform: translate(0.32em, -0.32em) scale(0.62); opacity: 0; }
+  70% { transform: translate(-0.58em, -0.32em) scale(0.62); opacity: 1; }
+  to { transform: translate(-0.58em, -0.32em) scale(0.62); opacity: 0; }
 }
 @keyframes jamo-n {
   from { transform: translateX(2.6em); }
-  70% { transform: translate(0, 0.36em) scale(0.62); opacity: 1; }
-  to { transform: translate(0, 0.36em) scale(0.62); opacity: 0; }
+  70% { transform: translate(-0.9em, 0.36em) scale(0.62); opacity: 1; }
+  to { transform: translate(-0.9em, 0.36em) scale(0.62); opacity: 0; }
+}
+/* 한글 in glass: the same material as the level objects, fully lit. */
+.jamo-word {
+  --lit: 1;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  translate: -50% -50%;
+  font-size: clamp(7rem, 15vw, 10.5rem);
+  line-height: 1;
+  white-space: nowrap;
 }
 .jamo-syllable {
-  font-size: clamp(7rem, 15vw, 10.5rem);
-  translate: -50% -50%;
-  color: transparent;
   animation: jamo-form 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.45s both;
 }
-.jamo-syllable::after {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  background: var(--hu-gold-face);
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-.jamo-syllable::before {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  color: var(--hu-gold-side);
-  text-shadow:
-    0.004em 0.006em 0 var(--hu-gold-side),
-    0.008em 0.012em 0 var(--hu-gold-side),
-    0.012em 0.018em 0 var(--hu-gold-side-deep),
-    0.016em 0.024em 0 var(--hu-gold-side-deep),
-    0.04em 0.08em 0.1em var(--hu-shadow);
+.jamo-syllable.is-late {
+  animation: jamo-form 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.9s both;
 }
 @keyframes jamo-form {
   from { opacity: 0; scale: 0.9; }
@@ -1240,5 +1203,26 @@ html[data-refract] .lg-prominent.lg-primary {
   .course-arrow {
     width: 2.5rem;
     height: 2.75rem;
+  }
+}
+
+/* Level quiz call to action under the learning paths: text left, button right; stacked on phones. */
+.quiz-cta {
+  display: grid;
+  gap: 1.75rem;
+  padding: 1.75rem;
+  border-color: color-mix(in srgb, var(--gold) 38%, transparent);
+}
+@media (min-width: 640px) {
+  .quiz-cta {
+    padding: 2.25rem 2.5rem;
+  }
+}
+@media (min-width: 900px) {
+  .quiz-cta {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 3rem;
+    padding: 2.5rem 3rem;
   }
 }
