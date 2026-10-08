@@ -295,11 +295,11 @@ const JamoStage = ({ label, replay, run, onReplay }: { label: string; replay: st
 type Detail = { label: string; value: string; muted?: boolean };
 
 const DetailList = ({ items }: { items: Detail[] }) => (
-  <dl className="flex flex-col border-t border-border">
+  <dl className="flex flex-col gap-4">
     {items.map((item) => (
-      <div key={item.label} className="grid gap-1 border-b border-border py-3.5 sm:grid-cols-[8.5rem_1fr] sm:gap-4">
-        <dt className="text-caption font-semibold uppercase tracking-[0.14em] text-text-muted">{item.label}</dt>
-        <dd className={cn("text-body-sm", item.muted ? "italic text-text-muted" : "text-text")}>{item.value}</dd>
+      <div key={item.label} className="flex flex-col gap-1">
+        <dt className="course-label">{item.label}</dt>
+        <dd className={cn("text-body-sm", item.muted ? "text-text-muted" : "text-text")}>{item.value}</dd>
       </div>
     ))}
   </dl>
@@ -367,7 +367,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
             onKeyDown={(event) => onTabKey(event, index)}
           >
             <span>{tabLabel[key]}</span>
-            {key === "free" ? <span className="course-free-badge">{t.free.badge}</span> : null}
+            {key === "free" ? <span className="course-tab-note">{t.free.badge}</span> : null}
           </button>
         ))}
       </div>
@@ -426,45 +426,45 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
 
         <div className="min-w-0 lg:col-span-5">
           {path === "free" ? (
-            <article key="free" data-atmo-glass className="glass-panel glass-lead course-info flex flex-col gap-5 rounded-(--radius-card) p-6 sm:p-8">
-              <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{t.free.kicker}</p>
+            <article key="free" data-atmo-glass className="glass-panel glass-lead course-info flex flex-col gap-7 rounded-(--radius-card) p-6 sm:p-9">
               <header className="flex flex-col gap-3">
-                <h3 className="course-swap font-display text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.05] text-text">{t.free.title}</h3>
-                <p className="flex items-center gap-3">
-                  <span className="course-free-badge is-large">{t.free.badge}</span>
-                  <span className="font-display text-3xl leading-none tabular-nums text-text">{t.free.price}</span>
-                  <span className="text-body-sm text-text-muted">{t.free.name}</span>
-                </p>
+                <p className="course-eyebrow">{t.free.kicker}</p>
+                <h3 className="course-swap display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">{t.free.title}</h3>
+                <p className="text-body text-text">{t.free.body}</p>
               </header>
-              <p className="text-body text-text-muted">{t.free.body}</p>
-              <div className="flex flex-col gap-2">
-                <p className="text-caption font-semibold uppercase tracking-[0.14em] text-text-muted">{t.free.includesLabel}</p>
-                <ol className="flex flex-col border-t border-border">
-                  {t.free.includes.map((step, index) => (
-                    <li key={step} className="flex items-center gap-4 border-b border-border py-2.5">
-                      <span className="w-5 font-display text-lg tabular-nums text-accent">{index + 1}</span>
-                      <span className="text-body-sm text-text">{step}</span>
+              <div className="flex flex-col gap-3">
+                <p className="course-label">{t.free.includesLabel}</p>
+                <ul className="flex flex-wrap gap-2">
+                  {t.free.includes.map((step) => (
+                    <li key={step} className="course-item">
+                      {step}
                     </li>
                   ))}
-                </ol>
+                </ul>
                 <p className="text-caption text-text-muted">{t.free.materials}</p>
               </div>
-              <p className="text-body-sm text-text">{t.free.how}</p>
-              <div className="flex flex-wrap items-center gap-3">
-                <Button href={`${base}/courses/alphabet`} arrow>
-                  {t.free.cta}
-                </Button>
-                <button type="button" className="course-link" onClick={() => choosePath("general")}>
-                  {t.free.continue} →
-                </button>
-              </div>
+              <footer className="flex flex-col gap-4 border-t border-border pt-6">
+                <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+                  <span className="price-figure">{t.free.price}</span>
+                  <span className="course-free-badge">{t.free.badge}</span>
+                  <span className="text-body-sm text-text-muted">{t.free.how}</span>
+                </p>
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+                  <Button href={`${base}/courses/alphabet`} arrow>
+                    {t.free.cta}
+                  </Button>
+                  <button type="button" className="course-link" onClick={() => choosePath("general")}>
+                    {t.free.continue} <span aria-hidden="true">→</span>
+                  </button>
+                </div>
+              </footer>
             </article>
           ) : path === "general" ? (
-            <article key="general" data-atmo-glass className="glass-panel course-info flex flex-col gap-5 rounded-(--radius-card) p-6 sm:p-8">
+            <article key="general" data-atmo-glass className="glass-panel course-info flex flex-col gap-6 rounded-(--radius-card) p-6 sm:p-9">
               <header key={general.code} className="course-swap flex flex-col gap-1.5">
-                <p className="text-caption font-semibold uppercase tracking-[0.16em] text-accent">{t.general.title}</p>
-                <h3 className="font-display text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.05] text-text">
-                  {general.code} <span className="text-text-muted">· {general.name}</span>
+                <p className="course-eyebrow">{t.general.title}</p>
+                <h3 className="display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">
+                  {general.code} <span className="text-text-muted">{general.name}</span>
                 </h3>
               </header>
               <div key={`d-${general.code}`} className="course-swap is-late">
@@ -477,10 +477,10 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                   ]}
                 />
               </div>
-              <footer className="flex flex-wrap items-end justify-between gap-4">
+              <footer className="flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6">
                 <div className="flex flex-col gap-1">
-                  <span className="text-caption font-semibold uppercase tracking-[0.14em] text-text-muted">{t.priceLabel}</span>
-                  <span key={general.price + general.code} className="course-swap font-display text-4xl leading-none tabular-nums text-text">
+                  <span className="course-label">{t.priceLabel}</span>
+                  <span key={general.price + general.code} className="course-swap price-figure">
                     {general.price}
                   </span>
                 </div>
@@ -490,10 +490,10 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               </footer>
             </article>
           ) : (
-            <article key="topik" data-atmo-glass className="glass-panel course-info flex flex-col gap-5 rounded-(--radius-card) p-6 sm:p-8">
+            <article key="topik" data-atmo-glass className="glass-panel course-info flex flex-col gap-6 rounded-(--radius-card) p-6 sm:p-9">
               <header key={topik.code} className="course-swap flex flex-col gap-1.5">
-                <p className="text-caption font-semibold uppercase tracking-[0.16em] text-info">{t.topik.title}</p>
-                <h3 className="font-display text-[clamp(2rem,3.2vw,2.75rem)] leading-[1.05] text-text">
+                <p className="course-eyebrow">{t.topik.title}</p>
+                <h3 className="display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">
                   {t.topik.courseWord} {topik.code}
                 </h3>
               </header>
@@ -508,10 +508,10 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                 />
               </div>
               <p className="text-caption text-text-muted">{t.topik.note}</p>
-              <footer className="flex flex-wrap items-end justify-between gap-4">
+              <footer className="flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6">
                 <div className="flex flex-col gap-1">
-                  <span className="text-caption font-semibold uppercase tracking-[0.14em] text-text-muted">{t.priceLabel}</span>
-                  <span key={topik.price + topik.code} className="course-swap font-display text-4xl leading-none tabular-nums text-text">
+                  <span className="course-label">{t.priceLabel}</span>
+                  <span key={topik.price + topik.code} className="course-swap price-figure">
                     {topik.price}
                   </span>
                 </div>

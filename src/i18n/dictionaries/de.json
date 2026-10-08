@@ -40,19 +40,19 @@
     "copyright": "© {year} SAID IN KOREAN"
   },
   "home": {
-    "eyebrow": "Koreanisch online lernen",
-    "title": "Koreanisch lernen mit Online-Kursen",
+    "eyebrow": "Koreanisch, online unterrichtet",
+    "title": "Koreanisch lernen, Schritt für Schritt",
     "titleBefore": "",
     "titleAccent": "Koreanisch",
-    "titleAfter": " lernen mit Online-Kursen",
-    "lede": "Wähle Allgemeines Koreanisch oder TOPIK-Vorbereitung. Neue Lernende können mit einem kostenlosen Alphabet-Kurs beginnen; der Einstufungstest ist optional.",
+    "titleAfter": " lernen, Schritt für Schritt",
+    "lede": "Kurse von den ersten Hangul-Buchstaben bis zu fortgeschrittenem Koreanisch und TOPIK-Vorbereitung. Beginne mit dem Alphabet oder finde mit dem optionalen Einstufungstest deinen Einstieg.",
     "primaryCta": "Kurse entdecken",
-    "secondaryCta": "Einstufungstest machen",
-    "scrollCue": "Scrollen und entdecken",
+    "secondaryCta": "Zum Einstufungstest",
+    "scrollCue": "Scrollen",
     "paths": {
       "eyebrow": "Lernwege",
       "title": "Finde deinen Weg ins Koreanische",
-      "lede": "Beginne mit dem Alphabet, baue dein Koreanisch Schritt für Schritt auf oder bereite dich auf TOPIK vor. Entdecke den Weg, der zu deinem Ziel passt.",
+      "lede": "Ob du deine ersten koreanischen Buchstaben lernst oder dich auf TOPIK vorbereitest: Hier findest du deinen Anfang.",
       "pathsLabel": "Lernwege",
       "previous": "Zurück",
       "next": "Weiter",
@@ -61,27 +61,27 @@
       "lessonsLabel": "Lektionen",
       "accessLabel": "Zugang",
       "priceLabel": "Preis",
-      "forLabel": "Für wen",
-      "aboutLabel": "Über den Kurs",
-      "pending": "Kursbeschreibung wartet auf die Freigabe der Lehrkraft.",
+      "forLabel": "Für",
+      "aboutLabel": "Der Kurs",
+      "pending": "Eine Beschreibung folgt, sobald die Lehrkraft sie freigegeben hat.",
       "free": {
-        "tab": "Kostenlos starten",
+        "tab": "Das Alphabet",
         "badge": "Kostenlos",
-        "kicker": "Neu im Koreanischen? Starte hier.",
-        "title": "Lerne Hangul kostenlos.",
+        "kicker": "Dein erster Schritt",
+        "title": "Beginne mit Hangul",
         "name": "Kostenloser Alphabet-Kurs",
         "price": "0 €",
-        "body": "Lerne, das koreanische Alphabet zu lesen und zu schreiben. Der empfohlene erste Schritt für absolute Anfänger, vor Allgemeinem Koreanisch A1.",
-        "includesLabel": "Was der Kurs enthält",
+        "body": "Lerne das koreanische Alphabet kennen, sieh, wie seine Buchstaben zusammenfinden, und lies deine ersten koreanischen Wörter.",
+        "includesLabel": "Im Kurs",
         "includes": [
           "Videolektion",
           "Alphabet-Übersicht",
           "Übungsquiz"
         ],
-        "materials": "Materialien auf Englisch und Deutsch werden vorbereitet.",
-        "how": "Kostenlos für alle. Kein Konto und keine Zahlung: Der Kurs öffnet sich direkt.",
-        "cta": "Kostenlosen Alphabet-Kurs starten",
-        "continue": "Danach weiter mit Allgemeinem Koreanisch",
+        "materials": "Materialien auf Englisch und Deutsch sind in Vorbereitung.",
+        "how": "Keine Zahlung nötig.",
+        "cta": "Den kostenlosen Kurs ansehen",
+        "continue": "Weiter zu Allgemeines Koreanisch",
         "visualLabel": "ㅎ + ㅏ + ㄴ = 한 · 한글",
         "replay": "한 noch einmal bilden",
         "kind": "Alphabet"
@@ -179,19 +179,19 @@
       },
       "quiz": {
         "eyebrow": "Unsicher, welches Niveau du hast?",
-        "title": "Finde deinen Einstieg.",
-        "body": "Mach den optionalen Einstufungstest. Er prüft Lesen, Hören und Schreiben über sechs Niveaus und schlägt vor, wo du beginnen könntest.",
+        "title": "Finde deinen Einstieg",
+        "body": "Ein optionaler Test zu Lesen, Hören und Schreiben über sechs Niveaus. Dein Ergebnis schlägt vor, wo du beginnen könntest.",
         "cta": "Zum Einstufungstest",
         "note": "Optional · Unverbindlich"
       }
     },
     "services": {
       "eyebrow": "Mit der Lehrkraft",
-      "title": "Lerne mit der Lehrkraft",
-      "lede": "Coaching begleitet einen aktiven gekauften Kurs. Speaking Chat ist ein separates Gesprächsangebot.",
+      "title": "Zeit mit der Lehrkraft",
+      "lede": "Coaching-Stunden begleiten einen Kurs, den du gerade belegst. Speaking Chat steht allen offen, die Konversation üben möchten.",
       "coaching": {
         "title": "Kurs-Coaching",
-        "body": "Für einen aktiven gekauften Kurs. Separat erhältlich.",
+        "body": "Stunden zu einem gekauften Kurs, auf den du noch Zugriff hast.",
         "options": [
           {
             "label": "3 × 50 Min.",
@@ -203,30 +203,30 @@
           }
         ],
         "requirement": "Aktiver Kurs erforderlich",
-        "cta": "Coaching ansehen"
+        "cta": "Zum Coaching"
       },
       "chat": {
         "title": "Speaking Chat",
-        "body": "Ein 50-minütiges, lockeres Gespräch. Kein Kurskauf nötig.",
+        "body": "Ein lockeres Gespräch von 50 Minuten. Kein Kurs nötig.",
         "duration": "50 Min.",
         "price": "25 €",
         "requirement": "Kein Kurs nötig",
-        "cta": "Speaking Chat ansehen"
+        "cta": "Zum Speaking Chat"
       }
     },
     "teacher": {
-      "eyebrow": "Über mich",
+      "eyebrow": "Deine Lehrkraft",
       "title": "Lerne die Lehrkraft kennen",
-      "status": "Wartet auf freigegebene Inhalte",
+      "status": "Profil in Vorbereitung",
       "photo": "Foto der Lehrkraft wartet auf Freigabe",
       "nameLabel": "Name",
-      "name": "Schreibweise wartet auf Freigabe",
+      "name": "Wird noch bestätigt",
       "bioLabel": "Biografie",
-      "bio": "Eine kurze geprüfte Biografie erscheint hier nach der Freigabe.",
+      "bio": "Eine kurze Biografie erscheint hier nach der Freigabe.",
       "qualificationsLabel": "Qualifikationen",
-      "qualifications": "Geprüfte Qualifikationen erscheinen hier nach der Freigabe.",
-      "contact": "Die Kontakt-E-Mail wird gerade eingerichtet.",
-      "cta": "Profil der Lehrkraft ansehen",
+      "qualifications": "Qualifikationen erscheinen hier, sobald sie geprüft sind.",
+      "contact": "Eine Kontakt-E-Mail folgt in Kürze.",
+      "cta": "Profil der Lehrkraft",
       "glyphCaption": "말 · mal · Worte, Sprache"
     }
   },

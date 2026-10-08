@@ -1104,6 +1104,7 @@ html[data-refract] .lg-prominent.lg-primary {
 .jamo-stage {
   display: block;
   width: 100%;
+  height: clamp(16rem, 34vw, 27rem);
   mask-image: none;
 }
 .jamo {
@@ -1116,7 +1117,7 @@ html[data-refract] .lg-prominent.lg-primary {
   color: var(--text);
 }
 .jamo {
-  font-size: clamp(3.25rem, 7vw, 5rem);
+  font-size: clamp(3.5rem, 8vw, 6.4rem);
   translate: -50% -50%;
 }
 /* Full shorthands: the CSS minifier drops timing longhands that have no name beside them. */
@@ -1152,7 +1153,7 @@ html[data-refract] .lg-prominent.lg-primary {
   top: 50%;
   display: flex;
   translate: -50% -50%;
-  font-size: clamp(7rem, 15vw, 10.5rem);
+  font-size: clamp(7.5rem, 17vw, 13.5rem);
   line-height: 1;
   white-space: nowrap;
 }
@@ -1225,4 +1226,153 @@ html[data-refract] .lg-prominent.lg-primary {
     gap: 3rem;
     padding: 2.5rem 3rem;
   }
+}
+
+/* ------------------------------------------------------------------
+   Editorial interface details on the Home (8 Oct 2026, after review).
+   Quieter controls: less rounding, thin rules, champagne kept for the
+   main actions, minimal hover and press, clear focus. Scoped to the Home
+   so other pages keep their approved styles until reviewed.
+   ------------------------------------------------------------------ */
+
+.home-canvas .lg {
+  border-radius: 0.5rem;
+  letter-spacing: 0.01em;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 var(--lg-edge);
+}
+.home-canvas .lg::after {
+  content: none;
+}
+.home-canvas .lg-primary {
+  --lg-spec-max: 0.18;
+}
+.home-canvas .lg-secondary {
+  --lg-fill: transparent;
+  --lg-sheen: transparent;
+  --lg-rim: var(--border-strong);
+  --lg-edge: transparent;
+}
+@media (hover: hover) {
+  .home-canvas .lg:hover {
+    box-shadow: inset 0 1px 0 var(--lg-edge);
+  }
+  .home-canvas .lg-secondary:hover {
+    --lg-fill: color-mix(in srgb, var(--text) 5%, transparent);
+    --lg-rim: color-mix(in srgb, var(--gold) 55%, var(--border-strong));
+  }
+}
+.home-canvas .lg:active {
+  scale: 0.985;
+  box-shadow: inset 0 1px 2px var(--lg-press);
+}
+.home-canvas .lg:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* Path tabs: a thin segmented rule, the selected tab outlined in champagne. */
+.home-canvas .course-tabs {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 0.625rem;
+  background: transparent;
+}
+.home-canvas .course-tab {
+  min-height: 2.75rem;
+  padding: 0 1.25rem;
+  border-radius: 0.4375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.home-canvas .course-tab[aria-selected="true"] {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 50%, transparent);
+}
+.course-tab-note {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+/* "Free" as a quiet champagne label rather than a gold pill. */
+.home-canvas .course-free-badge {
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  background: none;
+  color: var(--accent-text);
+}
+.home-canvas .course-chip {
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+.home-canvas .course-chip[aria-pressed="true"] {
+  background: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 50%, transparent);
+}
+.home-canvas .course-track {
+  border-radius: 0.5rem;
+  background: none;
+}
+.home-canvas .course-track-dot {
+  box-shadow: none;
+}
+.home-canvas .course-arrow {
+  border-radius: 0.5rem;
+  border-color: var(--border);
+}
+.home-canvas .course-arrow:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+.home-canvas .course-link {
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--text) 30%, transparent);
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.2s var(--ease-out-soft);
+}
+.home-canvas .course-link:hover {
+  text-decoration-color: var(--gold);
+}
+.home-canvas .course-tab:focus-visible,
+.home-canvas .course-chip:focus-visible,
+.home-canvas .course-arrow:focus-visible,
+.home-canvas .course-link:focus-visible {
+  outline-offset: 3px;
+}
+
+/* Small labels and figures in the course panels: one sans system. */
+.course-eyebrow {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.course-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.course-item {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  font-size: var(--text-body-sm);
+  color: var(--text);
+}
+.price-figure {
+  font-family: var(--font-sans);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
 }

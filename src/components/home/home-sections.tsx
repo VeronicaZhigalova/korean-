@@ -109,17 +109,16 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
       <div className="grid gap-5 md:grid-cols-2">
         <div>
           <article data-atmo-glass className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
-            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-gold to-transparent" />
-            <header className="flex flex-col items-start gap-3">
+                        <header className="flex flex-col items-start gap-3">
               <StatusPill tone="warning">{t.coaching.requirement}</StatusPill>
               <h3 className="display-headline text-[1.75rem] leading-tight text-text">{t.coaching.title}</h3>
               <p className="text-body-sm text-text-muted">{t.coaching.body}</p>
             </header>
-            <dl className="flex flex-col border-t border-border">
+            <dl className="flex flex-col border-t border-border pt-3">
               {t.coaching.options.map((option) => (
-                <div key={option.label} className="flex items-baseline justify-between gap-4 border-b border-border py-4">
+                <div key={option.label} className="flex items-baseline justify-between gap-4 py-2.5">
                   <dt className="text-body text-text">{option.label}</dt>
-                  <dd className="font-display text-3xl leading-none tabular-nums text-text">{option.price}</dd>
+                  <dd className="price-figure">{option.price}</dd>
                 </div>
               ))}
             </dl>
@@ -131,16 +130,15 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
 
         <div>
           <article data-atmo-glass className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
-            <span aria-hidden="true" className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-info to-transparent" />
-            <header className="flex flex-col items-start gap-3">
+                        <header className="flex flex-col items-start gap-3">
               <StatusPill tone="success">{t.chat.requirement}</StatusPill>
               <h3 className="display-headline text-[1.75rem] leading-tight text-text">{t.chat.title}</h3>
               <p className="text-body-sm text-text-muted">{t.chat.body}</p>
             </header>
-            <dl className="flex flex-col border-t border-border">
-              <div className="flex items-baseline justify-between gap-4 border-b border-border py-4">
+            <dl className="flex flex-col border-t border-border pt-3">
+              <div className="flex items-baseline justify-between gap-4 py-2.5">
                 <dt className="text-body text-text">{t.chat.duration}</dt>
-                <dd className="font-display text-3xl leading-none tabular-nums text-text">{t.chat.price}</dd>
+                <dd className="price-figure">{t.chat.price}</dd>
               </div>
             </dl>
             <Button href={href("speaking-chat")} variant="secondary" arrow className="mt-auto self-start">
@@ -188,9 +186,9 @@ export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) 
             [t.bioLabel, t.bio],
             [t.qualificationsLabel, t.qualifications],
           ].map(([label, value]) => (
-            <div key={label} className="grid gap-1 border-b border-border py-4 sm:grid-cols-[9rem_1fr] sm:gap-6">
+            <div key={label} className="grid gap-1 py-3 sm:grid-cols-[9rem_1fr] sm:gap-6">
               <dt className="text-caption font-semibold uppercase tracking-[0.14em] text-text-muted">{label}</dt>
-              <dd className="text-body-sm italic text-text-muted">{value}</dd>
+              <dd className="text-body-sm text-text-muted">{value}</dd>
             </div>
           ))}
         </dl>

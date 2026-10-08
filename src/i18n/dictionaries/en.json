@@ -40,19 +40,19 @@
     "copyright": "© {year} SAID IN KOREAN"
   },
   "home": {
-    "eyebrow": "Learn Korean online",
-    "title": "Learn Korean with online courses",
+    "eyebrow": "Korean, taught online",
+    "title": "Learn Korean, step by step",
     "titleBefore": "Learn ",
     "titleAccent": "Korean",
-    "titleAfter": " with online courses",
-    "lede": "Choose General Korean or TOPIK preparation. New learners can start with a free alphabet course; the level quiz is optional.",
+    "titleAfter": ", step by step",
+    "lede": "Courses from your first Hangul letters to advanced Korean and TOPIK preparation. Begin with the alphabet, or take the optional level quiz to find your place.",
     "primaryCta": "Explore courses",
-    "secondaryCta": "Take level quiz",
-    "scrollCue": "Scroll to explore",
+    "secondaryCta": "Take the level quiz",
+    "scrollCue": "Scroll",
     "paths": {
       "eyebrow": "Learning paths",
       "title": "Find your way into Korean",
-      "lede": "Start with the alphabet, build your Korean step by step, or prepare for TOPIK. Explore the path that fits your goal.",
+      "lede": "Whether you’re learning your first Korean letters or preparing for TOPIK, there’s a place to begin.",
       "pathsLabel": "Learning paths",
       "previous": "Previous",
       "next": "Next",
@@ -61,27 +61,27 @@
       "lessonsLabel": "Lessons",
       "accessLabel": "Access",
       "priceLabel": "Price",
-      "forLabel": "Who it’s for",
-      "aboutLabel": "About this course",
-      "pending": "Course description awaiting the teacher’s approval.",
+      "forLabel": "For",
+      "aboutLabel": "The course",
+      "pending": "A description will follow once the teacher has approved it.",
       "free": {
-        "tab": "Start for free",
+        "tab": "The alphabet",
         "badge": "Free",
-        "kicker": "New to Korean? Start here.",
-        "title": "Learn Hangul for free.",
+        "kicker": "Your first step",
+        "title": "Start with Hangul",
         "name": "Free alphabet course",
         "price": "€0",
-        "body": "Learn to read and write the Korean alphabet. The recommended first step for complete beginners, before General Korean A1.",
-        "includesLabel": "What the course includes",
+        "body": "Get to know the Korean alphabet, learn how its letters come together, and begin reading your first Korean words.",
+        "includesLabel": "Inside the course",
         "includes": [
           "Video lesson",
           "Alphabet reference",
           "Practice quiz"
         ],
-        "materials": "Materials in English and German are being prepared.",
-        "how": "Free for everyone. No account and no payment: the course opens directly.",
-        "cta": "Start free alphabet course",
-        "continue": "Then continue with General Korean",
+        "materials": "Materials in English and German are in preparation.",
+        "how": "No payment needed.",
+        "cta": "Explore the free course",
+        "continue": "Continue to General Korean",
         "visualLabel": "ㅎ + ㅏ + ㄴ = 한 · 한글",
         "replay": "Form 한 again",
         "kind": "Alphabet"
@@ -93,7 +93,7 @@
         "levelsLabel": "General Korean levels",
         "lessons": "15 lessons · 40 minutes each",
         "access": "Six months from payment",
-        "cta": "View {code} course",
+        "cta": "View the {code} course",
         "levels": [
           {
             "code": "A1",
@@ -147,9 +147,9 @@
         "courseWord": "Course",
         "lessons": "10 lessons · 50 minutes each",
         "access": "Six months from payment",
-        "cta": "View TOPIK course {code}",
-        "for": "Learners preparing for the official TOPIK test.",
-        "note": "Courses I–VI are our school’s preparation pathway and working names. The official TOPIK exam has two tests: TOPIK I (levels 1–2) and TOPIK II (levels 3–6).",
+        "cta": "View course {code}",
+        "for": "Learners preparing for the official TOPIK exam.",
+        "note": "Courses I–VI are our preparation pathway; their names are working titles. The official exam has two tests: TOPIK I (levels 1–2) and TOPIK II (levels 3–6).",
         "levels": [
           {
             "code": "I",
@@ -179,19 +179,19 @@
       },
       "quiz": {
         "eyebrow": "Not sure about your level?",
-        "title": "Find your starting point.",
-        "body": "Take the optional Korean level quiz. It checks reading, listening and writing across six levels and suggests where you could begin.",
+        "title": "Find your starting point",
+        "body": "An optional quiz on reading, listening and writing across six levels. Your results suggest where you could begin.",
         "cta": "Take the level quiz",
         "note": "Optional · No commitment"
       }
     },
     "services": {
       "eyebrow": "With the teacher",
-      "title": "Learn with the teacher",
-      "lede": "Coaching supports an active purchased course. Speaking Chat is a separate conversation service.",
+      "title": "Time with the teacher",
+      "lede": "Coaching sessions support a course you’re taking. Speaking Chat is open to anyone who wants to practise conversation.",
       "coaching": {
         "title": "Course coaching",
-        "body": "For an active purchased course. Sold separately.",
+        "body": "Sessions alongside a course you’ve purchased and can still access.",
         "options": [
           {
             "label": "3 × 50 min",
@@ -203,30 +203,30 @@
           }
         ],
         "requirement": "Requires an active course",
-        "cta": "Explore coaching"
+        "cta": "About coaching"
       },
       "chat": {
         "title": "Speaking Chat",
-        "body": "A 50-minute informal conversation. No course purchase needed.",
+        "body": "An informal 50-minute conversation. No course needed.",
         "duration": "50 min",
         "price": "€25",
         "requirement": "No course needed",
-        "cta": "Explore Speaking Chat"
+        "cta": "About Speaking Chat"
       }
     },
     "teacher": {
-      "eyebrow": "About",
+      "eyebrow": "Your teacher",
       "title": "Meet the teacher",
-      "status": "Awaiting approved content",
+      "status": "Profile in preparation",
       "photo": "Teacher photo awaiting approval",
       "nameLabel": "Name",
-      "name": "Awaiting approved spelling",
+      "name": "To be confirmed",
       "bioLabel": "Biography",
-      "bio": "A short verified biography will appear here after approval.",
+      "bio": "A short biography will appear here once approved.",
       "qualificationsLabel": "Qualifications",
-      "qualifications": "Verified qualifications will appear here after approval.",
-      "contact": "Contact email is being created.",
-      "cta": "View teacher profile",
+      "qualifications": "Qualifications will appear here once verified.",
+      "contact": "A contact email will be added soon.",
+      "cta": "Teacher profile",
       "glyphCaption": "말 · mal · words, speech"
     }
   },
