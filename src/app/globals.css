@@ -194,230 +194,126 @@
 }
 
 /* ------------------------------------------------------------------
-   Motion primitives (DESIGN.md §5)
-   ------------------------------------------------------------------ */
-
-/* ------------------------------------------------------------------
-   Hangul story (HangulStory / hangul-story.ts drives transform,
-   opacity and the light level of each character)
+   Hangul universe (HangulUniverse / hangul-universe.ts places each
+   character; its material is drawn here)
    ------------------------------------------------------------------ */
 
 :root,
 [data-theme="dark"] {
-  /* Light levels 0 (turned away: navy) to 5 (facing the light: warm white). */
-  --hs-l0: rgb(38 58 94);
-  --hs-l1: rgb(60 84 124);
-  --hs-l2: rgb(96 120 158);
-  --hs-l3: rgb(152 170 198);
-  --hs-l4: rgb(214 216 220);
-  --hs-l5: rgb(247 240 226);
-  --hs-g0: rgb(104 84 50);
-  --hs-g1: rgb(140 112 64);
-  --hs-g2: rgb(176 142 84);
-  --hs-g3: rgb(204 168 104);
-  --hs-g4: rgb(222 190 128);
-  --hs-g5: rgb(242 221 170);
-  /* The light behind the sculpture: warm white at the heart, a breath of gold, then navy dark. */
-  --hs-glow-core: rgb(247 240 226 / 0.09);
-  --hs-glow-warm: rgb(217 180 106 / 0.035);
-  --hs-glow-edge: rgb(38 58 94 / 0.045);
-  --hs-syllable-glow: rgb(242 221 170 / 0.18);
-  --hs-spark-core: rgb(255 240 212 / 0.5);
-  --hs-spark-warm: rgb(217 180 106 / 0.12);
+  /* Gold: warm highlight at the top left, a deep bronze body, a soft bright return at the lower edge. */
+  --hu-gold-face: linear-gradient(
+    160deg,
+    #fff4dc 0%,
+    #f2dda9 18%,
+    #d9b46a 38%,
+    #9c7034 58%,
+    #c99c58 76%,
+    #f0d8a2 100%
+  );
+  --hu-gold-side: #5d3f17;
+  --hu-gold-side-deep: #2c1d0a;
+  /* Ivory: polished stone-white with a cool navy shadow side. */
+  --hu-ivory-face: linear-gradient(160deg, #ffffff 0%, #f4efe6 22%, #d8d2c6 46%, #8e96a6 66%, #c9c6bf 82%, #f3eee5 100%);
+  --hu-ivory-side: #4b5568;
+  --hu-ivory-side-deep: #1b2436;
+  --hu-shadow: rgb(2 6 16 / 0.55);
+  --hu-rim: rgb(242 221 169 / 0.22);
 }
 
 [data-theme="light"] {
-  /* Light: deep navy faces the light, pale blue-grey turns away; gold stays restrained. */
-  --hs-l0: rgb(196 206 220);
-  --hs-l1: rgb(160 174 196);
-  --hs-l2: rgb(118 136 164);
-  --hs-l3: rgb(78 98 130);
-  --hs-l4: rgb(44 64 96);
-  --hs-l5: rgb(20 35 58);
-  --hs-g0: rgb(222 206 172);
-  --hs-g1: rgb(208 184 136);
-  --hs-g2: rgb(190 160 104);
-  --hs-g3: rgb(172 138 78);
-  --hs-g4: rgb(152 116 58);
-  --hs-g5: rgb(138 90 28);
-  --hs-glow-core: rgb(255 253 248 / 0.42);
-  --hs-glow-warm: rgb(217 180 106 / 0.05);
-  --hs-glow-edge: rgb(255 253 248 / 0.14);
-  --hs-syllable-glow: rgb(255 253 248 / 0.7);
-  --hs-spark-core: rgb(255 250 238 / 0.85);
-  --hs-spark-warm: rgb(217 180 106 / 0.14);
+  --hu-gold-side: #7a5420;
+  --hu-gold-side-deep: #4a3212;
+  /* On the light page the ivory pieces become polished navy so they still read. */
+  --hu-ivory-face: linear-gradient(160deg, #6f8db6 0%, #2f4f7d 26%, #1b365d 48%, #0b1a30 70%, #3d5c88 100%);
+  --hu-ivory-side: #0a1526;
+  --hu-ivory-side-deep: #050b16;
+  --hu-shadow: rgb(20 35 58 / 0.22);
+  --hu-rim: rgb(255 253 248 / 0.5);
 }
 
 /* Sits under every section's content and above the section tones. */
-.hangul-story {
+.hangul-universe {
   position: absolute;
   inset: 0;
   z-index: -1;
-  /* clip, not hidden: hidden would make a scroll container and stop the stage sticking. */
   overflow: clip;
   pointer-events: none;
   user-select: none;
-  opacity: 0;
-  transition: opacity 1.2s var(--ease-out-soft);
 }
 
-.hangul-story[data-ready] {
-  opacity: 1;
-}
-
-/* One viewport, pinned while the page scrolls past. */
-.hs-stage {
-  position: sticky;
+.hu-scene {
+  position: absolute;
+  left: 0;
   top: 0;
-  width: 100%;
-  height: 100vh;
   overflow: clip;
-  contain: strict;
+  /* Characters that stay in a section fade out at its lower edge instead of being cut by it. */
+  mask-image: linear-gradient(to bottom, #000 82%, transparent);
 }
 
-.hs-object {
+.hu-glyph {
+  position: absolute;
+  left: 0;
+  top: 0;
+  isolation: isolate;
+  font-family: var(--font-korean);
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  will-change: transform, opacity;
+}
+
+/* The face: a metal gradient clipped to the letter. */
+.hu-glyph::after {
+  content: attr(data-g);
+  position: relative;
+  display: block;
+  background: var(--hu-gold-face);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* The body: the same letter stacked towards the lower right, so it reads as a solid lit from the upper left,
+   with a soft cast shadow behind. */
+.hu-glyph::before {
+  content: attr(data-g);
   position: absolute;
   inset: 0;
-  font-family: var(--font-korean);
-  font-weight: 600;
-  line-height: 1;
+  z-index: -1;
+  color: var(--hu-gold-side);
+  text-shadow:
+    0.006em 0.008em 0 var(--hu-gold-side),
+    0.012em 0.016em 0 var(--hu-gold-side),
+    0.018em 0.024em 0 var(--hu-gold-side),
+    0.024em 0.032em 0 var(--hu-gold-side-deep),
+    0.03em 0.04em 0 var(--hu-gold-side-deep),
+    0.036em 0.048em 0 var(--hu-gold-side-deep),
+    0.07em 0.11em 0.12em var(--hu-shadow);
 }
 
-.hs-glyph {
-  position: absolute;
-  left: 0;
-  top: 0;
-  white-space: nowrap;
-  color: var(--hs-l3);
-  will-change: transform, opacity;
+.hu-glyph[data-tone="ivory"]::after {
+  background: var(--hu-ivory-face);
+  -webkit-background-clip: text;
+  background-clip: text;
 }
 
-.hs-glyph::before {
-  content: attr(data-g);
-}
-
-/* The seed is set heavier so it reads as one luminous mass. */
-.hs-seed {
-  font-weight: 800;
-}
-
-/* 한 and 글 once the jamo have fused, and 말 at the end: the clearest forms, ivory with a soft light. */
-.hs-glyph.hs-syllable[data-l],
-.hs-glyph.hs-word[data-l] {
-  font-weight: 700;
-  color: var(--hs-l5);
-  text-shadow: 0 0 0.6em var(--hs-syllable-glow);
-}
-
-/* 말 matches the weight of the teacher's character it covers. */
-.hs-glyph.hs-word[data-l] {
-  font-weight: 800;
-}
-
-/* Four depth layers; the farthest sinks into the dark with a soft blur. */
-.hs-glyph[data-z="0"] {
-  z-index: 0;
-  filter: blur(1.1px);
-}
-.hs-glyph[data-z="1"] {
-  z-index: 1;
-}
-.hs-glyph[data-z="2"] {
-  z-index: 2;
-}
-.hs-glyph[data-z="3"] {
-  z-index: 3;
-}
-
-.hs-glyph[data-l="0"] {
-  color: var(--hs-l0);
-}
-.hs-glyph[data-l="1"] {
-  color: var(--hs-l1);
-}
-.hs-glyph[data-l="2"] {
-  color: var(--hs-l2);
-}
-.hs-glyph[data-l="3"] {
-  color: var(--hs-l3);
-}
-.hs-glyph[data-l="4"] {
-  color: var(--hs-l4);
-}
-.hs-glyph[data-l="5"] {
-  color: var(--hs-l5);
-}
-.hs-glyph[data-warm][data-l="0"] {
-  color: var(--hs-g0);
-}
-.hs-glyph[data-warm][data-l="1"] {
-  color: var(--hs-g1);
-}
-.hs-glyph[data-warm][data-l="2"] {
-  color: var(--hs-g2);
-}
-.hs-glyph[data-warm][data-l="3"] {
-  color: var(--hs-g3);
-}
-.hs-glyph[data-warm][data-l="4"] {
-  color: var(--hs-g4);
-}
-.hs-glyph[data-warm][data-l="5"] {
-  color: var(--hs-g5);
-}
-
-/* The light behind the sculpture, drawn large and only ever scaled down; its heart sits up and to the
-   left, where the key light comes from. */
-.hs-glow {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 1200px;
-  height: 1200px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle at 42% 40%,
-    var(--hs-glow-core) 0,
-    var(--hs-glow-warm) 18%,
-    var(--hs-glow-edge) 34%,
-    color-mix(in srgb, var(--hs-glow-edge) 40%, transparent) 46%,
-    color-mix(in srgb, var(--hs-glow-edge) 12%, transparent) 56%,
-    transparent 66%
-  );
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* The seed's own light: a small warm core, brightest before the bloom. */
-.hs-spark {
-  position: absolute;
-  left: 0;
-  top: 0;
-  width: 600px;
-  height: 600px;
-  border-radius: 50%;
-  background: radial-gradient(
-    circle,
-    var(--hs-spark-core) 0,
-    color-mix(in srgb, var(--hs-spark-core) 45%, transparent) 14%,
-    var(--hs-spark-warm) 30%,
-    color-mix(in srgb, var(--hs-spark-warm) 30%, transparent) 50%,
-    transparent 70%
-  );
-  opacity: 0;
-  will-change: transform, opacity;
-}
-
-/* Reduced motion: still compositions in the page, not pinned. */
-.hs-still {
-  pointer-events: none;
+.hu-glyph[data-tone="ivory"]::before {
+  color: var(--hu-ivory-side);
+  text-shadow:
+    0.006em 0.008em 0 var(--hu-ivory-side),
+    0.012em 0.016em 0 var(--hu-ivory-side),
+    0.018em 0.024em 0 var(--hu-ivory-side),
+    0.024em 0.032em 0 var(--hu-ivory-side-deep),
+    0.03em 0.04em 0 var(--hu-ivory-side-deep),
+    0.036em 0.048em 0 var(--hu-ivory-side-deep),
+    0.07em 0.11em 0.12em var(--hu-shadow);
 }
 
 /* ------------------------------------------------------------------
    Home surfaces
    ------------------------------------------------------------------ */
 
-/* Section tones paint on a layer beneath the Hangul story (HangulStory). */
+/* Section tones paint on a layer beneath the Hangul universe (HangulUniverse). */
 .surface-night,
 .surface-raised {
   position: relative;
@@ -440,7 +336,7 @@
 
 /* ------------------------------------------------------------------
    Glass panels: course and service cards, the alphabet panel.
-   Mostly clear so the Hangul sculpture shows through, a light blur, a thin
+   Mostly clear so the Hangul characters show through, a light blur, a thin
    luminous rim and a soft inner light. .glass-lead (General Korean)
    carries a warmer rim, more inner light and more depth.
    ------------------------------------------------------------------ */

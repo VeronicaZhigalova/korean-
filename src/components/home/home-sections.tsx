@@ -35,57 +35,59 @@ const cardBase = "glass-panel flex h-full min-w-0 flex-col rounded-(--radius-car
 
 export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
   <section data-story="hero" aria-labelledby="home-title" className="surface-night overflow-hidden">
-
-    <Container className="grid gap-12 pb-14 pt-14 sm:min-h-[calc(100svh-4.5rem)] sm:content-center sm:py-20 lg:grid-cols-12 lg:items-center lg:gap-8">
-      <div className="flex flex-col items-start gap-6 sm:max-w-[36rem] lg:col-span-7 lg:max-w-none">
-        <p className="flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
-          <span aria-hidden="true" className="h-px w-6 bg-gold" />
-          {t.eyebrow}
-        </p>
-        <h1
-          id="home-title"
-          className="font-display text-[clamp(2.85rem,6.6vw,5.25rem)] leading-[0.98] tracking-[-0.02em] text-text"
-        >
-          {t.titleBefore}
-          <i className="text-accent">{t.titleAccent}</i>
-          {t.titleAfter}
-        </h1>
-        <p className="max-w-[44ch] text-body-lg text-text-muted">
-          {t.lede}
-        </p>
-        <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
-          <Button href={href("courses")} arrow prominent>
-            {t.primaryCta}
-          </Button>
-          <Button href={href("quiz")} variant="secondary">
-            {t.secondaryCta}
-          </Button>
-        </div>
-
-        {/* Below lg the Hangul object begins here, under the buttons (HangulStory). */}
-        <div data-story="hero-block" className="mt-2 h-[19rem] w-full sm:h-[30rem] lg:hidden" aria-hidden="true" />
-
-        {/* Quiet facts row: stays in the text column so nothing covers the network. */}
-        <dl
-          aria-label={t.factsLabel}
-          className="mt-4 grid w-full grid-cols-3 border-t border-border/70 pt-5 sm:mt-8 sm:max-w-[34rem]"
-        >
-          {t.facts.map((fact, index) => (
-            <div key={fact.label} className={cn("flex flex-col gap-1.5 pr-3", index > 0 && "border-l border-border/70 pl-4 sm:pl-6")}>
-              <dt className="order-2 text-caption leading-snug text-text-muted">{fact.label}</dt>
-              <dd
-                lang={fact.value === "한글" ? "ko" : undefined}
-                className={cn(
-                  "order-1 text-[1.5rem] leading-none text-accent sm:text-[1.75rem]",
-                  fact.value === "한글" ? "font-korean font-semibold" : "font-sans font-semibold tracking-[-0.01em] tabular-nums",
-                )}
-              >
-                {fact.value}
-              </dd>
-            </div>
-          ))}
-        </dl>
+    {/* Centred so the Hangul universe can surround the copy on every side (8 Oct 2026). */}
+    <Container className="flex min-h-[calc(100svh-4.5rem)] flex-col items-center justify-center gap-6 py-16 text-center sm:py-20">
+      <p className="flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
+        <span aria-hidden="true" className="h-px w-6 bg-gold" />
+        {t.eyebrow}
+        <span aria-hidden="true" className="h-px w-6 bg-gold" />
+      </p>
+      <h1
+        id="home-title"
+        className="max-w-[16ch] text-balance font-display text-[clamp(2.85rem,6.6vw,5.25rem)] leading-[0.98] tracking-[-0.02em] text-text"
+      >
+        {t.titleBefore}
+        <i className="text-accent">{t.titleAccent}</i>
+        {t.titleAfter}
+      </h1>
+      <p className="max-w-[44ch] text-body-lg text-text-muted">{t.lede}</p>
+      <div className="mt-2 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
+        <Button href={href("courses")} arrow prominent>
+          {t.primaryCta}
+        </Button>
+        <Button href={href("quiz")} variant="secondary">
+          {t.secondaryCta}
+        </Button>
       </div>
+
+      {/* Course levels: one quiet row under the actions. */}
+      <dl
+        aria-label={t.factsLabel}
+        className="mt-6 grid w-full max-w-[34rem] grid-cols-3 border-t border-border/70 pt-5 sm:mt-8"
+      >
+        {t.facts.map((fact, index) => (
+          <div key={fact.label} className={cn("flex flex-col items-center gap-1.5 px-2", index > 0 && "border-l border-border/70")}>
+            <dt className="order-2 text-caption leading-snug text-text-muted">{fact.label}</dt>
+            <dd
+              lang={fact.value === "한글" ? "ko" : undefined}
+              className={cn(
+                "order-1 text-[1.5rem] leading-none text-accent sm:text-[1.75rem]",
+                fact.value === "한글" ? "font-korean font-semibold" : "font-sans font-semibold tracking-[-0.01em] tabular-nums",
+              )}
+            >
+              {fact.value}
+            </dd>
+          </div>
+        ))}
+      </dl>
+
+      <a
+        href="#paths-title"
+        className="mt-4 inline-flex items-center gap-2 rounded-full px-3 py-2 text-caption font-semibold uppercase tracking-[0.2em] text-text-muted transition-colors hover:text-accent focus-visible:text-accent"
+      >
+        {t.scrollCue}
+        <span aria-hidden="true">↓</span>
+      </a>
     </Container>
   </section>
 );

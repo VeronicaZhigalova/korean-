@@ -5,7 +5,7 @@
   resizable frame with Desktop / Tablet / Mobile, Dark / Light and Full /
   Reduced motion controls, for review as a Claude artifact.
 
-  The motion code is not rewritten for the preview: hangul-story.ts and
+  The motion code is not rewritten for the preview: hangul-universe.ts and
   glass-light.ts are transpiled from src and run against the same markup.
   Only small shims replace React for the theme toggle and mobile menu.
 
@@ -88,14 +88,14 @@ document.querySelectorAll('button[aria-expanded]').forEach(function (btn) {
 `;
 
 const boot = `
-/* Same engines as the site (src/components/motion/hangul-story.ts, src/components/ui/glass-light.ts). */
-document.querySelectorAll('[data-hangul-story]').forEach(function (layer) {
-  startHangulStory(layer, layer.parentElement, JSON.parse(layer.dataset.hangulStory));
+/* Same engines as the site (src/components/motion/hangul-universe.ts, src/components/ui/glass-light.ts). */
+document.querySelectorAll('[data-hangul-universe]').forEach(function (layer) {
+  startHangulUniverse(layer, layer.parentElement, JSON.parse(layer.dataset.hangulUniverse));
 });
 startGlassLight();
 `;
 
-const runtime = `(function(){\n${shims}\n${transpile("src/components/motion/hangul-story.ts")}\n${transpile("src/components/ui/glass-light.ts")}\n${boot}\n})();`;
+const runtime = `(function(){\n${shims}\n${transpile("src/components/motion/hangul-universe.ts")}\n${transpile("src/components/ui/glass-light.ts")}\n${boot}\n})();`;
 
 const doc = (styles, reduced) =>
   `<!doctype html><html${htmlAttrs}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${fonts}<style>${styles}</style></head>` +
