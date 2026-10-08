@@ -110,7 +110,7 @@ const LETTER_EM = 1.7;
 const BLOOM_SECONDS = 4;
 const BLOOM_HURRY_SECONDS = 1.1;
 /** Fonts are set this much larger than drawn, so the open structure can grow without blurring. */
-const RASTER = 1.6;
+const RASTER = 1.8;
 
 /* Small seeded PRNG (mulberry32). */
 const rng = (seed: number) => () => {
