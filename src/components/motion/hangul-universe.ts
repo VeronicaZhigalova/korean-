@@ -161,6 +161,13 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
     const blocked = Array.from(root.querySelectorAll<HTMLElement>(CONTENT))
       .filter((el) => !el.closest(".hangul-universe") && el.offsetWidth)
       .map((el) => boxIn(el, root));
+    // The navigation sits over the top of the canvas on Home, so characters keep clear of it too.
+    // Its links get a wider margin than copy, so no character crowds the menu.
+    document.querySelectorAll<HTMLElement>(".site-header a, .site-header button").forEach((el) => {
+      if (!el.offsetWidth) return;
+      const b = boxIn(el, root);
+      blocked.push({ left: b.left - 28, top: b.top - 20, width: b.width + 56, height: b.height + 40 });
+    });
 
     /** Slides a point sideways, away from the centre, until a character there clears the content. */
     const clear = (x: number, y: number, px: number, away: number) => {

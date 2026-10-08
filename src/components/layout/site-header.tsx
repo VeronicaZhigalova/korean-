@@ -32,8 +32,8 @@ export const SiteHeader = async () => {
   );
 
   return (
-    <header className="site-header sticky top-0 z-40">
-      <div className="relative mx-auto flex min-h-[5rem] w-full max-w-(--container-content) items-center justify-between gap-6 px-4 sm:px-8 lg:px-12">
+    <header className="site-header relative z-40">
+      <div className="relative mx-auto flex min-h-(--header-h) w-full max-w-(--container-content) items-center justify-between gap-6 px-4 sm:px-8 lg:px-12">
         <div className="flex items-center gap-12">
           <BrandLockup
             href={`/${locale}`}

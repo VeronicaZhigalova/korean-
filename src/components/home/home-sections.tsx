@@ -21,7 +21,7 @@ const cardBase = "glass-panel flex h-full min-w-0 flex-col rounded-(--radius-car
 /* 1 · Hero ------------------------------------------------------------ */
 
 export const HeroSection = ({ t }: { t: Home }) => (
-  <section data-story="hero" aria-labelledby="home-title" className="overflow-hidden">
+  <section data-story="hero" aria-labelledby="home-title" className="overflow-hidden pt-(--header-h)">
     {/* Centred so the Hangul universe can surround the copy on every side (8 Oct 2026). */}
     <Container className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-7 py-20 text-center sm:py-24">
       <p className="hero-in hero-in-1 text-caption font-semibold uppercase tracking-[0.2em] text-accent">{t.eyebrow}</p>

@@ -345,6 +345,8 @@
   --atm-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 .home-canvas {
+  /* Starts under the header, so the header sits on the same background as the hero. */
+  margin-top: calc(-1 * var(--header-h));
   background:
     var(--atm-grain),
     radial-gradient(70% 900px at 50% 0, var(--atm-warm), transparent),
@@ -360,9 +362,6 @@
 }
 
 /* Smooth anchor scrolling; wheel, touch and keys stay native, so the Hangul universe reads the true position. */
-html {
-  scroll-padding-top: 6rem;
-}
 @media (prefers-reduced-motion: no-preference) {
   html {
     scroll-behavior: smooth;
@@ -1382,16 +1381,16 @@ html[data-refract] .lg-prominent.lg-primary {
    veil in the page's own colour, one hairline beneath, sans labels at a
    reading size, a short underline for the current page.
    ------------------------------------------------------------------ */
-.site-header {
-  background: color-mix(in srgb, var(--bg) 62%, transparent);
-  -webkit-backdrop-filter: blur(14px) saturate(130%);
-  backdrop-filter: blur(14px) saturate(130%);
-  border-bottom: 1px solid color-mix(in srgb, var(--border) 45%, transparent);
+/*
+  The header scrolls away with the page and has no surface of its own (8 Oct
+  2026): no band, blur or rule. On Home the canvas slides up behind it (see
+  .home-canvas below), so one atmosphere runs from the very top.
+*/
+:root {
+  --header-h: 5rem;
 }
-@media (prefers-reduced-transparency: reduce) {
-  .site-header {
-    background: var(--bg);
-  }
+.site-header {
+  background: transparent;
 }
 .nav-link {
   font-size: 0.875rem;
