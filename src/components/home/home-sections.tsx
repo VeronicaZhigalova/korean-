@@ -1,4 +1,3 @@
-import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import { CourseShowcase } from "@/components/home/course-showcase";
 import { StatusPill } from "@/components/ui/feedback";
@@ -9,23 +8,11 @@ import { cn } from "@/lib/cn";
 type Home = Dictionary["home"];
 type Href = (segment: string) => string;
 
-const Eyebrow = ({ index, children }: { index: number; children: ReactNode }) => (
-  <p className="flex items-center gap-4 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
-    <span className="tabular-nums text-text-muted">{String(index).padStart(2, "0")}</span>
-    {children}
-  </p>
-);
-
-const SectionIntro = ({ id, index, eyebrow, title, lede }: { id: string; index: number; eyebrow: string; title: string; lede?: string }) => (
-  <div className="grid gap-6 lg:grid-cols-12 lg:items-end">
-    <div className="flex flex-col gap-4 lg:col-span-7">
-      <Eyebrow index={index}>{eyebrow}</Eyebrow>
-      <h2 id={id} className="display-headline section-headline text-text">
-        {title}
-      </h2>
-    </div>
-    {lede ? <p className="max-w-[46ch] text-body-lg text-text-muted lg:col-span-5 lg:pb-2">{lede}</p> : null}
-  </div>
+// Sections open on their heading alone: no numbering, no eyebrow.
+const SectionIntro = ({ id, title }: { id: string; title: string }) => (
+  <h2 id={id} className="display-headline section-headline max-w-[22ch] text-text">
+    {title}
+  </h2>
 );
 
 // Glass panels: the Hangul object shows softly through them (see .glass-panel).
@@ -33,19 +20,19 @@ const cardBase = "glass-panel flex h-full min-w-0 flex-col rounded-(--radius-car
 
 /* 1 · Hero ------------------------------------------------------------ */
 
-export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
+export const HeroSection = ({ t }: { t: Home }) => (
   <section data-story="hero" aria-labelledby="home-title" className="overflow-hidden">
     {/* Centred so the Hangul universe can surround the copy on every side (8 Oct 2026). */}
     <Container className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-7 py-20 text-center sm:py-24">
-      <p className="text-caption font-semibold uppercase tracking-[0.2em] text-accent">{t.eyebrow}</p>
-      <h1 id="home-title" className="display-headline hero-headline text-balance text-text">
+      <p className="hero-in hero-in-1 text-caption font-semibold uppercase tracking-[0.2em] text-accent">{t.eyebrow}</p>
+      <h1 id="home-title" className="hero-in hero-in-2 display-headline hero-headline text-balance text-text">
         {t.titleBefore}
         <i className="text-accent">{t.titleAccent}</i>
         {t.titleAfter}
       </h1>
-      <p className="max-w-[44ch] text-body-lg text-text-muted">{t.lede}</p>
+      <p className="hero-in hero-in-3 max-w-[44ch] text-body-lg text-text-muted">{t.lede}</p>
       {/* One clear action: straight to the course selector below. The quiz stays in the navigation and under the courses. */}
-      <Button href="#learning-paths" arrow prominent className="mt-3">
+      <Button href="#learning-paths" arrow prominent className="hero-in hero-in-4 mt-3">
         {t.primaryCta}
       </Button>
     </Container>
@@ -57,7 +44,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
 export const LearningPathsSection = ({ t, href, base }: { t: Home["paths"]; href: Href; base: string }) => (
   <section id="learning-paths" tabIndex={-1} data-story="paths" aria-labelledby="paths-title" className="py-24 outline-none lg:py-32">
     <Container className="flex flex-col gap-8 lg:gap-10">
-      <SectionIntro id="paths-title" index={1} eyebrow={t.eyebrow} title={t.title} />
+      <SectionIntro id="paths-title" title={t.title} />
       <CourseShowcase t={t} base={base} />
       {/* Level quiz: optional help for choosing a course, set apart as its own quiet glass panel. */}
       <aside aria-labelledby="quiz-cta-title" data-atmo-glass className="glass-panel quiz-cta rounded-(--radius-card)">
@@ -84,17 +71,17 @@ export const LearningPathsSection = ({ t, href, base }: { t: Home["paths"]; href
 export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }) => (
   <section data-story="services" aria-labelledby="services-title" className="py-24 lg:py-32">
     <Container className="flex flex-col gap-12 lg:gap-16">
-      <SectionIntro id="services-title" index={2} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
+      <SectionIntro id="services-title" title={t.title} />
 
       <div className="grid gap-5 md:grid-cols-2">
         <div>
           <article data-atmo-glass className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
-                        <header className="flex flex-col items-start gap-3">
+            <header className="flex flex-col items-start gap-3">
               <StatusPill tone="warning">{t.coaching.requirement}</StatusPill>
               <h3 className="display-headline text-[1.75rem] leading-tight text-text">{t.coaching.title}</h3>
               <p className="text-body-sm text-text-muted">{t.coaching.body}</p>
             </header>
-            <dl className="flex flex-col border-t border-border pt-3">
+            <dl className="flex flex-col">
               {t.coaching.options.map((option) => (
                 <div key={option.label} className="flex items-baseline justify-between gap-4 py-2.5">
                   <dt className="text-body text-text">{option.label}</dt>
@@ -110,12 +97,12 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
 
         <div>
           <article data-atmo-glass className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
-                        <header className="flex flex-col items-start gap-3">
+            <header className="flex flex-col items-start gap-3">
               <StatusPill tone="success">{t.chat.requirement}</StatusPill>
               <h3 className="display-headline text-[1.75rem] leading-tight text-text">{t.chat.title}</h3>
               <p className="text-body-sm text-text-muted">{t.chat.body}</p>
             </header>
-            <dl className="flex flex-col border-t border-border pt-3">
+            <dl className="flex flex-col">
               <div className="flex items-baseline justify-between gap-4 py-2.5">
                 <dt className="text-body text-text">{t.chat.duration}</dt>
                 <dd className="price-figure">{t.chat.price}</dd>
@@ -155,12 +142,11 @@ export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) 
       </figure>
 
       <div className="flex flex-col items-start gap-6 md:col-span-7 lg:col-span-6 lg:col-start-7">
-        <Eyebrow index={3}>{t.eyebrow}</Eyebrow>
         <h2 id="teacher-title" className="display-headline section-headline text-text">
           {t.title}
         </h2>
         <StatusPill tone="warning">{t.status}</StatusPill>
-        <dl className="flex w-full flex-col border-t border-border">
+        <dl className="flex w-full flex-col">
           {[
             [t.nameLabel, t.name],
             [t.bioLabel, t.bio],

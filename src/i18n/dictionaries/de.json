@@ -48,7 +48,6 @@
     "lede": "Kurse von den ersten Hangul-Buchstaben bis zu fortgeschrittenem Koreanisch und TOPIK-Vorbereitung. Beginne mit dem Alphabet oder finde mit dem optionalen Einstufungstest deinen Einstieg.",
     "primaryCta": "Kurse entdecken",
     "paths": {
-      "eyebrow": "Lernwege",
       "title": "Finde deinen Weg ins Koreanische",
       "pathsLabel": "Lernwege",
       "previous": "Zurück",
@@ -95,8 +94,8 @@
             "code": "A1",
             "name": "Anfänger",
             "price": "39 €",
-            "for": "Absolute Anfänger. Wenn Hangul neu für dich ist, beginne mit dem kostenlosen Alphabet-Kurs.",
-            "about": "Am Ende des Kurses können sich Lernende vorstellen und Personen, Dinge und Orte mit einfachen Satzmustern beschreiben. Sie nutzen die wichtigsten Partikeln, sprechen über Vergangenheit, Gegenwart und Zukunft, nennen Uhrzeit und Datum, zählen mit beiden Zahlensystemen und verbinden Sätze mit „und“, „also“ und „aber“."
+            "for": "Absolute Anfänger. Hangul ist neu für dich? Beginne mit dem Alphabet-Kurs.",
+            "about": "Du lernst, dich vorzustellen und Personen, Dinge und Orte zu beschreiben, die wichtigsten Partikeln zu nutzen, über Vergangenheit, Gegenwart und Zukunft zu sprechen, Uhrzeit und Datum zu nennen, mit beiden Zahlensystemen zu zählen und Sätze mit „und“, „also“ und „aber“ zu verbinden."
           },
           {
             "code": "A2",
@@ -182,12 +181,10 @@
       }
     },
     "services": {
-      "eyebrow": "Mit der Lehrkraft",
       "title": "Zeit mit der Lehrkraft",
-      "lede": "Coaching-Stunden begleiten einen Kurs, den du gerade belegst. Speaking Chat steht allen offen, die Konversation üben möchten.",
       "coaching": {
         "title": "Kurs-Coaching",
-        "body": "Stunden mit der Lehrkraft zu dem Kurs, den du gerade belegst.",
+        "body": "Stunden mit der Lehrkraft zu einem gekauften Kurs. Buchbar, solange dein Kurszugang aktiv ist.",
         "options": [
           {
             "label": "3 × 50 Min.",
@@ -203,7 +200,7 @@
       },
       "chat": {
         "title": "Speaking Chat",
-        "body": "Ein lockeres Gespräch mit der Lehrkraft.",
+        "body": "Ein lockeres Gespräch mit der Lehrkraft. Alle können es buchen, mit oder ohne Kurs.",
         "duration": "50 Min.",
         "price": "25 €",
         "requirement": "Kein Kurs nötig",
@@ -211,7 +208,6 @@
       }
     },
     "teacher": {
-      "eyebrow": "Deine Lehrkraft",
       "title": "Lerne die Lehrkraft kennen",
       "status": "Profil in Vorbereitung",
       "photo": "Foto der Lehrkraft wartet auf Freigabe",

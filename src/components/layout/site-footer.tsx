@@ -6,11 +6,11 @@ import { BrandLockup } from "./brand-lockup";
 
 const FooterLinks = ({ title, links }: { title: string; links: { href: string; label: string }[] }) => (
   <div className="flex flex-col gap-3">
-    <h2 className="text-caption font-semibold uppercase tracking-[0.16em] text-text-muted">{title}</h2>
-    <ul className="flex flex-col gap-1">
+    <h2 className="text-[0.8125rem] font-medium text-text">{title}</h2>
+    <ul className="flex flex-col">
       {links.map((link) => (
         <li key={link.href}>
-          <Link href={link.href} className="inline-flex min-h-10 items-center rounded-md text-body-sm text-text-muted transition-colors hover:text-text">
+          <Link href={link.href} className="inline-flex min-h-10 items-center rounded-sm text-[0.875rem] text-text-muted transition-colors duration-150 hover:text-text">
             {link.label}
           </Link>
         </li>
@@ -29,8 +29,8 @@ export const SiteFooter = async () => {
   const path = (segment: string) => `/${locale}/${segment}`;
 
   return (
-    <footer aria-label={t.footer.label} className="mt-auto border-t border-border bg-bg-raised">
-      <Container className="grid gap-10 py-14 sm:grid-cols-[1.4fr_1fr_1fr]">
+    <footer aria-label={t.footer.label} className="site-footer mt-auto">
+      <Container className="grid gap-10 pb-10 pt-16 sm:grid-cols-[1.6fr_1fr_1fr] lg:pt-20">
         <div className="flex flex-col items-start gap-4">
           <BrandLockup href={`/${locale}`} name={t.brand.name} tagline={t.brand.tagline} label={t.brand.homeLabel} compact />
         </div>
@@ -52,7 +52,7 @@ export const SiteFooter = async () => {
           ]}
         />
       </Container>
-      <Container className="border-t border-border py-6">
+      <Container className="pb-10">
         <p className="text-caption text-text-muted">{format(t.footer.copyright, { year })}</p>
       </Container>
     </footer>

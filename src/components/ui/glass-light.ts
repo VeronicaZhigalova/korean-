@@ -1,5 +1,5 @@
 /*
-  Pointer-led highlight for the hero liquid glass CTA, framework-free so the
+  Pointer-led highlight for the hero liquid glass CTA and the Home panels, framework-free so the
   Home and its review preview run the same code. Writes --gx/--gy, which CSS
   eases (registered properties), and enables :active press states on iOS.
   Returns a stop function.
@@ -12,7 +12,17 @@ export const startGlassLight = () => {
     return () => document.removeEventListener("touchstart", onTouch);
   }
 
+  // Information panels on the Home: a soft highlight that follows the pointer across the glass.
+  const onPanel = (event: PointerEvent) => {
+    const panel = (event.target as Element | null)?.closest<HTMLElement>(".home-canvas .glass-panel");
+    if (!panel) return;
+    const rect = panel.getBoundingClientRect();
+    panel.style.setProperty("--px", `${(((event.clientX - rect.left) / rect.width) * 100).toFixed(1)}%`);
+    panel.style.setProperty("--py", `${(((event.clientY - rect.top) / rect.height) * 100).toFixed(1)}%`);
+  };
+
   const onMove = (event: PointerEvent) => {
+    onPanel(event);
     const button = (event.target as Element | null)?.closest<HTMLElement>(".lg-prominent");
     if (!button) return;
     const rect = button.getBoundingClientRect();

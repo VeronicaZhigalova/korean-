@@ -443,7 +443,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                 </ul>
                 <p className="text-caption text-text-muted">{t.free.materials}</p>
               </div>
-              <footer className="flex flex-col gap-4 border-t border-border pt-6">
+              <footer className="mt-1 flex flex-col gap-4">
                 <p className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
                   <span className="price-figure">{t.free.price}</span>
                   <span className="text-body-sm text-text-muted">{t.free.how}</span>
@@ -475,7 +475,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                   ]}
                 />
               </div>
-              <footer className="flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6">
+              <footer className="mt-2 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex flex-col gap-1">
                   
                   <span key={general.price + general.code} className="course-swap price-figure">
@@ -505,7 +505,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                 />
               </div>
               <p className="text-caption text-text-muted">{t.topik.note}</p>
-              <footer className="flex flex-wrap items-end justify-between gap-4 border-t border-border pt-6">
+              <footer className="mt-2 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex flex-col gap-1">
                   
                   <span key={topik.price + topik.code} className="course-swap price-figure">

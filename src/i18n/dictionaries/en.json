@@ -48,7 +48,6 @@
     "lede": "Courses from your first Hangul letters to advanced Korean and TOPIK preparation. Begin with the alphabet, or take the optional level quiz to find your place.",
     "primaryCta": "Explore courses",
     "paths": {
-      "eyebrow": "Learning paths",
       "title": "Find your way into Korean",
       "pathsLabel": "Learning paths",
       "previous": "Previous",
@@ -95,8 +94,8 @@
             "code": "A1",
             "name": "Beginner",
             "price": "€39",
-            "for": "Complete beginners. If Hangul is new to you, start with the free alphabet course.",
-            "about": "By the end of the course, learners can introduce themselves and describe people, things and places with basic sentence patterns. They use the core particles, talk about past, present and future events, tell the time and dates, count with both number systems, and link sentences with “and”, “so” and “but”."
+            "for": "Complete beginners. New to Hangul? Start with the alphabet course.",
+            "about": "You’ll learn to introduce yourself and describe people, things and places; use the core particles; talk about past, present and future; tell the time and dates; count with both number systems; and link sentences with “and”, “so” and “but”."
           },
           {
             "code": "A2",
@@ -182,12 +181,10 @@
       }
     },
     "services": {
-      "eyebrow": "With the teacher",
       "title": "Time with the teacher",
-      "lede": "Coaching sessions support a course you’re taking. Speaking Chat is open to anyone who wants to practise conversation.",
       "coaching": {
         "title": "Course coaching",
-        "body": "Sessions with the teacher to support the course you’re taking.",
+        "body": "Sessions with the teacher to support a course you’ve bought. You can book them while your course access is active.",
         "options": [
           {
             "label": "3 × 50 min",
@@ -203,7 +200,7 @@
       },
       "chat": {
         "title": "Speaking Chat",
-        "body": "An informal conversation with the teacher.",
+        "body": "An informal conversation with the teacher. Anyone can book it, with or without a course.",
         "duration": "50 min",
         "price": "€25",
         "requirement": "No course needed",
@@ -211,7 +208,6 @@
       }
     },
     "teacher": {
-      "eyebrow": "Your teacher",
       "title": "Meet the teacher",
       "status": "Profile in preparation",
       "photo": "Teacher photo awaiting approval",

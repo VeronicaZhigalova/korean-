@@ -1443,3 +1443,138 @@ html[data-refract] .lg-prominent.lg-primary {
   background: var(--bg);
   border-bottom: 1px solid var(--border);
 }
+
+/* ------------------------------------------------------------------
+   Hero entrance (8 Oct 2026): the copy arrives with the Hangul universe's
+   opening dolly (INTRO_SECONDS 3.4 in hangul-universe.ts). The eyebrow
+   settles its tracking, the headline is unveiled line by line from above, the
+   lede comes into focus, then the action appears. All done by about 2.6 s,
+   while the far characters are still arriving. Full shorthands only.
+   ------------------------------------------------------------------ */
+@media (prefers-reduced-motion: no-preference) {
+  .hero-in-1 {
+    animation: hero-track 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+  }
+  .hero-in-2 {
+    animation: hero-unveil 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.75s both;
+  }
+  .hero-in-3 {
+    animation: hero-focus 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1.45s both;
+  }
+  .hero-in-4 {
+    animation: hero-arrive 1s cubic-bezier(0.22, 1, 0.36, 1) 1.8s both;
+  }
+}
+@keyframes hero-track {
+  from { opacity: 0; letter-spacing: 0.42em; }
+  to { opacity: 1; letter-spacing: 0.2em; }
+}
+@keyframes hero-unveil {
+  from {
+    opacity: 0;
+    translate: 0 0.18em;
+    letter-spacing: 0.05em;
+    clip-path: inset(-0.3em -0.3em 100% -0.3em);
+  }
+  40% { opacity: 1; }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    letter-spacing: 0.01em;
+    clip-path: inset(-0.3em -0.3em -0.4em -0.3em);
+  }
+}
+@keyframes hero-focus {
+  from { opacity: 0; filter: blur(6px); }
+  to { opacity: 1; filter: blur(0); }
+}
+@keyframes hero-arrive {
+  from { opacity: 0; scale: 0.97; }
+  to { opacity: 1; scale: 1; }
+}
+
+/* ------------------------------------------------------------------
+   Information panels on the Home: crafted glass. A denser, readable body,
+   a soft blur of the atmosphere behind, a bright top edge and a shaded
+   lower one, layered shadows, and a faint highlight that follows the
+   pointer (glass-light.ts writes --px/--py). Hover lifts the panel a
+   hair and wakes the rim.
+   ------------------------------------------------------------------ */
+.home-canvas .glass-panel {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 70% at 0% 0%, var(--glow), transparent 60%),
+    linear-gradient(165deg, var(--pane-sheen) 0%, transparent 38%),
+    linear-gradient(to bottom, transparent 70%, var(--pane-depth)),
+    var(--pane-body);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 var(--pane-edge),
+    inset 0 -1px 0 var(--pane-under),
+    0 1px 1px var(--pane-contact),
+    0 14px 28px -16px var(--pane-near),
+    0 44px 90px -46px var(--pane-far);
+  transition:
+    border-color 0.35s var(--ease-out-soft),
+    box-shadow 0.35s var(--ease-out-soft),
+    translate 0.35s var(--ease-out-soft);
+}
+.home-canvas .glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(32rem 22rem at var(--px, 20%) var(--py, 0%), var(--pane-light), transparent 70%);
+  opacity: 0.55;
+  transition: opacity 0.35s var(--ease-out-soft);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .home-canvas .glass-panel:hover {
+    translate: 0 -2px;
+    box-shadow:
+      inset 0 1px 0 var(--pane-edge),
+      inset 0 -1px 0 var(--pane-under),
+      0 2px 2px var(--pane-contact),
+      0 20px 36px -18px var(--pane-near),
+      0 56px 100px -48px var(--pane-far);
+  }
+  .home-canvas .glass-panel:hover::before {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-canvas .glass-panel:hover {
+    translate: none;
+  }
+}
+:root,
+[data-theme="dark"] {
+  --pane-body: rgb(14 28 52 / 0.62);
+  --pane-depth: rgb(2 6 16 / 0.28);
+  --pane-under: rgb(0 0 0 / 0.35);
+  --pane-contact: rgb(0 0 0 / 0.35);
+  --pane-near: rgb(0 0 0 / 0.55);
+  --pane-far: rgb(0 0 0 / 0.8);
+  --pane-light: rgb(214 228 255 / 0.07);
+}
+[data-theme="light"] {
+  --pane-body: rgb(255 255 255 / 0.62);
+  --pane-depth: rgb(20 35 58 / 0.04);
+  --pane-under: rgb(20 35 58 / 0.06);
+  --pane-contact: rgb(20 35 58 / 0.08);
+  --pane-near: rgb(20 35 58 / 0.14);
+  --pane-far: rgb(20 35 58 / 0.24);
+  --pane-light: rgb(255 255 255 / 0.7);
+}
+
+/* Footer: no rules; it continues the page's atmosphere and settles darker. */
+/* The footer carries the canvas grain too: without it the canvas ends a few levels brighter and shows a seam. */
+.site-footer {
+  background:
+    var(--atm-grain),
+    linear-gradient(to bottom, var(--bg-raised), color-mix(in srgb, var(--bg-raised) 55%, var(--bg)));
+}
