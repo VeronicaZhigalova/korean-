@@ -1,14 +1,18 @@
 import type { Rest, SpaceGlyph, UniverseOptions, UniverseScene } from "@/components/motion/hangul-universe";
 
 /*
-  The Home's Hangul universe (8 Oct 2026). Characters fill the space around the
-  centred hero copy at several depths. While the page scrolls, selected ones
-  sink and settle into small compositions along the bottom of later sections:
-  in each lower corner a lead character on the floor with a smaller companion
-  raised beside it, clear of content. Each section also adds a
-  faint character of its own that continues the descent. Positions are
-  fractions of the section box; the engine slides any resting character clear
-  of copy, cards and buttons.
+  The Home's Hangul universe (8 Oct 2026, refined after the Home review).
+  Three depth layers surround the centred hero copy: a few near characters,
+  large, soft and cropped by the edges; sharp middle characters that frame the
+  copy; small, dim far ones. While the page scrolls, selected characters sink
+  and settle at the bottom of the following sections, each section with its own
+  composition:
+  - Learning paths: 배움 ("learning") as a word on the left, and ㄱ ㄴ ㄷ, the
+    first letters of the alphabet, in a low curve on the right.
+  - Services: two quiet single letters at different heights.
+  - Teacher: 한글 as a word on the right, a lone far ㅇ on the left.
+  Positions are fractions of the section box; the engine slides any resting
+  character clear of copy, the course showcase, cards and buttons.
 */
 
 type Tone = SpaceGlyph["tone"];
@@ -19,47 +23,46 @@ const desktop: UniverseScene[] = [
   {
     section: "hero",
     space: [
-      // Left: 한 leads, 말 below it, a near ㅁ blurred and cropped at the lower edge.
-      s("한", 0.215, 0.3, 0.72, 0.19, -8),
-      s("말", 0.285, 0.7, 0.6, 0.11, 7),
-      s("ㄱ", 0.1, 0.48, 0.5, 0.08, -18, "ivory", to("paths", 0.06, 0.62, 0.085, -8)),
-      s("ㅁ", 0.12, 0.93, 0.95, 0.4, 12, "ivory"),
-      s("배", 0.16, 0.1, 0.34, 0.06, 10, "gold", to("paths", 0.125, 0.4, 0.05, 12, 2.1)),
-      s("ㅎ", 0.04, 0.24, 0.2, 0.05, 14, "ivory", to("alphabet", 0.125, 0.38, 0.042, -10, 2.2)),
-      s("ㅈ", 0.05, 0.68, 0.24, 0.045, -9, "gold", to("alphabet", 0.06, 0.58, 0.08, -6)),
-      s("ㅅ", 0.08, 0.86, 0.28, 0.045, 20, "gold", to("services", 0.125, 0.4, 0.045, 12, 2.0)),
-      // Right: ㄷ leads high, ㅂ beyond it, ㅇ and 말 lower, a near ㅁ cropped at the right edge.
-      s("ㄷ", 0.8, 0.27, 0.74, 0.2, 22),
-      s("ㅂ", 0.93, 0.16, 0.52, 0.09, 9, "ivory", to("alphabet", 0.94, 0.58, 0.08, 8)),
-      s("ㄹ", 0.88, 0.52, 0.56, 0.1, 16, "ivory", to("services", 0.06, 0.6, 0.085, -7)),
-      s("ㅇ", 0.72, 0.72, 0.6, 0.08, 0, "ivory", to("paths", 0.875, 0.42, 0.045, 0, 2.3)),
-      s("말", 0.67, 0.9, 0.4, 0.07, -12, "gold", to("teacher", 0.06, 0.66, 0.1, -8)),
-      s("ㅁ", 1.0, 0.86, 0.95, 0.36, -14, "ivory"),
-      s("움", 0.69, 0.08, 0.3, 0.05, -6, "gold", to("paths", 0.94, 0.62, 0.09, 6)),
-      s("글", 0.96, 0.38, 0.26, 0.045, 8, "gold", to("teacher", 0.94, 0.62, 0.09, 7)),
-      s("ㄴ", 0.79, 0.4, 0.14, 0.035, -16, "ivory", to("alphabet", 0.875, 0.38, 0.045, 10, 2.2)),
-      s("ㅎ", 0.38, 0.12, 0.12, 0.035, 12, "gold", to("teacher", 0.13, 0.38, 0.042, 12, 2.3)),
+      // Near: two large, soft characters cropped by the lower left and upper right edges.
+      s("ㅁ", 0.05, 0.92, 0.94, 0.25, 12, "ivory"),
+      s("ㅎ", 0.985, 0.12, 0.92, 0.2, -10, "ivory"),
+      // Middle: sharp characters framing the copy; 한 and ㄷ lead, 말 and ㄹ answer lower.
+      s("한", 0.2, 0.31, 0.74, 0.16, -8),
+      s("ㄷ", 0.81, 0.33, 0.72, 0.15, 20),
+      s("말", 0.25, 0.73, 0.62, 0.1, 7),
+      s("ㄹ", 0.86, 0.66, 0.6, 0.09, 16, "ivory"),
+      // Characters that later descend into the sections.
+      s("배", 0.14, 0.13, 0.46, 0.065, 10, "gold", to("paths", 0.055, 0.6, 0.075, -4, 0.2)),
+      s("움", 0.68, 0.11, 0.42, 0.055, -6, "gold", to("paths", 0.115, 0.6, 0.075, 3, 0.2)),
+      s("ㄱ", 0.08, 0.5, 0.5, 0.07, -18, "ivory", to("paths", 0.865, 0.46, 0.05, -10, 0.55)),
+      s("ㄴ", 0.79, 0.45, 0.32, 0.04, -16, "ivory", to("paths", 0.91, 0.5, 0.055, 6, 0.15)),
+      s("ㄷ", 0.95, 0.5, 0.3, 0.04, 10, "ivory", to("paths", 0.955, 0.42, 0.045, 12, 0.7)),
+      s("ㅅ", 0.33, 0.93, 0.32, 0.04, 20, "gold", to("services", 0.06, 0.5, 0.055, -8, 0.3)),
+      s("ㅈ", 0.04, 0.66, 0.26, 0.045, -9, "gold", to("services", 0.94, 0.4, 0.04, 9, 1.6)),
+      s("한", 0.6, 0.06, 0.2, 0.035, 0, "gold", to("teacher", 0.885, 0.62, 0.07, -3, 0.25)),
+      s("글", 0.9, 0.2, 0.28, 0.045, 8, "gold", to("teacher", 0.945, 0.62, 0.07, 4, 0.25)),
+      s("ㅇ", 0.72, 0.84, 0.5, 0.06, 0, "ivory", to("teacher", 0.06, 0.34, 0.04, 0, 0.9)),
+      // Far: small and dim, for depth only.
+      s("ㅎ", 0.38, 0.1, 0.12, 0.03, 12),
+      s("ㅂ", 0.64, 0.92, 0.22, 0.035, 9, "ivory"),
     ],
   },
-  // Each later section adds one faint, far character that continues the descent into the next.
-  { section: "paths", space: [s("ㄷ", 0.97, 0.12, 0.2, 0.04, 10, "ivory", to("services", 0.875, 0.4, 0.045, -8, 2.1))] },
-  { section: "alphabet", space: [s("ㅁ", 0.97, 0.15, 0.2, 0.04, -10, "gold", to("services", 0.94, 0.6, 0.08, 8))] },
-  { section: "services", space: [s("ㄹ", 0.97, 0.15, 0.2, 0.04, 12, "ivory", to("teacher", 0.87, 0.4, 0.045, -6, 2.2))] },
 ];
 
-// Tablet: fewer characters, simpler depth.
+// Tablet: fewer characters, the same three layers.
 const tablet: UniverseScene[] = [
   {
     section: "hero",
     space: [
-      s("한", 0.14, 0.12, 0.7, 0.16, -8),
-      s("ㄷ", 0.86, 0.13, 0.7, 0.16, 20),
-      s("말", 0.12, 0.88, 0.6, 0.12, 7, "gold", to("teacher", 0.08, 0.6, 0.09, -8)),
-      s("ㅇ", 0.88, 0.86, 0.55, 0.09, 0, "ivory", to("teacher", 0.93, 0.5, 0.07, 0)),
-      s("ㄱ", 0.04, 0.5, 0.45, 0.07, -16, "ivory", to("paths", 0.07, 0.56, 0.08, -8)),
-      s("ㄹ", 0.96, 0.5, 0.45, 0.08, 14, "ivory", to("alphabet", 0.93, 0.56, 0.07, 10)),
-      s("배", 0.35, 0.04, 0.3, 0.05, 10, "gold", to("services", 0.07, 0.56, 0.08, -6)),
-      s("움", 0.64, 0.97, 0.3, 0.05, -8, "gold", to("paths", 0.93, 0.56, 0.08, 7)),
+      s("한", 0.14, 0.13, 0.7, 0.14, -8),
+      s("ㄷ", 0.86, 0.14, 0.7, 0.13, 20),
+      s("ㅁ", 0.03, 0.95, 0.92, 0.2, 12, "ivory"),
+      s("말", 0.16, 0.84, 0.6, 0.1, 7),
+      s("배", 0.36, 0.05, 0.3, 0.05, 10, "gold", to("paths", 0.07, 0.55, 0.07, -4, 0.2)),
+      s("움", 0.64, 0.96, 0.3, 0.05, -8, "gold", to("paths", 0.165, 0.55, 0.07, 3, 0.2)),
+      s("ㅈ", 0.04, 0.5, 0.45, 0.06, -16, "ivory", to("services", 0.92, 0.5, 0.06, 8, 0.3)),
+      s("한", 0.92, 0.6, 0.4, 0.05, 0, "gold", to("teacher", 0.8, 0.55, 0.065, -3, 0.25)),
+      s("글", 0.88, 0.86, 0.5, 0.07, 6, "gold", to("teacher", 0.9, 0.55, 0.065, 4, 0.25)),
     ],
   },
 ];
@@ -69,11 +72,12 @@ const mobile: UniverseScene[] = [
   {
     section: "hero",
     space: [
-      s("한", 0.12, 0.05, 0.62, 0.16, -8),
-      s("ㄷ", 0.9, 0.06, 0.6, 0.14, 20),
-      s("말", 0.16, 0.95, 0.55, 0.14, 7, "gold", to("teacher", 0.1, 0.55, 0.11, -8)),
-      s("ㅇ", 0.86, 0.96, 0.5, 0.1, 0, "ivory", to("paths", 0.9, 0.5, 0.1, 6)),
-      s("배", 0.5, 0.02, 0.3, 0.07, 10, "gold", to("services", 0.9, 0.5, 0.11, 7)),
+      s("한", 0.13, 0.06, 0.62, 0.15, -8),
+      s("ㄷ", 0.88, 0.07, 0.6, 0.13, 20),
+      s("말", 0.15, 0.95, 0.55, 0.12, 7, "gold", to("teacher", 0.12, 0.5, 0.1, -6, 0.2)),
+      s("배", 0.5, 0.025, 0.3, 0.06, 10, "gold", to("paths", 0.1, 0.5, 0.09, -4, 0.2)),
+      s("움", 0.62, 0.97, 0.3, 0.06, -6, "gold", to("paths", 0.26, 0.5, 0.09, 3, 0.2)),
+      s("ㅇ", 0.88, 0.95, 0.5, 0.08, 0, "ivory", to("services", 0.9, 0.45, 0.07, 0, 0.3)),
     ],
   },
 ];

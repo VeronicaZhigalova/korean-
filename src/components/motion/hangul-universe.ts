@@ -85,7 +85,7 @@ const boxIn = (el: HTMLElement, root: HTMLElement): Box => {
 };
 
 /** Content a character must never cover once it is at rest: copy, controls and cards. */
-const CONTENT = "h1, h2, h3, p, dl, ol, ul, figure, a, button, article, [data-atmo-glass]";
+const CONTENT = "h1, h2, h3, p, dl, ol, ul, figure, a, button, article, [data-atmo-glass], [data-hu-avoid]";
 
 const overlaps = (a: Box, b: Box, pad: number) =>
   a.left < b.left + b.width + pad && a.left + a.width + pad > b.left && a.top < b.top + b.height + pad && a.top + a.height + pad > b.top;
@@ -363,8 +363,8 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
     if (Math.abs(target - s) < 0.5) s = target;
     // Camera drift eases in after the opening, as in the reference; the pointer nudges it a little.
     const drift = smooth(clamp01((intro - 0.85) / 0.15));
-    const wantX = (wander(t * 0.5, 1) * 10 + pointerX * 14) * drift;
-    const wantY = (wander(t * 0.5, 5) * 7 + pointerY * 10) * drift;
+    const wantX = (wander(t * 0.5, 1) * 10 + pointerX * 8) * drift;
+    const wantY = (wander(t * 0.5, 5) * 7 + pointerY * 6) * drift;
     camX += (wantX - camX) * Math.min(1, dt * 2);
     camY += (wantY - camY) * Math.min(1, dt * 2);
     draw(intro, s, camX, camY, t);

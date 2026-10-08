@@ -40,7 +40,7 @@
     "copyright": "© {year} SAID IN KOREAN"
   },
   "home": {
-    "eyebrow": "Koreanisch online lernen · A1⁠–⁠C2 · TOPIK",
+    "eyebrow": "Koreanisch online lernen",
     "title": "Koreanisch lernen mit Online-Kursen",
     "titleBefore": "",
     "titleAccent": "Koreanisch",
@@ -49,60 +49,139 @@
     "primaryCta": "Kurse entdecken",
     "secondaryCta": "Einstufungstest machen",
     "scrollCue": "Scrollen und entdecken",
-    "facts": [
-      {
-        "value": "A1⁠–⁠C2",
-        "label": "Allgemeines Koreanisch"
-      },
-      {
-        "value": "I⁠–⁠VI",
-        "label": "TOPIK-Vorbereitung"
-      },
-      {
-        "value": "한글",
-        "label": "Kostenloser Alphabet-Kurs"
-      }
-    ],
-    "factsLabel": "Auf einen Blick",
     "paths": {
       "eyebrow": "Lernwege",
-      "title": "Wähle deinen Lernweg",
-      "lede": "Wähle direkt einen Kurs für Allgemeines Koreanisch oder TOPIK. Bezahlte Lektionen stehen sechs Monate nach dem Kauf zur Verfügung; der Einstufungstest ist optional.",
+      "title": "Finde deinen Weg ins Koreanische",
+      "lede": "Beginne mit dem Alphabet, baue dein Koreanisch Schritt für Schritt auf oder bereite dich auf TOPIK vor. Entdecke den Weg, der zu deinem Ziel passt.",
+      "pathsLabel": "Lernwege",
+      "previous": "Zurück",
+      "next": "Weiter",
+      "position": "{n} von {total}",
+      "selected": "{name} ausgewählt",
+      "lessonsLabel": "Lektionen",
+      "accessLabel": "Zugang",
+      "priceLabel": "Preis",
+      "forLabel": "Für wen",
+      "aboutLabel": "Über den Kurs",
+      "pending": "Kursbeschreibung wartet auf die Freigabe der Lehrkraft.",
+      "free": {
+        "tab": "Kostenlos starten",
+        "badge": "Kostenlos",
+        "kicker": "Neu im Koreanischen? Starte hier.",
+        "title": "Lerne Hangul kostenlos.",
+        "name": "Kostenloser Alphabet-Kurs",
+        "price": "0 €",
+        "body": "Lerne, das koreanische Alphabet zu lesen und zu schreiben. Der empfohlene erste Schritt für absolute Anfänger, vor Allgemeinem Koreanisch A1.",
+        "includesLabel": "Was der Kurs enthält",
+        "includes": [
+          "Videolektion",
+          "Alphabet-Übersicht",
+          "Übungsquiz"
+        ],
+        "materials": "Materialien auf Englisch und Deutsch werden vorbereitet.",
+        "how": "Kostenlos für alle. Kein Konto und keine Zahlung: Der Kurs öffnet sich direkt.",
+        "cta": "Kostenlosen Alphabet-Kurs starten",
+        "continue": "Danach weiter mit Allgemeinem Koreanisch",
+        "visualLabel": "ㅎ + ㅏ + ㄴ = 한",
+        "replay": "한 noch einmal bilden",
+        "kind": "Alphabet"
+      },
       "general": {
+        "tab": "Allgemeines Koreanisch",
         "title": "Allgemeines Koreanisch",
-        "levelsLabel": "Sechs Niveaus",
-        "meta": "Sechs Kurse · 15 Lektionen à 40 Minuten",
-        "access": "Sechs Monate Zugang",
-        "price": "39–59 €",
-        "cta": "Allgemeines Koreanisch ansehen"
+        "korean": "일반 한국어",
+        "levelsLabel": "Niveaus Allgemeines Koreanisch",
+        "lessons": "15 Lektionen à 40 Minuten",
+        "access": "Sechs Monate ab Zahlung",
+        "cta": "Kurs {code} ansehen",
+        "levels": [
+          {
+            "code": "A1",
+            "name": "Anfänger",
+            "price": "39 €",
+            "for": "Absolute Anfänger. Wenn Hangul neu für dich ist, beginne mit dem kostenlosen Alphabet-Kurs.",
+            "about": "Am Ende des Kurses können sich Lernende vorstellen und Personen, Dinge und Orte mit einfachen Satzmustern beschreiben. Sie nutzen die wichtigsten Partikeln, sprechen über Vergangenheit, Gegenwart und Zukunft, nennen Uhrzeit und Datum, zählen mit beiden Zahlensystemen und verbinden Sätze mit „und“, „also“ und „aber“."
+          },
+          {
+            "code": "A2",
+            "name": "Grundlagen",
+            "price": "39 €",
+            "for": "Lernende, denen der Einstufungstest A2 empfiehlt.",
+            "about": ""
+          },
+          {
+            "code": "B1",
+            "name": "Mittelstufe",
+            "price": "39 €",
+            "for": "Lernende, denen der Einstufungstest B1 empfiehlt.",
+            "about": ""
+          },
+          {
+            "code": "B2",
+            "name": "Gehobene Mittelstufe",
+            "price": "49 €",
+            "for": "Lernende, denen der Einstufungstest B2 empfiehlt.",
+            "about": ""
+          },
+          {
+            "code": "C1",
+            "name": "Fortgeschritten",
+            "price": "59 €",
+            "for": "Lernende, denen der Einstufungstest C1 empfiehlt.",
+            "about": ""
+          },
+          {
+            "code": "C2",
+            "name": "Kompetente Sprachverwendung",
+            "price": "59 €",
+            "for": "Lernende, denen der Einstufungstest C2 empfiehlt.",
+            "about": ""
+          }
+        ]
       },
       "topik": {
+        "tab": "TOPIK-Vorbereitung",
         "title": "TOPIK-Vorbereitung",
-        "levelsLabel": "Sechs Kurse",
-        "meta": "Sechs eigenständige Kurse · 10 Lektionen à 50 Minuten",
-        "price": "59–69 €",
-        "cta": "TOPIK-Kurse ansehen"
+        "korean": "TOPIK 대비",
+        "levelsLabel": "TOPIK-Vorbereitungskurse",
+        "courseWord": "Kurs",
+        "lessons": "10 Lektionen à 50 Minuten",
+        "access": "Sechs Monate ab Zahlung",
+        "cta": "TOPIK-Kurs {code} ansehen",
+        "for": "Lernende, die sich auf den offiziellen TOPIK-Test vorbereiten.",
+        "note": "Kurse I–VI sind der Vorbereitungsweg unserer Schule und Arbeitstitel. Die offizielle TOPIK-Prüfung besteht aus zwei Tests: TOPIK I (Stufen 1–2) und TOPIK II (Stufen 3–6).",
+        "levels": [
+          {
+            "code": "I",
+            "price": "59 €"
+          },
+          {
+            "code": "II",
+            "price": "59 €"
+          },
+          {
+            "code": "III",
+            "price": "59 €"
+          },
+          {
+            "code": "IV",
+            "price": "69 €"
+          },
+          {
+            "code": "V",
+            "price": "69 €"
+          },
+          {
+            "code": "VI",
+            "price": "69 €"
+          }
+        ]
       },
       "quiz": {
         "title": "Unsicher, wo du anfangen sollst?",
         "body": "Prüfe Lesen, Hören und Schreiben über sechs Niveaus.",
-        "meta": "Optional · A1⁠–⁠C2",
         "cta": "Optionalen Test starten"
       }
-    },
-    "alphabet": {
-      "eyebrow": "Kostenloser Kurs",
-      "title": "Beginne mit dem koreanischen Alphabet",
-      "body": "Eine kostenlose Videolektion, eine Alphabet-Übersicht und ein Übungsquiz für alle. Materialien auf Englisch und Deutsch werden vorbereitet.",
-      "badge": "Kostenlos für alle",
-      "steps": [
-        "Videolektion",
-        "Alphabet-Übersicht",
-        "Übungsquiz"
-      ],
-      "stepsLabel": "Das enthält der Kurs",
-      "cta": "Kostenlosen Alphabet-Kurs ansehen",
-      "visualCaption": "ㅎ + ㅏ + ㄴ = 한"
     },
     "services": {
       "eyebrow": "Mit der Lehrkraft",
@@ -136,7 +215,15 @@
     "teacher": {
       "eyebrow": "Über mich",
       "title": "Lerne die Lehrkraft kennen",
-      "body": "Eine geprüfte Biografie und Qualifikationen erscheinen nach der Freigabe. Die Kontakt-E-Mail wird gerade eingerichtet.",
+      "status": "Wartet auf freigegebene Inhalte",
+      "photo": "Foto der Lehrkraft wartet auf Freigabe",
+      "nameLabel": "Name",
+      "name": "Schreibweise wartet auf Freigabe",
+      "bioLabel": "Biografie",
+      "bio": "Eine kurze geprüfte Biografie erscheint hier nach der Freigabe.",
+      "qualificationsLabel": "Qualifikationen",
+      "qualifications": "Geprüfte Qualifikationen erscheinen hier nach der Freigabe.",
+      "contact": "Die Kontakt-E-Mail wird gerade eingerichtet.",
       "cta": "Profil der Lehrkraft ansehen",
       "glyphCaption": "말 · mal · Worte, Sprache"
     }

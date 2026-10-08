@@ -221,6 +221,8 @@
 }
 
 [data-theme="light"] {
+  /* Deeper gold on the ivory page so the pieces keep their contrast and volume. */
+  --hu-gold-face: linear-gradient(160deg, #f3d99c 0%, #c99a4c 22%, #9a6a26 46%, #6e4716 66%, #a87a37 84%, #e1bd78 100%);
   --hu-gold-side: #7a5420;
   --hu-gold-side-deep: #4a3212;
   /* On the light page the ivory pieces become polished navy so they still read. */
@@ -687,4 +689,399 @@ html[data-refract] .lg-prominent.lg-primary {
 .lg:is(:disabled, [aria-disabled="true"]) {
   --gs: 0 !important;
   scale: 1 !important;
+}
+
+/* ------------------------------------------------------------------
+   Course showcase (CourseShowcase). One selected level sits in the
+   centre, lit; its neighbours recede along a gentle curve. The level
+   type uses the Hangul universe material so the two belong together.
+   ------------------------------------------------------------------ */
+
+.course-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.375rem;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-raised) 70%, transparent);
+}
+
+.course-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 1.125rem;
+  border-radius: 999px;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  transition:
+    background-color 0.3s var(--ease-out-soft),
+    color 0.3s var(--ease-out-soft),
+    box-shadow 0.3s var(--ease-out-soft);
+}
+.course-tab:hover {
+  color: var(--text);
+}
+.course-tab[aria-selected="true"] {
+  color: var(--text);
+  background: var(--surface-strong);
+  box-shadow:
+    inset 0 0 0 1px var(--border-strong),
+    0 8px 24px -14px rgb(0 0 0 / 0.6);
+}
+.course-tab:focus-visible,
+.course-chip:focus-visible,
+.course-arrow:focus-visible,
+.course-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.course-free-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1a1206;
+  background: linear-gradient(160deg, #f6e2b0, #d9b46a 55%, #b88a45);
+}
+.course-free-badge.is-large {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.course-korean {
+  font-family: var(--font-korean);
+  font-size: 0.9375rem;
+  letter-spacing: 0.32em;
+  text-align: center;
+  color: var(--accent-text);
+  opacity: 0.8;
+}
+
+/* The stage: a lit floor in the middle, levels on a curve around it. */
+.course-stage,
+.jamo-stage {
+  position: relative;
+  height: clamp(15rem, 30vw, 22rem);
+  overflow: clip;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+  /* The row fades out at its ends instead of being cut. */
+  mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
+}
+.course-stage {
+  cursor: grab;
+}
+.course-stage.is-dragging {
+  cursor: grabbing;
+}
+
+.course-stage-light {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  width: min(26rem, 70%);
+  height: 38%;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(217 180 106 / 0.22), rgb(217 180 106 / 0.06) 60%, transparent);
+  filter: blur(6px);
+  pointer-events: none;
+}
+[data-theme="light"] .course-stage-light {
+  background: radial-gradient(closest-side, rgb(176 132 58 / 0.22), rgb(27 54 87 / 0.05) 60%, transparent);
+}
+
+.course-object {
+  --lit: 0;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+  font-family: var(--font-display);
+  font-size: clamp(6.5rem, 15vw, 11.5rem);
+  line-height: 0.9;
+  white-space: nowrap;
+  cursor: pointer;
+  will-change: transform, opacity;
+  /* The row glides and settles, as in the reference carousel: a long, soft ease-out. */
+  transition:
+    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
+    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.course-stage.is-dragging .course-object {
+  transition: none;
+}
+.course-object-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.11em;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  margin-right: -0.42em;
+  color: var(--text-muted);
+}
+.course-object-face {
+  position: relative;
+  display: block;
+  color: transparent;
+  /* Unlit neighbours fall back into navy shade; the selected one carries the light. */
+  filter: brightness(calc(0.5 + var(--lit) * 0.5)) saturate(calc(0.6 + var(--lit) * 0.4));
+}
+.course-object-face::before,
+.course-object-face::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+}
+.course-object-face::after {
+  background: var(--hu-gold-face);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.course-object-face::before {
+  color: var(--hu-gold-side);
+  text-shadow:
+    0.004em 0.006em 0 var(--hu-gold-side),
+    0.008em 0.012em 0 var(--hu-gold-side),
+    0.012em 0.018em 0 var(--hu-gold-side-deep),
+    0.016em 0.024em 0 var(--hu-gold-side-deep),
+    0.04em 0.08em 0.1em var(--hu-shadow);
+}
+.course-object[data-tone="ivory"] .course-object-face::after {
+  background: var(--hu-ivory-face);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.course-object[data-tone="ivory"] .course-object-face::before {
+  color: var(--hu-ivory-side);
+  text-shadow:
+    0.004em 0.006em 0 var(--hu-ivory-side),
+    0.008em 0.012em 0 var(--hu-ivory-side),
+    0.012em 0.018em 0 var(--hu-ivory-side-deep),
+    0.016em 0.024em 0 var(--hu-ivory-side-deep),
+    0.04em 0.08em 0.1em var(--hu-shadow);
+}
+
+/* Position track with direct selection. */
+.course-track {
+  position: relative;
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-raised) 60%, transparent);
+}
+.course-track-dot {
+  position: absolute;
+  bottom: -0.3rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px rgb(217 180 106 / 0.7);
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.course-chip {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  transition:
+    background-color 0.3s var(--ease-out-soft),
+    color 0.3s var(--ease-out-soft);
+}
+.course-chip:hover {
+  color: var(--text);
+}
+.course-chip[aria-pressed="true"] {
+  color: var(--text);
+  background: var(--surface-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+.course-arrow {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  transition:
+    border-color 0.3s var(--ease-out-soft),
+    opacity 0.3s var(--ease-out-soft);
+}
+.course-arrow:hover:not(:disabled) {
+  border-color: var(--gold);
+}
+.course-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.course-link {
+  min-height: 2.75rem;
+  padding: 0 0.25rem;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--accent-text);
+  text-underline-offset: 0.25em;
+}
+.course-link:hover {
+  text-decoration: underline;
+}
+
+/* Details change with a short masked rise, a little after the levels start moving. */
+.course-swap {
+  animation: course-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.course-swap.is-late {
+  animation-delay: 0.08s;
+}
+@keyframes course-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.6rem;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Free alphabet: ㅎ, ㅏ and ㄴ glide into one block and become 한. */
+.jamo-stage {
+  display: block;
+  width: 100%;
+  mask-image: none;
+}
+.jamo,
+.jamo-syllable {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-family: var(--font-korean);
+  font-weight: 800;
+  line-height: 1;
+  color: var(--text);
+}
+.jamo {
+  font-size: clamp(3.25rem, 7vw, 5rem);
+  translate: -50% -50%;
+}
+/* Full shorthands: the CSS minifier drops timing longhands that have no name beside them. */
+.jamo-h {
+  animation: jamo-h 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.5s both;
+}
+.jamo-a {
+  animation: jamo-a 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.5s both;
+}
+.jamo-n {
+  animation: jamo-n 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.5s both;
+}
+@keyframes jamo-h {
+  from { transform: translateX(-2.6em); }
+  70% { transform: translate(-0.3em, -0.32em) scale(0.62); opacity: 1; }
+  to { transform: translate(-0.3em, -0.32em) scale(0.62); opacity: 0; }
+}
+@keyframes jamo-a {
+  from { transform: translateX(0); }
+  70% { transform: translate(0.32em, -0.32em) scale(0.62); opacity: 1; }
+  to { transform: translate(0.32em, -0.32em) scale(0.62); opacity: 0; }
+}
+@keyframes jamo-n {
+  from { transform: translateX(2.6em); }
+  70% { transform: translate(0, 0.36em) scale(0.62); opacity: 1; }
+  to { transform: translate(0, 0.36em) scale(0.62); opacity: 0; }
+}
+.jamo-syllable {
+  font-size: clamp(7rem, 15vw, 10.5rem);
+  translate: -50% -50%;
+  color: transparent;
+  animation: jamo-form 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.45s both;
+}
+.jamo-syllable::after {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  background: var(--hu-gold-face);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.jamo-syllable::before {
+  content: attr(data-text);
+  position: absolute;
+  inset: 0;
+  color: var(--hu-gold-side);
+  text-shadow:
+    0.004em 0.006em 0 var(--hu-gold-side),
+    0.008em 0.012em 0 var(--hu-gold-side),
+    0.012em 0.018em 0 var(--hu-gold-side-deep),
+    0.016em 0.024em 0 var(--hu-gold-side-deep),
+    0.04em 0.08em 0.1em var(--hu-shadow);
+}
+@keyframes jamo-form {
+  from { opacity: 0; scale: 0.9; }
+  to { opacity: 1; scale: 1; }
+}
+
+/* Reduced motion: the finished 한 with its parts beside it, no travel. */
+@media (prefers-reduced-motion: reduce) {
+  .jamo {
+    display: none;
+  }
+}
+
+/* Phones: the three paths stay on one row, each label may wrap. */
+@media (max-width: 639px) {
+  .course-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    border-radius: 1.25rem;
+  }
+  .course-tab {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    min-height: 3.5rem;
+    padding: 0.5rem 0.375rem;
+    border-radius: 0.95rem;
+    font-size: 0.8125rem;
+    line-height: 1.15;
+    text-align: center;
+  }
+  .course-chip {
+    min-width: 2.25rem;
+    padding: 0 0.25rem;
+  }
+  .course-track {
+    gap: 0;
+  }
+  .course-arrow {
+    width: 2.5rem;
+    height: 2.75rem;
+  }
 }

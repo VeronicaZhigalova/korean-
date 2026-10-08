@@ -7,11 +7,15 @@
 
   The motion code is not rewritten for the preview: hangul-universe.ts and
   glass-light.ts are transpiled from src and run against the same markup.
-  Only small shims replace React for the theme toggle and mobile menu.
+  The course showcase is the real React component, bundled with esbuild and
+  mounted in place of its server markup. Small shims replace React for the
+  theme toggle and mobile menu.
 
   Usage:
     npm run build && npx next start -p 3200
-    node scripts/build-motion-preview.mjs http://localhost:3200 out/home-motion-preview.html
+    ESBUILD=/path/to/esbuild/lib/main.js \
+      node scripts/build-motion-preview.mjs http://localhost:3200 out/home-motion-preview.html
+  esbuild is not a project dependency; without it the showcase stays static.
 */
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -95,7 +99,56 @@ document.querySelectorAll('[data-hangul-universe]').forEach(function (layer) {
 startGlassLight();
 `;
 
-const runtime = `(function(){\n${shims}\n${transpile("src/components/motion/hangul-universe.ts")}\n${transpile("src/components/ui/glass-light.ts")}\n${boot}\n})();`;
+/* The course showcase: the real client component, rendered by React inside the preview. */
+const showcase = await (async () => {
+  if (!process.env.ESBUILD) {
+    console.warn("ESBUILD not set: the course showcase stays static in the preview.");
+    return "";
+  }
+  const esbuild = await import(process.env.ESBUILD);
+  const result = await esbuild.build({
+    stdin: {
+      contents: `
+        import { createElement } from "react";
+        import { flushSync } from "react-dom";
+        import { createRoot } from "react-dom/client";
+        import { CourseShowcase } from "@/components/home/course-showcase";
+        import en from "@/i18n/dictionaries/en.json";
+        window.__mountShowcase = () => document.querySelectorAll("[data-course-showcase]").forEach((node) => {
+          const host = document.createElement("div");
+          node.replaceWith(host);
+          flushSync(() => createRoot(host).render(createElement(CourseShowcase, { t: en.home.paths, base: "/en" })));
+        });`,
+      resolveDir: root,
+      loader: "tsx",
+    },
+    bundle: true,
+    write: false,
+    minify: true,
+    format: "iife",
+    jsx: "automatic",
+    tsconfig: join(root, "tsconfig.json"),
+    define: { "process.env.NODE_ENV": '"production"' },
+    plugins: [
+      {
+        // Links stay plain anchors; the preview never navigates.
+        name: "next-link",
+        setup(build) {
+          build.onResolve({ filter: /^next\/link$/ }, () => ({ path: "next-link", namespace: "shim" }));
+          build.onLoad({ filter: /.*/, namespace: "shim" }, () => ({
+            contents: 'import { createElement } from "react"; export default ({ href, prefetch, ...props }) => createElement("a", { href, ...props });',
+            loader: "js",
+            resolveDir: root,
+          }));
+        },
+      },
+    ],
+    logLevel: "error",
+  });
+  return result.outputFiles[0].text.replace(/<\/script/gi, "<\\/script");
+})();
+
+const runtime = `${showcase}\n(function(){\nif (window.__mountShowcase) window.__mountShowcase();\n${shims}\n${transpile("src/components/motion/hangul-universe.ts")}\n${transpile("src/components/ui/glass-light.ts")}\n${boot}\n})();`;
 
 const doc = (styles, reduced) =>
   `<!doctype html><html${htmlAttrs}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${fonts}<style>${styles}</style></head>` +

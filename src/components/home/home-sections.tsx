@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
+import { CourseShowcase } from "@/components/home/course-showcase";
 import { StatusPill } from "@/components/ui/feedback";
 import { Container } from "@/components/ui/layout";
 import type { Dictionary } from "@/i18n/dictionaries";
@@ -36,7 +37,7 @@ const cardBase = "glass-panel flex h-full min-w-0 flex-col rounded-(--radius-car
 export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
   <section data-story="hero" aria-labelledby="home-title" className="surface-night overflow-hidden">
     {/* Centred so the Hangul universe can surround the copy on every side (8 Oct 2026). */}
-    <Container className="flex min-h-[calc(100svh-4.5rem)] flex-col items-center justify-center gap-6 py-16 text-center sm:py-20">
+    <Container className="flex min-h-[calc(100svh-4.5rem)] flex-col items-center justify-center gap-7 py-20 text-center sm:py-24">
       <p className="flex items-center gap-3 text-caption font-semibold uppercase tracking-[0.2em] text-accent">
         <span aria-hidden="true" className="h-px w-6 bg-gold" />
         {t.eyebrow}
@@ -51,7 +52,7 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
         {t.titleAfter}
       </h1>
       <p className="max-w-[44ch] text-body-lg text-text-muted">{t.lede}</p>
-      <div className="mt-2 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
+      <div className="mt-3 flex w-full flex-col justify-center gap-3 sm:w-auto sm:flex-row">
         <Button href={href("courses")} arrow prominent>
           {t.primaryCta}
         </Button>
@@ -60,30 +61,9 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
         </Button>
       </div>
 
-      {/* Course levels: one quiet row under the actions. */}
-      <dl
-        aria-label={t.factsLabel}
-        className="mt-6 grid w-full max-w-[34rem] grid-cols-3 border-t border-border/70 pt-5 sm:mt-8"
-      >
-        {t.facts.map((fact, index) => (
-          <div key={fact.label} className={cn("flex flex-col items-center gap-1.5 px-2", index > 0 && "border-l border-border/70")}>
-            <dt className="order-2 text-caption leading-snug text-text-muted">{fact.label}</dt>
-            <dd
-              lang={fact.value === "한글" ? "ko" : undefined}
-              className={cn(
-                "order-1 text-[1.5rem] leading-none text-accent sm:text-[1.75rem]",
-                fact.value === "한글" ? "font-korean font-semibold" : "font-sans font-semibold tracking-[-0.01em] tabular-nums",
-              )}
-            >
-              {fact.value}
-            </dd>
-          </div>
-        ))}
-      </dl>
-
       <a
         href="#paths-title"
-        className="mt-4 inline-flex items-center gap-2 rounded-full px-3 py-2 text-caption font-semibold uppercase tracking-[0.2em] text-text-muted transition-colors hover:text-accent focus-visible:text-accent"
+        className="mt-10 inline-flex items-center gap-2 rounded-full px-3 py-2 sm:mt-14 text-caption font-semibold uppercase tracking-[0.2em] text-text-muted transition-colors hover:text-accent focus-visible:text-accent"
       >
         {t.scrollCue}
         <span aria-hidden="true">↓</span>
@@ -92,171 +72,30 @@ export const HeroSection = ({ t, href }: { t: Home; href: Href }) => (
   </section>
 );
 
-/* 2 · Learning paths --------------------------------------------------- */
+/* 2 · Learning paths (with the free alphabet course) ----------------- */
 
-const generalLevels = ["A1", "A2", "B1", "B2", "C1", "C2"];
-const topikLevels = ["I", "II", "III", "IV", "V", "VI"];
-
-const LevelStair = ({ label }: { label: string }) => (
-  <div className="flex flex-col gap-3">
-    <p className="text-caption font-semibold uppercase tracking-[0.16em] text-text-muted">{label}</p>
-    <ol className="grid grid-cols-6 items-end gap-1.5 [--stair-base:3.25rem] [--stair-step:0.85rem] sm:gap-2.5 sm:[--stair-base:4rem] sm:[--stair-step:1.1rem] lg:[--stair-base:5rem] lg:[--stair-step:1.55rem]">
-      {generalLevels.map((level, index) => (
-        <li
-          key={level}
-          className="flex flex-col justify-end rounded-xl border border-border bg-bg/40 px-1.5 pb-3 pt-3 text-center sm:px-2"
-          style={{ height: `calc(var(--stair-base) + ${index} * var(--stair-step))` }}
-        >
-          <span
-            className={cn(
-              "font-sans text-[clamp(1.05rem,1.9vw,1.6rem)] font-semibold leading-none tracking-[-0.01em] tabular-nums",
-              index >= 4 ? "text-accent" : "text-text",
-            )}
-          >
-            {level}
-          </span>
-        </li>
-      ))}
-    </ol>
-  </div>
-);
-
-export const LearningPathsSection = ({ t, href }: { t: Home["paths"]; href: Href }) => (
+export const LearningPathsSection = ({ t, href, base }: { t: Home["paths"]; href: Href; base: string }) => (
   <section data-story="paths" aria-labelledby="paths-title" className="surface-raised py-24 lg:py-32">
-    <Container className="flex flex-col gap-12 lg:gap-16">
+    <Container className="flex flex-col gap-10 lg:gap-14">
       <SectionIntro id="paths-title" index={1} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
-
-      <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-12 lg:grid-rows-[auto_auto]">
-        <div className="md:col-span-2 lg:col-span-7 lg:row-span-2">
-          <article data-atmo-glass className={cn(cardBase, "glass-lead gap-8 p-6 sm:p-9")}>
-            <header className="flex flex-col gap-2">
-              <h3 className="font-display text-[clamp(2rem,3.4vw,2.75rem)] leading-tight text-text">{t.general.title}</h3>
-              <p className="text-body-sm text-text-muted">{t.general.meta}</p>
-            </header>
-            <LevelStair label={t.general.levelsLabel} />
-            <footer className="mt-auto flex flex-wrap items-end justify-between gap-5 border-t border-border pt-6">
-              <div className="flex flex-col gap-1">
-                <span className="font-display text-4xl leading-none tabular-nums text-text">{t.general.price}</span>
-                <span className="text-caption text-text-muted">{t.general.access}</span>
-              </div>
-              <Button href={`${href("courses")}#general-korean`} arrow>
-                {t.general.cta}
-              </Button>
-            </footer>
-          </article>
-        </div>
-
-        <div className="lg:col-span-5">
-          <article data-atmo-glass className={cn(cardBase, "gap-5 p-6 sm:p-7")}>
-            <header className="flex items-start justify-between gap-4">
-              <h3 className="font-display text-[1.875rem] leading-tight text-text">{t.topik.title}</h3>
-              <span className="pt-2 text-caption font-semibold uppercase tracking-[0.16em] text-text-muted">{t.topik.levelsLabel}</span>
-            </header>
-            <ol className="flex flex-wrap gap-1.5" aria-label={t.topik.levelsLabel}>
-              {topikLevels.map((level) => (
-                <li key={level} className="grid h-9 min-w-10 place-items-center rounded-lg border border-border px-2 font-display text-lg leading-none text-text">
-                  {level}
-                </li>
-              ))}
-            </ol>
-            <p className="text-body-sm text-text-muted">{t.topik.meta}</p>
-            <footer className="mt-auto flex flex-wrap items-center justify-between gap-4 border-t border-border pt-5">
-              <span className="font-display text-[1.75rem] leading-none tabular-nums text-text">{t.topik.price}</span>
-              <Button href={`${href("courses")}#topik`} variant="secondary" size="sm" arrow>
-                {t.topik.cta}
-              </Button>
-            </footer>
-          </article>
-        </div>
-
-        <div className="lg:col-span-5">
-          <article className="flex h-full flex-col gap-4 rounded-(--radius-card) border border-dashed border-border-strong p-6 transition-colors duration-300 hover:border-gold sm:p-7">
-            <span className="w-fit rounded-full border border-border px-3 py-0.5 text-caption font-semibold text-text-muted">{t.quiz.meta}</span>
-            <h3 className="text-xl font-semibold text-text">{t.quiz.title}</h3>
-            <p className="text-body-sm text-text-muted">{t.quiz.body}</p>
-            <Button href={href("quiz")} variant="secondary" size="sm" arrow className="mt-auto self-start">
-              {t.quiz.cta}
-            </Button>
-          </article>
-        </div>
-      </div>
-    </Container>
-  </section>
-);
-
-/* 3 · Free alphabet ---------------------------------------------------- */
-
-const AlphabetVisual = ({ caption }: { caption: string }) => {
-  const jamo = ["ㅎ", "ㅏ", "ㄴ"];
-  return (
-    <figure
-      data-story="alphabet-visual"
-      data-atmo-glass
-      className="glass-panel relative flex flex-col items-center gap-6 rounded-(--radius-card) px-6 py-10 sm:py-14"
-      aria-label={caption}
-    >
-      <div className="flex items-center gap-3 sm:gap-5" aria-hidden="true">
-        {jamo.map((letter, index) => (
-          <span key={letter} className="flex items-center gap-3 sm:gap-5">
-            <span lang="ko" className="grid size-16 place-items-center rounded-2xl border border-border-strong font-korean text-3xl font-semibold text-text sm:size-20 sm:text-4xl">
-              {letter}
-            </span>
-            {index < jamo.length - 1 ? <span className="text-xl text-text-muted">+</span> : null}
-          </span>
-        ))}
-      </div>
-      <svg aria-hidden="true" viewBox="0 0 240 40" className="h-8 w-48 text-gold" fill="none">
-        <path d="M20 4 C 60 36, 180 36, 220 4" stroke="currentColor" strokeWidth="1" strokeDasharray="3 6" />
-        <path d="M120 30 v8" stroke="currentColor" strokeWidth="1" />
-      </svg>
-      <span lang="ko" aria-hidden="true" className="font-korean text-[clamp(6rem,14vw,9.5rem)] font-extrabold leading-none text-accent">
-        한
-      </span>
-      <figcaption lang="ko" className="text-caption tracking-[0.14em] text-text-muted">
-        {caption}
-      </figcaption>
-    </figure>
-  );
-};
-
-export const AlphabetSection = ({ t, href }: { t: Home["alphabet"]; href: Href }) => (
-  <section data-story="alphabet" aria-labelledby="alphabet-title" className="surface-night overflow-hidden py-24 lg:py-32">
-    <Container className="grid items-center gap-12 lg:grid-cols-12 lg:gap-8">
-      <div className="order-2 lg:order-1 lg:col-span-5">
-        <AlphabetVisual caption={t.visualCaption} />
-      </div>
-      <div className="order-1 flex flex-col items-start gap-6 lg:order-2 lg:col-span-6 lg:col-start-7">
-        <Eyebrow index={2}>{t.eyebrow}</Eyebrow>
-        <h2 id="alphabet-title" className="font-display text-[clamp(2.4rem,4.6vw,4rem)] leading-[1.02] tracking-[-0.015em] text-text">
-          {t.title}
-        </h2>
-        <StatusPill tone="success">{t.badge}</StatusPill>
-        <p className="max-w-[48ch] text-body-lg text-text-muted">{t.body}</p>
-        <div className="flex w-full flex-col gap-3">
-          <p className="text-caption font-semibold uppercase tracking-[0.16em] text-text-muted">{t.stepsLabel}</p>
-          <ol className="flex flex-col border-t border-border">
-            {t.steps.map((step, index) => (
-              <li key={step} className="flex items-center gap-5 border-b border-border py-3.5">
-                <span className="w-6 font-display text-xl tabular-nums text-accent">{index + 1}</span>
-                <span className="text-body text-text">{step}</span>
-              </li>
-            ))}
-          </ol>
-        </div>
-        <Button href={href("courses/alphabet")} variant="secondary" arrow className="mt-2">
-          {t.cta}
+      <CourseShowcase t={t} base={base} />
+      <p className="flex flex-wrap items-center gap-x-4 gap-y-2 border-t border-border pt-6 text-body-sm text-text-muted">
+        <span className="font-semibold text-text">{t.quiz.title}</span>
+        <span>{t.quiz.body}</span>
+        <Button href={href("quiz")} variant="ghost" size="sm" arrow className="px-0 text-accent hover:text-accent">
+          {t.quiz.cta}
         </Button>
-      </div>
+      </p>
     </Container>
   </section>
 );
 
-/* 4 · Coaching and Speaking Chat -------------------------------------- */
+/* 3 · Coaching and Speaking Chat -------------------------------------- */
 
 export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }) => (
   <section data-story="services" aria-labelledby="services-title" className="surface-raised py-24 lg:py-32">
     <Container className="flex flex-col gap-12 lg:gap-16">
-      <SectionIntro id="services-title" index={3} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
+      <SectionIntro id="services-title" index={2} eyebrow={t.eyebrow} title={t.title} lede={t.lede} />
 
       <div className="grid gap-5 md:grid-cols-2">
         <div>
@@ -275,7 +114,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
                 </div>
               ))}
             </dl>
-            <Button href={href("coaching")} arrow className="mt-auto self-start">
+            <Button href={href("coaching")} variant="secondary" arrow className="mt-auto self-start">
               {t.coaching.cta}
             </Button>
           </article>
@@ -295,7 +134,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
                 <dd className="font-display text-3xl leading-none tabular-nums text-text">{t.chat.price}</dd>
               </div>
             </dl>
-            <Button href={href("speaking-chat")} arrow className="mt-auto self-start">
+            <Button href={href("speaking-chat")} variant="secondary" arrow className="mt-auto self-start">
               {t.chat.cta}
             </Button>
           </article>
@@ -305,29 +144,52 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
   </section>
 );
 
-/* 5 · Meet the teacher ------------------------------------------------- */
+/* 4 · Meet the teacher ------------------------------------------------- */
 
+// Every slot is ready for approved content; nothing about the teacher is invented.
 export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) => (
-  <section data-story="teacher" aria-labelledby="teacher-title" className="surface-night overflow-hidden py-24 lg:py-36">
-    <Container className="grid items-center gap-12 lg:grid-cols-12">
-      <div className="flex flex-col items-start gap-6 lg:col-span-6">
-        <Eyebrow index={4}>{t.eyebrow}</Eyebrow>
+  <section data-story="teacher" aria-labelledby="teacher-title" className="surface-night overflow-hidden py-24 lg:py-32">
+    <Container className="grid items-center gap-10 md:grid-cols-12 lg:gap-14">
+      <figure className="md:col-span-5">
+        <div
+          data-atmo-glass
+          className="glass-panel relative grid aspect-[4/5] w-full max-w-[26rem] place-items-center overflow-hidden rounded-(--radius-card)"
+        >
+          <span aria-hidden="true" lang="ko" className="glyph-soft font-korean text-[clamp(7rem,14vw,10rem)] font-extrabold leading-none opacity-70">
+            말
+          </span>
+          <figcaption className="absolute inset-x-4 bottom-4 rounded-xl border border-border bg-bg/60 px-4 py-3 text-center text-caption text-text-muted">
+            {t.photo}
+          </figcaption>
+        </div>
+        <p lang="ko" aria-hidden="true" className="mt-3 max-w-[26rem] text-center text-caption tracking-[0.14em] text-text-muted">
+          {t.glyphCaption}
+        </p>
+      </figure>
+
+      <div className="flex flex-col items-start gap-6 md:col-span-7 lg:col-span-6 lg:col-start-7">
+        <Eyebrow index={3}>{t.eyebrow}</Eyebrow>
         <h2 id="teacher-title" className="font-display text-[clamp(2.4rem,4.6vw,4rem)] leading-[1.02] tracking-[-0.015em] text-text">
           {t.title}
         </h2>
-        <p className="max-w-[44ch] text-body-lg text-text-muted">{t.body}</p>
-        <Button href={href("about")} variant="secondary" arrow className="mt-2">
+        <StatusPill tone="warning">{t.status}</StatusPill>
+        <dl className="flex w-full flex-col border-t border-border">
+          {[
+            [t.nameLabel, t.name],
+            [t.bioLabel, t.bio],
+            [t.qualificationsLabel, t.qualifications],
+          ].map(([label, value]) => (
+            <div key={label} className="grid gap-1 border-b border-border py-4 sm:grid-cols-[9rem_1fr] sm:gap-6">
+              <dt className="text-caption font-semibold uppercase tracking-[0.14em] text-text-muted">{label}</dt>
+              <dd className="text-body-sm italic text-text-muted">{value}</dd>
+            </div>
+          ))}
+        </dl>
+        <p className="text-body-sm text-text-muted">{t.contact}</p>
+        <Button href={href("about")} variant="secondary" arrow>
           {t.cta}
         </Button>
       </div>
-      <figure className="flex flex-col items-center gap-4 lg:col-span-5 lg:col-start-8" aria-hidden="true">
-        <span data-story="teacher-word" lang="ko" className="glyph-soft font-korean text-[clamp(10rem,24vw,18rem)] font-extrabold leading-none">
-          말
-        </span>
-        <figcaption lang="ko" className="text-caption tracking-[0.14em] text-text-muted">
-          {t.glyphCaption}
-        </figcaption>
-      </figure>
     </Container>
   </section>
 );
