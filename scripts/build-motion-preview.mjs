@@ -97,6 +97,9 @@ document.querySelectorAll('[data-hangul-universe]').forEach(function (layer) {
   startHangulUniverse(layer, layer.parentElement, JSON.parse(layer.dataset.hangulUniverse));
 });
 startGlassLight();
+document.querySelectorAll('[data-hangul-universe]').forEach(function (layer) {
+  startScrollReveal(layer.parentElement);
+});
 `;
 
 /* The course showcase: the real client component, rendered by React inside the preview. */
@@ -148,7 +151,7 @@ const showcase = await (async () => {
   return result.outputFiles[0].text.replace(/<\/script/gi, "<\\/script");
 })();
 
-const runtime = `${showcase}\n(function(){\nif (window.__mountShowcase) window.__mountShowcase();\n${shims}\n${transpile("src/components/motion/hangul-universe.ts")}\n${transpile("src/components/ui/glass-light.ts")}\n${boot}\n})();`;
+const runtime = `${showcase}\n(function(){\nif (window.__mountShowcase) window.__mountShowcase();\n${shims}\n${transpile("src/components/motion/hangul-universe.ts")}\n${transpile("src/components/ui/glass-light.ts")}\n${transpile("src/components/motion/scroll-reveal.ts")}\n${boot}\n})();`;
 
 const doc = (styles, reduced) =>
   `<!doctype html><html${htmlAttrs}><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${fonts}<style>${styles}</style></head>` +

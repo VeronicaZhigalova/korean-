@@ -282,6 +282,22 @@
   opacity: 0;
   will-change: transform, opacity;
 }
+/* The light a hero piece stands in: a soft cool pool behind its upper left, dimming as it recedes. */
+.hu-light {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.6em;
+  height: 1.6em;
+  translate: -62% -60%;
+  z-index: -1;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgb(120 170 240 / 0.12), transparent);
+  pointer-events: none;
+}
+[data-theme="light"] .hu-light {
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.55), transparent);
+}
 /* A character built from its jamo: a square block, each part placed from its centre. */
 .hu-glyph.is-modular {
   width: 1em;
@@ -893,11 +909,11 @@ html[data-refract] .lg-prominent.lg-primary {
   .course-object.is-current .course-shadow {
     animation:
       level-shadow 1.15s cubic-bezier(0.33, 0, 0.25, 1) both,
-      crystal-shadow 7s ease-in-out 1.15s infinite;
+      crystal-shadow 10s ease-in-out 1.15s infinite;
   }
   .course-object.is-current .course-float,
   .jamo-word .course-float {
-    animation: crystal-float 7s ease-in-out 1.15s infinite both;
+    animation: crystal-float 10s ease-in-out 1.15s infinite both;
   }
   .jamo-word .course-shadow {
     animation: crystal-shadow 7s ease-in-out 2.8s infinite both;
@@ -929,13 +945,14 @@ html[data-refract] .lg-prominent.lg-primary {
   from { opacity: 1; transform: none; }
   to { opacity: 0; transform: translateY(-6px) scale(0.86); }
 }
+/* After the landing the piece settles: a breath of 3 px, slow enough to read as stillness. */
 @keyframes crystal-float {
   0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-7px); }
+  50% { transform: translateY(-3px); }
 }
 @keyframes crystal-shadow {
   0%, 100% { transform: scale(1); opacity: 1; }
-  50% { transform: scale(1.14, 1.2); opacity: 0.6; }
+  50% { transform: scale(1.05, 1.08); opacity: 0.82; }
 }
 
 /* Position track with direct selection. */
@@ -1381,17 +1398,24 @@ html[data-refract] .lg-prominent.lg-primary {
    while the far characters are still arriving. Full shorthands only.
    ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
+  /* Hangul Journey: the glass letters come forward first (0.2 to 2.5 s), then the words. */
   .hero-in-1 {
-    animation: hero-track 1.4s cubic-bezier(0.22, 1, 0.36, 1) 0.45s both;
+    animation: hero-track 1.4s cubic-bezier(0.22, 1, 0.36, 1) 1.05s both;
   }
   .hero-in-2 {
-    animation: hero-unveil 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.75s both;
+    animation: hero-unveil 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1.35s both;
   }
   .hero-in-3 {
-    animation: hero-focus 1.2s cubic-bezier(0.22, 1, 0.36, 1) 1.45s both;
+    animation: hero-focus 1.2s cubic-bezier(0.22, 1, 0.36, 1) 2.05s both;
   }
   .hero-in-4 {
-    animation: hero-arrive 1s cubic-bezier(0.22, 1, 0.36, 1) 1.8s both;
+    animation: hero-arrive 1s cubic-bezier(0.22, 1, 0.36, 1) 2.45s both;
+  }
+  /* Scroll-linked: the copy recedes and fades with the hero's scroll progress (set by the engine). */
+  .hero-copy {
+    opacity: calc(1 - var(--hero-p, 0) * 1.25);
+    transform: translateY(calc(var(--hero-p, 0) * -3rem)) scale(calc(1 - var(--hero-p, 0) * 0.05));
+    will-change: transform, opacity;
   }
 }
 @keyframes hero-track {
@@ -1705,5 +1729,86 @@ html[data-refract] .lg-prominent.lg-primary {
   }
   .course-points {
     gap: 0.7rem;
+  }
+}
+
+/*
+  Hangul Journey section entrances (9 Oct 2026). scroll-reveal.ts marks
+  below-the-fold [data-reveal] elements "pending" and then "in" once seen; with
+  no JavaScript or reduced motion nothing is ever pending. Each kind moves
+  differently, so the page reads as a progression rather than a row of fade-ups:
+  - heading: the line is uncovered from below, like type set into place;
+  - card: tilts up out of depth into the reading plane;
+  - unit (Learning Paths): the glass piece rises dimensionally, the level
+    controls follow, then the course information slides in from the right.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal="heading"] {
+    transition:
+      clip-path 1s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-reveal="heading"][data-reveal-state="pending"] {
+    clip-path: inset(-15% -5% 100% -5%);
+    transform: translateY(0.35em);
+  }
+  [data-reveal="heading"][data-reveal-state="in"] {
+    clip-path: inset(-15% -5% -15% -5%);
+  }
+
+  /* Glass panels keep their own hover transitions alongside the entrance. */
+  .home-canvas [data-reveal="card"] {
+    transition:
+      opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 120ms + 80ms),
+      transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 120ms + 80ms),
+      border-color 0.35s var(--ease-out-soft),
+      box-shadow 0.35s var(--ease-out-soft),
+      translate 0.35s var(--ease-out-soft);
+  }
+  [data-reveal="card"][data-reveal-state="pending"] {
+    opacity: 0;
+    transform: perspective(1000px) translateY(1.75rem) rotateX(7deg) scale(0.98);
+  }
+
+  [data-reveal="unit"] .course-tabs,
+  [data-reveal="unit"] .course-unit,
+  [data-reveal="unit"] .course-stage,
+  [data-reveal="unit"] .jamo-stage,
+  [data-reveal="unit"] .course-unit-stage > :last-child,
+  [data-reveal="unit"] .course-unit-info {
+    transition:
+      opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-reveal="unit"] .course-stage,
+  [data-reveal="unit"] .jamo-stage {
+    transition-delay: 0.15s;
+  }
+  [data-reveal="unit"] .course-unit-stage > :last-child {
+    transition-delay: 0.5s;
+  }
+  [data-reveal="unit"] .course-unit-info {
+    transition-delay: 0.65s;
+  }
+  [data-reveal="unit"][data-reveal-state="pending"] .course-tabs,
+  [data-reveal="unit"][data-reveal-state="pending"] .course-unit-stage > :last-child {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  [data-reveal="unit"][data-reveal-state="pending"] .course-unit {
+    opacity: 0.4;
+  }
+  [data-reveal="unit"][data-reveal-state="pending"] .course-stage,
+  [data-reveal="unit"][data-reveal-state="pending"] .jamo-stage {
+    opacity: 0;
+    transform: perspective(900px) translateY(1.5rem) rotateX(16deg) scale(0.9);
+  }
+  [data-reveal="unit"][data-reveal-state="pending"] .course-unit-info {
+    opacity: 0;
+    transform: translateX(1.25rem);
+  }
+  /* The alphabet's ㅎ ㅏ ㄴ → 한글 waits until it is seen. */
+  [data-reveal="unit"][data-reveal-state="pending"] .jamo-stage * {
+    animation-play-state: paused;
   }
 }

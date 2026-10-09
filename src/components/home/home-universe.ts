@@ -7,7 +7,8 @@ import type { GlyphPart, HeroGlyph, UniverseOptions } from "@/components/motion/
     in its cell of the syllable block: the modular construction of Hangul is
     the signature of the site.
   - 글, its answer, lower right: smaller, further back, softer and dimmer.
-  The eye travels 한 → headline → 글 → CTA. Positions are fractions of the
+  The eye travels 한 → headline → 글 → CTA. Scrolling, they part: 한 left
+  and into depth, 글 right, and both leave as Learning Paths arrives. Positions are fractions of the
   hero box; the engine slides either clear of the copy and the navigation.
 */
 
@@ -19,6 +20,9 @@ const g = (g: string, x: number, y: number, z: number, size: number, rot: number
   size,
   rot,
   parts,
+  // On scroll 한 slides left and sinks deeper; 글 eases the other way and barely recedes.
+  drift: g === "한" ? -0.09 : 0.05,
+  recede: g === "한" ? 0.38 : 0.16,
 });
 
 // 한 as a block: initial ㅎ top left, vowel ㅏ tall on the right, final ㄴ across the bottom.

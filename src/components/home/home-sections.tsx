@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { Button } from "@/components/ui/button";
 import { CourseShowcase } from "@/components/home/course-showcase";
 import { StatusPill } from "@/components/ui/feedback";
@@ -10,7 +11,7 @@ type Href = (segment: string) => string;
 
 // Sections open on their heading alone: no numbering, no eyebrow.
 const SectionIntro = ({ id, title }: { id: string; title: string }) => (
-  <h2 id={id} className="display-headline section-headline max-w-[22ch] text-text">
+  <h2 id={id} data-reveal="heading" className="display-headline section-headline max-w-[22ch] text-text">
     {title}
   </h2>
 );
@@ -23,7 +24,7 @@ const cardBase = "glass-panel flex h-full min-w-0 flex-col rounded-(--radius-car
 export const HeroSection = ({ t }: { t: Home }) => (
   <section data-story="hero" aria-labelledby="home-title" className="overflow-hidden pt-(--header-h)">
     {/* Centred so the Hangul universe can surround the copy on every side (8 Oct 2026). */}
-    <Container className="flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-7 py-20 text-center sm:py-24">
+    <Container className="hero-copy flex min-h-[calc(100svh-5rem)] flex-col items-center justify-center gap-7 py-20 text-center sm:py-24">
       <p className="hero-in hero-in-1 text-caption font-semibold uppercase tracking-[0.2em] text-accent">{t.eyebrow}</p>
       <h1 id="home-title" className="hero-in hero-in-2 display-headline hero-headline text-balance text-text">
         {t.titleBefore}
@@ -45,9 +46,11 @@ export const LearningPathsSection = ({ t, href, base }: { t: Home["paths"]; href
   <section id="learning-paths" tabIndex={-1} data-story="paths" aria-labelledby="paths-title" className="py-24 outline-none lg:py-32">
     <Container className="flex flex-col gap-8 lg:gap-10">
       <SectionIntro id="paths-title" title={t.title} />
-      <CourseShowcase t={t} base={base} />
+      <div data-reveal="unit">
+        <CourseShowcase t={t} base={base} />
+      </div>
       {/* Level quiz: optional help for choosing a course, set apart as its own quiet glass panel. */}
-      <aside aria-labelledby="quiz-cta-title" data-atmo-glass className="glass-panel quiz-cta rounded-(--radius-card)">
+      <aside aria-labelledby="quiz-cta-title" data-reveal="card" data-atmo-glass className="glass-panel quiz-cta rounded-(--radius-card)">
         <div className="flex max-w-[40rem] flex-col gap-3">
           <p className="text-caption font-semibold uppercase tracking-[0.18em] text-accent">{t.quiz.eyebrow}</p>
           <h3 id="quiz-cta-title" className="display-headline text-[clamp(1.6rem,2.6vw,2.15rem)] leading-tight text-text">
@@ -74,7 +77,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
       <SectionIntro id="services-title" title={t.title} />
 
       <div className="grid gap-5 md:grid-cols-2">
-        <div>
+        <div data-reveal="card">
           <article data-atmo-glass className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
             <header className="flex flex-col items-start gap-3">
               <StatusPill tone="warning">{t.coaching.requirement}</StatusPill>
@@ -95,7 +98,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
           </article>
         </div>
 
-        <div>
+        <div data-reveal="card" style={{ "--i": 1 } as CSSProperties}>
           <article data-atmo-glass className={cn(cardBase, "relative gap-6 overflow-hidden p-6 sm:p-8")}>
             <header className="flex flex-col items-start gap-3">
               <StatusPill tone="success">{t.chat.requirement}</StatusPill>
@@ -124,7 +127,7 @@ export const ServicesSection = ({ t, href }: { t: Home["services"]; href: Href }
 export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) => (
   <section data-story="teacher" aria-labelledby="teacher-title" className="overflow-hidden py-24 lg:py-32">
     <Container className="grid items-center gap-10 md:grid-cols-12 lg:gap-14">
-      <figure className="md:col-span-5">
+      <figure data-reveal="card" className="md:col-span-5">
         <div
           data-atmo-glass
           className="glass-panel relative grid aspect-[4/5] w-full max-w-[26rem] place-items-center overflow-hidden rounded-(--radius-card)"
@@ -142,7 +145,7 @@ export const TeacherSection = ({ t, href }: { t: Home["teacher"]; href: Href }) 
       </figure>
 
       <div className="flex flex-col items-start gap-6 md:col-span-7 lg:col-span-6 lg:col-start-7">
-        <h2 id="teacher-title" className="display-headline section-headline text-text">
+        <h2 id="teacher-title" data-reveal="heading" className="display-headline section-headline text-text">
           {t.title}
         </h2>
         <StatusPill tone="warning">{t.status}</StatusPill>

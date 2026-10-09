@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, type ReactNode } from "react";
 import { startHangulUniverse, type UniverseOptions } from "./hangul-universe";
+import { startScrollReveal } from "./scroll-reveal";
 
 /*
   The glass Hangul around a page's hero (placement and motion live in
@@ -19,7 +20,12 @@ export const HangulUniverse = ({ options, children, className }: Props) => {
     const layer = ref.current;
     const root = layer?.parentElement;
     if (!layer || !root) return;
-    return startHangulUniverse(layer, root, options);
+    const stopUniverse = startHangulUniverse(layer, root, options);
+    const stopReveal = startScrollReveal(root);
+    return () => {
+      stopUniverse();
+      stopReveal();
+    };
   }, [options]);
 
   return (

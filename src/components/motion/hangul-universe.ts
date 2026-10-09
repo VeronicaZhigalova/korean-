@@ -4,14 +4,18 @@
   varied size and depth. Framework-free so the Home and its review preview
   run the same code.
 
-  - They appear one after another while the hero copy is introduced (the
-    copy's own CSS entrance runs from 0.45 s to about 2.8 s).
+  - Hangul Journey (9 Oct 2026): they emerge from depth first, out of focus
+    and unlit, sharpening and catching the light as they come forward; the
+    hero copy follows in its own CSS sequence (eyebrow, headline, description,
+    CTA), so letters and words read as one directed entrance.
   - Once there, each floats very slowly, a few pixels up and down with a
     gentle turn, and on desktop the pointer adds a restrained parallax, more
     for near characters than far ones.
-  - Scrolling away from the hero, they recede into depth: they drift back
-    towards the centre, shrink a little and fade, far ones first. Nothing
-    travels across the rest of the page.
+  - Scrolling is tied to progress, never triggered: each character drifts
+    along its own direction (drift) and recedes at its own rate (recede), so
+    한 slides left into depth while 글 eases right; the light behind each one
+    dims, and they leave the scene as Learning Paths arrives. The hero copy
+    recedes through --hero-p on the hero section. Scrolling up reverses it all.
   - A character can be built from its jamo (parts), the way Hangul composes
     a syllable block: the parts arrive a little apart and settle into their
     cells, then the finished block floats as one piece.
@@ -29,6 +33,10 @@ export type HeroGlyph = {
   /** Height as a fraction of the smaller viewport side. */
   size: number;
   rot: number;
+  /** Sideways travel while the page scrolls away from the hero, in fractions of the hero width (negative: left). */
+  drift?: number;
+  /** How much it shrinks into depth over the same scroll (0..1). */
+  recede?: number;
   /** Built from its jamo instead of drawn whole: each part in its cell of the syllable block. */
   parts?: GlyphPart[];
 };
@@ -79,10 +87,11 @@ type Item = {
   period: number;
   seed: number;
   parts: { el: HTMLElement; part: GlyphPart }[];
+  light: HTMLElement;
 };
 
 /** Seconds a character takes to appear. */
-const APPEAR = 1.6;
+const APPEAR = 2;
 
 /** Starts the hero characters in `layer`, placed around `root`'s hero section. Returns a stop function. */
 export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, options: UniverseOptions) => {
@@ -91,6 +100,8 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
 
   let items: Item[] = [];
   let hero: Box = { left: 0, top: 0, width: 1, height: 1 };
+  let heroSection: HTMLElement | null = null;
+  let lastProgress = -1;
 
   const field = document.createElement("div");
   field.className = "hu-field";
@@ -99,6 +110,7 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
   const build = () => {
     const section = root.querySelector<HTMLElement>(`[data-story="${options.section}"]`);
     if (!section) return;
+    heroSection = section;
     hero = boxIn(section, root);
     const mode = matchMedia("(min-width: 1024px)").matches ? "desktop" : matchMedia("(min-width: 640px)").matches ? "tablet" : "mobile";
     const unit = Math.min(root.offsetWidth, innerHeight);
@@ -150,11 +162,14 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
       });
       outer.style.fontSize = `${px.toFixed(1)}px`;
       outer.style.zIndex = String(Math.round(glyph.z * 10));
+      const light = document.createElement("span");
+      light.className = "hu-light";
+      outer.appendChild(light);
       if (parts.length) {
         outer.classList.add("is-modular");
         parts.forEach(({ el }) => outer.appendChild(el));
       } else outer.appendChild(crystal(glyph.g, px));
-      return { outer, glyph, x, y, px, delay: 0.2 + rank * 0.35, period: 9 + ((i * 7) % 6), seed: i * 1.7, parts };
+      return { outer, glyph, x, y, px, delay: 0.2 + rank * 0.35, period: 9 + ((i * 7) % 6), seed: i * 1.7, parts, light };
     });
     field.replaceChildren(...items.map((item) => item.outer));
   };
@@ -167,16 +182,20 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
     const wave = Math.sin((t / item.period) * Math.PI * 2 + item.seed);
     const float = wave * (3 + g.z * 4);
     const turn = Math.sin((t / (item.period * 1.3)) * Math.PI * 2 + item.seed * 2) * 1.6;
-    // Receding: towards the hero's centre and into depth; far characters go first.
-    const r = smooth(clamp01(p * (1.5 - g.z * 0.6)));
-    const cx = hero.left + hero.width / 2;
-    const cy = hero.top + hero.height * 0.42;
+    // Scroll: each character travels its own way and into depth; nearer ones respond more slowly.
+    const r = smooth(clamp01(p * (1.3 - g.z * 0.3)));
     const depth = g.z - 0.35;
-    const x = item.x + (cx - item.x) * r * 0.22 + px * depth * 16;
-    const y = item.y + (cy - item.y) * r * 0.22 + float + py * depth * 10 + (1 - appear) * 14;
-    const scale = (0.9 + 0.1 * appear) * (1 - r * 0.32);
-    const opacity = brightnessFor(g.z) * appear * (1 - r);
+    const x = item.x + (g.drift ?? 0) * hero.width * r + px * depth * 16;
+    const y = item.y - r * hero.height * 0.06 * (1 - g.z) + float + py * depth * 10 + (1 - appear) * 10;
+    // Emerging from depth: smaller, soft and unlit at first.
+    const scale = (0.8 + 0.2 * appear) * (1 - r * (g.recede ?? 0.3));
+    // They leave as Learning Paths takes over the second half of the scroll.
+    const leave = smooth(clamp01((p - 0.35) / 0.6));
+    const opacity = brightnessFor(g.z) * appear * (1 - leave);
     item.outer.style.opacity = opacity < 0.004 ? "0" : opacity.toFixed(3);
+    item.outer.style.filter = appear < 1 ? `blur(${((1 - appear) * 10).toFixed(1)}px) brightness(${(0.35 + 0.65 * appear).toFixed(2)})` : "";
+    // The light behind each piece rises with it and dims as it recedes.
+    if (item.light) item.light.style.opacity = (appear * (1 - r * 0.8)).toFixed(3);
     // Jamo settle into their cells: from a little apart to the closed block.
     const assemble = smooth(clamp01((t - item.delay - 0.2) / 2.2));
     for (const { el, part } of item.parts) {
@@ -241,6 +260,10 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
     easedX += (pointerX - easedX) * Math.min(1, dt * 2.5);
     easedY += (pointerY - easedY) * Math.min(1, dt * 2.5);
     const p = clamp01((scrollY - (root.getBoundingClientRect().top + scrollY) - hero.top) / (hero.height * 0.85));
+    if (heroSection && Math.abs(p - lastProgress) > 0.001) {
+      lastProgress = p;
+      heroSection.style.setProperty("--hero-p", p.toFixed(3));
+    }
     // Past the hero there is nothing to draw.
     if (p >= 1) {
       if (!hidden) items.forEach((item) => (item.outer.style.opacity = "0"));
