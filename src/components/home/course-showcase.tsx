@@ -188,7 +188,7 @@ const LevelControls = ({
           <span aria-hidden="true">→</span>
         </button>
       </div>
-      <p className="text-caption tabular-nums text-text-muted" aria-hidden="true">
+      <p className="hidden text-caption tabular-nums text-text-muted sm:block" aria-hidden="true">
         {fill(t.position, { n: selected + 1, total: labels.length })}
       </p>
     </div>
@@ -219,19 +219,6 @@ const JamoStage = ({ label, replay, run, onReplay }: { label: string; replay: st
       {replay}
     </button>
   </div>
-);
-
-type Detail = { label: string; value: string; muted?: boolean };
-
-const DetailList = ({ items }: { items: Detail[] }) => (
-  <dl className="flex flex-col gap-4">
-    {items.map((item) => (
-      <div key={item.label} className="flex flex-col gap-1">
-        <dt className="course-label">{item.label}</dt>
-        <dd className={cn("text-body-sm", item.muted ? "text-text-muted" : "text-text")}>{item.value}</dd>
-      </div>
-    ))}
-  </dl>
 );
 
 export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
@@ -278,7 +265,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
   const tabLabel: Record<PathKey, string> = { free: t.free.tab, general: t.general.tab, topik: t.topik.tab };
 
   return (
-    <div data-course-showcase className="course-showcase flex flex-col gap-8 lg:gap-10">
+    <div data-course-showcase className="course-showcase flex flex-col gap-6 lg:gap-12">
       <div role="tablist" aria-label={t.pathsLabel} className="course-tabs">
         {PATHS.map((key, index) => (
           <button
@@ -306,9 +293,9 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
         id={`${id}-panel`}
         role="tabpanel"
         aria-labelledby={`${id}-tab-${path}`}
-        className="grid items-center gap-8 lg:grid-cols-12 lg:gap-10"
+        className="course-layout grid items-center gap-6 lg:grid-cols-12 lg:gap-12"
       >
-        <div className="flex min-w-0 flex-col gap-6 lg:col-span-7">
+        <div className="flex min-w-0 flex-col gap-3 sm:gap-5 lg:col-span-6">
           {path === "free" ? (
             <JamoStage label={t.free.visualLabel} replay={t.free.replay} run={jamoRun} onReplay={() => setJamoRun((run) => run + 1)} />
           ) : path === "general" ? (
@@ -354,7 +341,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
           )}
         </div>
 
-        <div className="min-w-0 lg:col-span-5">
+        <div className="min-w-0 lg:col-span-6">
           {path === "free" ? (
             <article key="free" data-atmo-glass className="glass-panel glass-lead course-info flex flex-col gap-7 rounded-(--radius-card) p-6 sm:p-9">
               <header className="flex flex-col gap-3">
@@ -389,59 +376,57 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               </footer>
             </article>
           ) : path === "general" ? (
-            <article key="general" data-atmo-glass className="glass-panel course-info flex flex-col gap-6 rounded-(--radius-card) p-6 sm:p-9">
-              <header key={general.code} className="course-swap flex flex-col gap-1.5">
-                                <h3 className="display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">
+            <article key="general" data-atmo-glass className="glass-panel course-info flex flex-col gap-7 rounded-(--radius-card) p-6 sm:p-10">
+              <header key={general.code} className="course-swap flex flex-col gap-3">
+                <h3 className="display-headline text-[clamp(1.9rem,2.8vw,2.5rem)] leading-[1.05] text-text">
                   {general.code} <span className="text-text-muted">{general.name}</span>
                 </h3>
+                <p className="text-body text-text-muted">{general.for}</p>
               </header>
-              <div key={`d-${general.code}`} className="course-swap is-late">
-                <DetailList
-                  items={[
-                    { label: t.forLabel, value: general.for },
-                    { label: t.aboutLabel, value: general.about || t.pending, muted: !general.about },
-                    { label: t.lessonsLabel, value: t.general.lessons },
-                    { label: t.accessLabel, value: t.general.access },
-                  ]}
-                />
+              <div key={`d-${general.code}`} className="course-swap is-late flex flex-col gap-3">
+                <p className="course-label">{t.aboutLabel}</p>
+                {general.points ? (
+                  <ul className="course-points">
+                    {general.points.map((point) => (
+                      <li key={point}>{point}</li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p className={cn("text-body-sm", general.about ? "text-text" : "text-text-muted")}>{general.about || t.pending}</p>
+                )}
               </div>
-              <footer className="mt-2 flex flex-wrap items-center justify-between gap-4">
-                <div className="flex flex-col gap-1">
-                  
-                  <span key={general.price + general.code} className="course-swap price-figure">
-                    {general.price}
-                  </span>
-                </div>
+              <p className="course-meta">
+                {t.general.lessons} · {t.general.access}
+              </p>
+              <footer className="flex flex-wrap items-center justify-between gap-4">
+                <span key={general.price + general.code} className="course-swap price-figure">
+                  {general.price}
+                </span>
                 <Button href={`${base}/courses/general-korean-${general.code.toLowerCase()}`} arrow>
                   {fill(t.general.cta, { code: general.code })}
                 </Button>
               </footer>
             </article>
           ) : (
-            <article key="topik" data-atmo-glass className="glass-panel course-info flex flex-col gap-6 rounded-(--radius-card) p-6 sm:p-9">
-              <header key={topik.code} className="course-swap flex flex-col gap-1.5">
-                                <h3 className="display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">
+            <article key="topik" data-atmo-glass className="glass-panel course-info flex flex-col gap-7 rounded-(--radius-card) p-6 sm:p-10">
+              <header key={topik.code} className="course-swap flex flex-col gap-3">
+                <h3 className="display-headline text-[clamp(1.9rem,2.8vw,2.5rem)] leading-[1.05] text-text">
                   {t.topik.courseWord} {topik.code}
                 </h3>
+                <p className="text-body text-text-muted">{t.topik.for}</p>
               </header>
-              <div key={`d-${topik.code}`} className="course-swap is-late">
-                <DetailList
-                  items={[
-                    { label: t.forLabel, value: t.topik.for },
-                    { label: t.aboutLabel, value: t.pending, muted: true },
-                    { label: t.lessonsLabel, value: t.topik.lessons },
-                    { label: t.accessLabel, value: t.topik.access },
-                  ]}
-                />
+              <div key={`d-${topik.code}`} className="course-swap is-late flex flex-col gap-3">
+                <p className="course-label">{t.aboutLabel}</p>
+                <p className="text-body-sm text-text-muted">{t.pending}</p>
               </div>
+              <p className="course-meta">
+                {t.topik.lessons} · {t.topik.access}
+              </p>
               <p className="text-caption text-text-muted">{t.topik.note}</p>
-              <footer className="mt-2 flex flex-wrap items-center justify-between gap-4">
-                <div className="flex flex-col gap-1">
-                  
-                  <span key={topik.price + topik.code} className="course-swap price-figure">
-                    {topik.price}
-                  </span>
-                </div>
+              <footer className="flex flex-wrap items-center justify-between gap-4">
+                <span key={topik.price + topik.code} className="course-swap price-figure">
+                  {topik.price}
+                </span>
                 <Button href={`${base}/courses/topik-${levels.topik + 1}`} arrow>
                   {fill(t.topik.cta, { code: topik.code })}
                 </Button>

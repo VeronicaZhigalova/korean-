@@ -207,15 +207,15 @@
 */
 :root,
 [data-theme="dark"] {
-  --crystal-body: rgb(110 170 245 / 0.24);
-  --crystal-edge: rgb(48 118 246 / 0.86);
+  --crystal-body: rgb(150 198 248 / 0.24);
+  --crystal-edge: rgb(66 136 242 / 0.85);
   --crystal-inner: #9ccbff;
   --crystal-key: #ffffff;
   --crystal-glint: #f0d39a;
   --crystal-rim: rgb(226 240 255 / 0.55);
   --crystal-shadow: rgb(0 3 12 / 0.5);
   --crystal-floor: rgb(0 4 14 / 0.75);
-  --crystal-caustic: rgb(120 176 240 / 0.2);
+  --crystal-caustic: rgb(120 176 240 / 0.08);
   --crystal-depth: rgb(8 30 80 / 0.7);
 }
 [data-theme="light"] {
@@ -260,7 +260,7 @@
   background:
     radial-gradient(closest-side, var(--crystal-floor), transparent),
     radial-gradient(closest-side, var(--crystal-caustic), transparent) 0 0.04em / 100% 100% no-repeat;
-  filter: blur(6px);
+  filter: blur(3px);
   pointer-events: none;
 }
 
@@ -836,7 +836,7 @@ html[data-refract] .lg-prominent.lg-primary {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-size: clamp(6.5rem, 15vw, 11.5rem);
+  font-size: clamp(7.5rem, 19vw, 15.5rem);
   line-height: 0.9;
   white-space: nowrap;
   pointer-events: none;
@@ -1525,4 +1525,53 @@ html[data-refract] .lg-prominent.lg-primary {
 @keyframes chip-select {
   from { transform: scale(0.9); }
   to { transform: scale(1); }
+}
+
+/*
+  Learning paths composition (9 Oct 2026): the selected level is the focal
+  sculpture, as tall as the course card beside it, with its selector directly
+  under it; the card leads with the level, then who it is for, what you learn,
+  one line of practical facts, price and action. Fewer outlines.
+*/
+.course-stage {
+  height: clamp(13rem, 34vw, 27rem);
+}
+.home-canvas .course-info {
+  border-color: transparent;
+}
+.course-points {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: var(--text-body-sm);
+  color: var(--text);
+}
+.course-points li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+.course-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.68em;
+  width: 0.45rem;
+  height: 1px;
+  background: var(--accent-text);
+}
+.course-meta {
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 639px) {
+  .course-stage {
+    height: 10.5rem;
+  }
+  .course-object {
+    font-size: 6.6rem;
+  }
+  .course-korean {
+    font-size: 0.8125rem;
+  }
 }

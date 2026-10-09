@@ -57,7 +57,7 @@
       "lessonsLabel": "Lessons",
       "accessLabel": "Access",
       "forLabel": "For",
-      "aboutLabel": "The course",
+      "aboutLabel": "What you'll learn",
       "pending": "A description will follow once the teacher has approved it.",
       "free": {
         "tab": "The alphabet",
@@ -95,7 +95,14 @@
             "name": "Beginner",
             "price": "€39",
             "for": "Complete beginners. New to Hangul? Start with the alphabet course.",
-            "about": "You’ll learn to introduce yourself and describe people, things and places; use the core particles; talk about past, present and future; tell the time and dates; count with both number systems; and link sentences with “and”, “so” and “but”."
+            "about": "You’ll learn to introduce yourself and describe people, things and places; use the core particles; talk about past, present and future; tell the time and dates; count with both number systems; and link sentences with “and”, “so” and “but”.",
+            "points": [
+              "Introduce yourself and describe people, things and places",
+              "Use the core particles",
+              "Talk about past, present and future",
+              "Tell the time and dates, and count with both number systems",
+              "Link sentences with “and”, “so” and “but”"
+            ]
           },
           {
             "code": "A2",

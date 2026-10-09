@@ -6,8 +6,8 @@ import type { CSSProperties } from "react";
 
   Drawn by an SVG filter from the letter's own outline, so Korean glyphs keep
   their exact shapes:
-  - the outline is softened and re-cut a little wider, which rounds every
-    corner and gives thin strokes a thicker, inflated body;
+  - the outline is softened and re-cut sharply, which rounds corners while
+    keeping a crisp silhouette;
   - a blurred copy becomes a height map, so strokes read as thick, domed glass;
   - the body is a clear ice-blue tint, deeper towards the edges where light
     travels further through the glass;
@@ -37,18 +37,18 @@ const CrystalFilter = ({ size }: { size: CrystalSize }) => {
   return (
     <filter id={`crystal-${size}`} x="-12%" y="-12%" width="124%" height="140%" colorInterpolationFilters="sRGB">
       {/* Inflated, rounded outline: thin serifs and corners swell into soft glass. */}
-      <feGaussianBlur in="SourceAlpha" stdDeviation={n(2.6)} result="soft" />
+      <feGaussianBlur in="SourceAlpha" stdDeviation={n(1.1)} result="soft" />
       <feComponentTransfer in="soft" result="round">
-        <feFuncA type="linear" slope="5" intercept="-0.55" />
+        <feFuncA type="linear" slope="12" intercept="-3.6" />
       </feComponentTransfer>
       {/* Height map and the thin outer band. */}
-      <feGaussianBlur in="round" stdDeviation={n(5)} result="height" />
-      <feMorphology in="round" operator="erode" radius={n(1.1)} result="inner" />
+      <feGaussianBlur in="round" stdDeviation={n(3.2)} result="height" />
+      <feMorphology in="round" operator="erode" radius={n(0.7)} result="inner" />
       <feComposite in="round" in2="inner" operator="out" result="band" />
       <feComposite in="round" in2="height" operator="arithmetic" k1="-1" k2="1" k3="0" k4="0" result="thick" />
       {/* Contact shadow. */}
-      <feGaussianBlur in="round" stdDeviation={n(7)} result="shadowSoft" />
-      <feOffset in="shadowSoft" dy={n(9)} result="shadowDrop" />
+      <feGaussianBlur in="round" stdDeviation={n(3.5)} result="shadowSoft" />
+      <feOffset in="shadowSoft" dy={n(5)} result="shadowDrop" />
       <feFlood style={token("--crystal-shadow")} />
       <feComposite in2="shadowDrop" operator="in" result="shadow" />
       {/* Clear body, deeper at the edges. */}
@@ -68,12 +68,12 @@ const CrystalFilter = ({ size }: { size: CrystalSize }) => {
       </feSpecularLighting>
       <feComposite in="innerLight" in2="round" operator="in" result="caught" />
       {/* Polished key light from the upper left. */}
-      <feSpecularLighting in="height" surfaceScale={n(6)} specularConstant="1" specularExponent="44" style={light("--crystal-key")} result="keyLight">
+      <feSpecularLighting in="height" surfaceScale={n(6)} specularConstant="1.6" specularExponent="70" style={light("--crystal-key")} result="keyLight">
         <feDistantLight azimuth="225" elevation="46" />
       </feSpecularLighting>
       <feComposite in="keyLight" in2="round" operator="in" result="key" />
       {/* Small champagne glint from the right. */}
-      <feSpecularLighting in="height" surfaceScale={n(6)} specularConstant="0.7" specularExponent="46" style={light("--crystal-glint")} result="glintLight">
+      <feSpecularLighting in="height" surfaceScale={n(6)} specularConstant="0.8" specularExponent="110" style={light("--crystal-glint")} result="glintLight">
         <feDistantLight azimuth="345" elevation="20" />
       </feSpecularLighting>
       <feComposite in="glintLight" in2="round" operator="in" result="glint" />

@@ -57,7 +57,7 @@
       "lessonsLabel": "Lektionen",
       "accessLabel": "Zugang",
       "forLabel": "Für",
-      "aboutLabel": "Der Kurs",
+      "aboutLabel": "Was du lernst",
       "pending": "Eine Beschreibung folgt, sobald die Lehrkraft sie freigegeben hat.",
       "free": {
         "tab": "Das Alphabet",
@@ -95,7 +95,14 @@
             "name": "Anfänger",
             "price": "39 €",
             "for": "Absolute Anfänger. Hangul ist neu für dich? Beginne mit dem Alphabet-Kurs.",
-            "about": "Du lernst, dich vorzustellen und Personen, Dinge und Orte zu beschreiben, die wichtigsten Partikeln zu nutzen, über Vergangenheit, Gegenwart und Zukunft zu sprechen, Uhrzeit und Datum zu nennen, mit beiden Zahlensystemen zu zählen und Sätze mit „und“, „also“ und „aber“ zu verbinden."
+            "about": "Du lernst, dich vorzustellen und Personen, Dinge und Orte zu beschreiben, die wichtigsten Partikeln zu nutzen, über Vergangenheit, Gegenwart und Zukunft zu sprechen, Uhrzeit und Datum zu nennen, mit beiden Zahlensystemen zu zählen und Sätze mit „und“, „also“ und „aber“ zu verbinden.",
+            "points": [
+              "Dich vorstellen und Personen, Dinge und Orte beschreiben",
+              "Die wichtigsten Partikeln nutzen",
+              "Über Vergangenheit, Gegenwart und Zukunft sprechen",
+              "Uhrzeit und Datum nennen und mit beiden Zahlensystemen zählen",
+              "Sätze mit „und“, „also“ und „aber“ verbinden"
+            ]
           },
           {
             "code": "A2",
