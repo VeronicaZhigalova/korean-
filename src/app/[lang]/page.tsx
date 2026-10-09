@@ -5,6 +5,7 @@ import {
   TeacherSection,
 } from "@/components/home/home-sections";
 import { homeUniverse } from "@/components/home/home-universe";
+import { CrystalGlassDefs } from "@/components/motion/crystal-glass";
 import { HangulUniverse } from "@/components/motion/hangul-universe-layer";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 
@@ -15,9 +16,10 @@ export default async function HomePage() {
   const href = (segment: string) => `/${locale}/${segment}`;
 
   // One continuous background (.home-canvas) runs behind every section.
-  // Hangul characters fill the space around the hero and settle at the bottom of each section.
+  // Crystal Blue Glass Hangul surround the hero only and recede as the page scrolls on.
   return (
-    <HangulUniverse scenes={homeUniverse.scenes} className="home-canvas">
+    <HangulUniverse options={homeUniverse} className="home-canvas">
+      <CrystalGlassDefs />
       <HeroSection t={t.home} />
       <LearningPathsSection t={t.home.paths} href={href} base={`/${locale}`} />
       <ServicesSection t={t.home.services} href={href} />

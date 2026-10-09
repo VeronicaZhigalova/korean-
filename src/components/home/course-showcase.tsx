@@ -3,6 +3,7 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type PointerEvent } from "react";
 import { Button } from "@/components/ui/button";
 import type { Dictionary } from "@/i18n/dictionaries";
+import { CrystalGlyph } from "@/components/motion/crystal-glass";
 import { cn } from "@/lib/cn";
 
 type Paths = Dictionary["home"]["paths"];
@@ -14,171 +15,95 @@ const fill = (text: string, values: Record<string, string | number>) =>
   text.replace(/\{(\w+)\}/g, (_, key: string) => String(values[key] ?? ""));
 
 /*
-  Course showcase (8 Oct 2026). The interaction follows what the Ciao Energy
-  product carousel does, translated to course levels: one selected level sits
-  in the centre, lit and upright; its neighbours stay visible along a gentle
-  arc, smaller, further back and dimmer. The row glides to a new selection and
-  can be dragged directly, a neighbour can be clicked, and previous/next and a
-  position track do the same with keyboard or touch. The course details swap
-  with a short masked text change. Page scrolling is never taken over.
+  Course showcase (9 Oct 2026). One level at a time: only the selected level
+  stands on the stage, as a Crystal Blue Glass sculpture, and every level stays
+  available in the controls below. Changing level, the current piece recedes
+  and dissolves while the new one rises into the centre; pieces still leaving
+  are kept until they have faded, so rapid changes never overlap or flicker.
+  The selected piece floats a few pixels with a slow rhythm, its shadow
+  widening and softening as it rises (CSS, still under reduced motion).
+  A horizontal swipe on the stage steps to the neighbouring level; page
+  scrolling is never taken over.
 */
 
-/** Where a level object sits for its distance from the selected one (fractional while dragging). */
-const placement = (offset: number, spread: number) => {
-  const distance = Math.min(Math.abs(offset), 3);
-  const side = Math.sign(offset);
-  // Each step out moves less far, so the row reads as a curve receding into depth.
-  const x = side * spread * (distance <= 1 ? distance : 1 + (distance - 1) * 0.62);
-  const y = -Math.min(distance, 2.2) * 6;
-  const scale = 1 - Math.min(distance, 2.4) * 0.27;
-  const rotate = side * Math.min(distance, 2) * 7;
-  const opacity = distance < 2.6 ? 1 - Math.min(distance, 2) * 0.36 : Math.max(0, 0.28 - (distance - 2.6) * 0.7);
-  const light = 1 - Math.min(distance, 1);
-  return { x, y, scale, rotate, opacity, light, z: Math.round(10 - distance * 3) };
-};
-
-/*
-  Sculptural glass for the level objects (8 Oct 2026). The letter's own shape is
-  turned into a soft height map and lit twice: a cool white key light from the
-  upper left and a champagne return from the right, plus a thin bright rim.
-  The fill underneath stays mostly clear, so the page shows through it.
-*/
-const glassFilter = (id: string, rim: string, rimOpacity: number, warm: string) => (
-  <filter id={id} x="-8%" y="-8%" width="116%" height="124%" colorInterpolationFilters="sRGB">
-    <feComponentTransfer in="SourceAlpha" result="shape">
-      <feFuncA type="linear" slope="40" />
-    </feComponentTransfer>
-    <feGaussianBlur in="shape" stdDeviation="5" result="height" />
-    <feSpecularLighting in="height" surfaceScale="9" specularConstant="1.25" specularExponent="38" lightingColor="#ffffff" result="key">
-      <feDistantLight azimuth="235" elevation="40" />
-    </feSpecularLighting>
-    <feComposite in="key" in2="shape" operator="in" result="keyLight" />
-    <feSpecularLighting in="height" surfaceScale="9" specularConstant="0.85" specularExponent="16" lightingColor={warm} result="return">
-      <feDistantLight azimuth="20" elevation="28" />
-    </feSpecularLighting>
-    <feComposite in="return" in2="shape" operator="in" result="returnLight" />
-    <feMorphology in="shape" operator="erode" radius="2" result="inner" />
-    <feComposite in="shape" in2="inner" operator="out" result="edge" />
-    <feFlood floodColor={rim} floodOpacity={rimOpacity} />
-    <feComposite in2="edge" operator="in" result="rim" />
-    <feMerge>
-      <feMergeNode in="SourceGraphic" />
-      <feMergeNode in="rim" />
-      <feMergeNode in="returnLight" />
-      <feMergeNode in="keyLight" />
-    </feMerge>
-  </filter>
-);
-
-const GlassFilters = () => (
-  <svg aria-hidden="true" width="0" height="0" className="absolute">
-    {glassFilter("course-glass", "#eef4ff", 0.6, "#f2d29a")}
-    {glassFilter("course-glass-light", "#1d3556", 0.42, "#d6a95a")}
-  </svg>
-);
+/** How long a piece takes to recede; matches .course-object.is-leaving in globals.css. */
+const LEAVE_MS = 520;
 
 type StageProps = {
   items: { key: string; label: string; kicker?: string }[];
   selected: number;
   onSelect: (index: number) => void;
-  tone: "gold" | "ivory";
 };
 
-/** The level objects: a decorative, draggable view of the same choice the controls below make. */
-const LevelStage = ({ items, selected, onSelect, tone }: StageProps) => {
+/** The selected level as a glass sculpture: a decorative view of the choice the controls below make. */
+const LevelStage = ({ items, selected, onSelect }: StageProps) => {
   const stage = useRef<HTMLDivElement>(null);
-  const drag = useRef<{ x: number; y: number; id: number; horizontal: boolean | null; moved: boolean } | null>(null);
-  const [dragOffset, setDragOffset] = useState(0);
-  const [width, setWidth] = useState(720);
+  const drag = useRef<{ x: number; y: number; id: number; horizontal: boolean | null } | null>(null);
+  const [leaving, setLeaving] = useState<{ index: number; id: number }[]>([]);
+  const current = useRef(selected);
+  const counter = useRef(0);
 
+  // Keep the piece that was on stage while it recedes; each leaving piece clears itself.
   useEffect(() => {
-    const element = stage.current;
-    if (!element) return;
-    const observer = new ResizeObserver(() => setWidth(element.offsetWidth));
-    observer.observe(element);
-    setWidth(element.offsetWidth);
-    return () => observer.disconnect();
-  }, []);
-
-  const spread = Math.max(120, Math.min(width * 0.34, 290));
+    const previous = current.current;
+    if (previous === selected) return;
+    current.current = selected;
+    const id = ++counter.current;
+    setLeaving((list) => [...list.filter((item) => item.index !== selected && item.index !== previous), { index: previous, id }]);
+    window.setTimeout(() => setLeaving((list) => list.filter((item) => item.id !== id)), LEAVE_MS + 40);
+  }, [selected]);
 
   const onPointerDown = (event: PointerEvent<HTMLDivElement>) => {
-    drag.current = { x: event.clientX, y: event.clientY, id: event.pointerId, horizontal: null, moved: false };
+    drag.current = { x: event.clientX, y: event.clientY, id: event.pointerId, horizontal: null };
   };
   const onPointerMove = (event: PointerEvent<HTMLDivElement>) => {
     const state = drag.current;
     if (!state || state.id !== event.pointerId) return;
     const dx = event.clientX - state.x;
     const dy = event.clientY - state.y;
-    // Decide once whether this gesture is a horizontal drag; vertical ones stay page scrolls.
-    if (state.horizontal === null && Math.hypot(dx, dy) > 6) {
+    // Decide once whether this gesture is a horizontal swipe; vertical ones stay page scrolls.
+    if (state.horizontal === null && Math.hypot(dx, dy) > 8) {
       state.horizontal = Math.abs(dx) > Math.abs(dy);
       if (state.horizontal) stage.current?.setPointerCapture(event.pointerId);
     }
-    if (!state.horizontal) return;
-    state.moved = true;
-    const next = -dx / spread;
-    // Resist past the first and last level.
-    const limit = (value: number) => {
-      const target = selected + value;
-      if (target < 0) return value - target * 0.65;
-      if (target > items.length - 1) return value - (target - items.length + 1) * 0.65;
-      return value;
-    };
-    setDragOffset(limit(next));
   };
   const onPointerEnd = (event: PointerEvent<HTMLDivElement>) => {
     const state = drag.current;
     if (!state || state.id !== event.pointerId) return;
     drag.current = null;
-    if (state.moved) {
-      const target = Math.max(0, Math.min(items.length - 1, Math.round(selected + dragOffset)));
-      onSelect(target);
+    const dx = event.clientX - state.x;
+    if (state.horizontal && Math.abs(dx) > 48) {
+      const next = Math.max(0, Math.min(items.length - 1, selected + (dx < 0 ? 1 : -1)));
+      if (next !== selected) onSelect(next);
     }
-    setDragOffset(0);
   };
 
-  const position = selected + dragOffset;
+  const piece = (index: number, state: "current" | "leaving", key: string) => {
+    const item = items[index];
+    return (
+      <div key={key} className={cn("course-object", state === "leaving" ? "is-leaving" : "is-current")}>
+        <span className="course-shadow" />
+        <div className="course-float">
+          {item.kicker ? <span className="course-object-kicker">{item.kicker}</span> : null}
+          <CrystalGlyph text={item.label} size="l" className="course-object-glass" />
+        </div>
+      </div>
+    );
+  };
 
   return (
     <div
       ref={stage}
       aria-hidden="true"
-      data-hu-avoid
-      className={cn("course-stage", dragOffset !== 0 && "is-dragging")}
+      className="course-stage"
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerEnd}
       onPointerCancel={onPointerEnd}
     >
       <span className="course-stage-light" />
-      {items.map((item, index) => {
-        const p = placement(index - position, spread);
-        return (
-          <div
-            key={item.key}
-            className="course-object"
-            data-tone={tone}
-            data-current={index === selected ? "" : undefined}
-            style={{
-              transform: `translate(-50%, -50%) translate3d(${p.x.toFixed(1)}px, ${p.y.toFixed(1)}px, 0) rotate(${p.rotate.toFixed(2)}deg) scale(${p.scale.toFixed(3)})`,
-              opacity: p.opacity,
-              zIndex: p.z,
-              ["--lit" as string]: p.light.toFixed(3),
-              ["--turn" as string]: Math.max(-1.5, Math.min(1.5, index - position)).toFixed(3),
-            }}
-            onClick={() => {
-              if (drag.current?.moved) return;
-              if (index !== selected) onSelect(index);
-            }}
-          >
-            {item.kicker ? <span className="course-object-kicker">{item.kicker}</span> : null}
-            <span className="course-object-face" data-text={item.label}>
-              <span className="course-object-glass">{item.label}</span>
-            </span>
-          </div>
-        );
-      })}
+      {leaving.map((item) => piece(item.index, "leaving", `leave-${item.id}`))}
+      {piece(selected, "current", `level-${items[selected].key}`)}
     </div>
   );
 };
@@ -270,16 +195,15 @@ const JamoStage = ({ label, replay, run, onReplay }: { label: string; replay: st
   <div className="flex w-full flex-col items-center gap-5">
     <div key={run} className="jamo-stage w-full" data-hu-avoid role="img" aria-label={label}>
       <span className="course-stage-light" aria-hidden="true" />
-      <span lang="ko" aria-hidden="true" className="jamo jamo-h">ㅎ</span>
-      <span lang="ko" aria-hidden="true" className="jamo jamo-a">ㅏ</span>
-      <span lang="ko" aria-hidden="true" className="jamo jamo-n">ㄴ</span>
-      {/* ㅎ ㅏ ㄴ become 한, then 글 joins: 한글 in the same glass as the level objects. */}
-      <span lang="ko" aria-hidden="true" className="jamo-word">
-        <span className="course-object-face jamo-syllable" data-text="한">
-          <span className="course-object-glass">한</span>
-        </span>
-        <span className="course-object-face jamo-syllable is-late" data-text="글">
-          <span className="course-object-glass">글</span>
+      {/* ㅎ ㅏ ㄴ glide into one block and become 한, then 글 joins: 한글 in the same glass as the levels. */}
+      <span aria-hidden="true" className="jamo jamo-h"><CrystalGlyph text="ㅎ" size="m" /></span>
+      <span aria-hidden="true" className="jamo jamo-a"><CrystalGlyph text="ㅏ" size="m" /></span>
+      <span aria-hidden="true" className="jamo jamo-n"><CrystalGlyph text="ㄴ" size="m" /></span>
+      <span aria-hidden="true" className="jamo-word">
+        <span className="course-shadow" />
+        <span className="course-float">
+          <span className="jamo-syllable"><CrystalGlyph text="한" size="l" /></span>
+          <span className="jamo-syllable is-late"><CrystalGlyph text="글" size="l" /></span>
         </span>
       </span>
     </div>
@@ -348,7 +272,6 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
 
   return (
     <div data-course-showcase className="course-showcase flex flex-col gap-8 lg:gap-10">
-      <GlassFilters />
       <div role="tablist" aria-label={t.pathsLabel} className="course-tabs">
         {PATHS.map((key, index) => (
           <button
@@ -387,7 +310,6 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                 {t.general.korean}
               </p>
               <LevelStage
-                tone="gold"
                 selected={levels.general}
                 onSelect={(index) => chooseLevel("general", index)}
                 items={t.general.levels.map((level) => ({ key: level.code, label: level.code }))}
@@ -407,7 +329,6 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                 {t.topik.korean}
               </p>
               <LevelStage
-                tone="ivory"
                 selected={levels.topik}
                 onSelect={(index) => chooseLevel("topik", index)}
                 items={t.topik.levels.map((level) => ({ key: level.code, label: level.code, kicker: "TOPIK" }))}

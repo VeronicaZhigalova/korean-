@@ -198,42 +198,71 @@
    character; its material is drawn here)
    ------------------------------------------------------------------ */
 
+/*
+  Crystal Blue Glass (9 Oct 2026): one material for every sculptural letter on
+  Home. The SVG filter in crystal-glass.tsx builds the volume from the letter's
+  outline; these tokens colour it. Thick, rounded ice-blue glass with deeper
+  blue edges (the E reference), clear body with crisp white highlights and
+  light caught inside (the S reference), a small champagne glint.
+*/
 :root,
 [data-theme="dark"] {
-  /* Gold: warm highlight at the top left, a deep bronze body, a soft bright return at the lower edge. */
-  --hu-gold-face: linear-gradient(
-    160deg,
-    #fff4dc 0%,
-    #f2dda9 18%,
-    #d9b46a 38%,
-    #9c7034 58%,
-    #c99c58 76%,
-    #f0d8a2 100%
-  );
-  --hu-gold-side: #5d3f17;
-  --hu-gold-side-deep: #2c1d0a;
-  /* Ivory: polished stone-white with a cool navy shadow side. */
-  --hu-ivory-face: linear-gradient(160deg, #ffffff 0%, #f4efe6 22%, #d8d2c6 46%, #8e96a6 66%, #c9c6bf 82%, #f3eee5 100%);
-  --hu-ivory-side: #4b5568;
-  --hu-ivory-side-deep: #1b2436;
-  --hu-shadow: rgb(2 6 16 / 0.55);
-  --hu-rim: rgb(242 221 169 / 0.22);
+  --crystal-body: rgb(110 170 245 / 0.24);
+  --crystal-edge: rgb(48 118 246 / 0.86);
+  --crystal-inner: #9ccbff;
+  --crystal-key: #ffffff;
+  --crystal-glint: #f0d39a;
+  --crystal-rim: rgb(226 240 255 / 0.55);
+  --crystal-shadow: rgb(0 3 12 / 0.5);
+  --crystal-floor: rgb(0 4 14 / 0.75);
+  --crystal-caustic: rgb(120 176 240 / 0.2);
 }
-
 [data-theme="light"] {
-  /* Deeper gold on the ivory page so the pieces keep their contrast and volume. */
-  --hu-gold-face: linear-gradient(160deg, #f3d99c 0%, #c99a4c 22%, #9a6a26 46%, #6e4716 66%, #a87a37 84%, #e1bd78 100%);
-  --hu-gold-side: #7a5420;
-  --hu-gold-side-deep: #4a3212;
-  /* On the light page the ivory pieces become polished navy so they still read. */
-  --hu-ivory-face: linear-gradient(160deg, #6f8db6 0%, #2f4f7d 26%, #1b365d 48%, #0b1a30 70%, #3d5c88 100%);
-  --hu-ivory-side: #0a1526;
-  --hu-ivory-side-deep: #050b16;
-  --hu-shadow: rgb(20 35 58 / 0.22);
-  --hu-rim: rgb(255 253 248 / 0.5);
+  --crystal-body: rgb(120 170 225 / 0.2);
+  --crystal-edge: rgb(34 96 176 / 0.66);
+  --crystal-inner: #e8f5ff;
+  --crystal-key: #ffffff;
+  --crystal-glint: #d1a356;
+  --crystal-rim: rgb(22 62 120 / 0.42);
+  --crystal-shadow: rgb(25 45 80 / 0.2);
+  --crystal-floor: rgb(25 45 80 / 0.28);
+  --crystal-caustic: rgb(80 140 210 / 0.18);
 }
 
-/* Sits under every section's content and above the section tones. */
+.crystal {
+  display: block;
+  font-family: var(--font-korean);
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  /* Only the outline is used by the filter; this colour shows only if filters are unavailable. */
+  color: #a8cdf0;
+  filter: url(#crystal-m) blur(var(--crystal-blur, 0px));
+}
+.crystal[data-crystal="s"] {
+  filter: url(#crystal-s) blur(var(--crystal-blur, 0px));
+}
+.crystal[data-crystal="l"] {
+  filter: url(#crystal-l) blur(var(--crystal-blur, 0px));
+}
+
+/* Soft floor shadow under a standing piece, with a faint blue caustic. */
+.course-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -0.06em;
+  width: 72%;
+  height: 0.14em;
+  translate: -50% 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, var(--crystal-floor), transparent),
+    radial-gradient(closest-side, var(--crystal-caustic), transparent) 0 0.04em / 100% 100% no-repeat;
+  filter: blur(6px);
+  pointer-events: none;
+}
+
+/* Sits under every section's content. */
 .hangul-universe {
   position: absolute;
   inset: 0;
@@ -243,72 +272,13 @@
   user-select: none;
 }
 
-.hu-scene {
-  position: absolute;
-  left: 0;
-  top: 0;
-  overflow: clip;
-  /* Characters that stay in a section fade out at its lower edge instead of being cut by it. */
-  mask-image: linear-gradient(to bottom, #000 82%, transparent);
-}
-
+/* Moved by the engine; the glass inside is drawn once. */
 .hu-glyph {
   position: absolute;
   left: 0;
   top: 0;
-  isolation: isolate;
-  font-family: var(--font-korean);
-  font-weight: 800;
-  line-height: 1;
-  white-space: nowrap;
+  opacity: 0;
   will-change: transform, opacity;
-}
-
-/* The face: a metal gradient clipped to the letter. */
-.hu-glyph::after {
-  content: attr(data-g);
-  position: relative;
-  display: block;
-  background: var(--hu-gold-face);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-/* The body: the same letter stacked towards the lower right, so it reads as a solid lit from the upper left,
-   with a soft cast shadow behind. */
-.hu-glyph::before {
-  content: attr(data-g);
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  color: var(--hu-gold-side);
-  text-shadow:
-    0.006em 0.008em 0 var(--hu-gold-side),
-    0.012em 0.016em 0 var(--hu-gold-side),
-    0.018em 0.024em 0 var(--hu-gold-side),
-    0.024em 0.032em 0 var(--hu-gold-side-deep),
-    0.03em 0.04em 0 var(--hu-gold-side-deep),
-    0.036em 0.048em 0 var(--hu-gold-side-deep),
-    0.07em 0.11em 0.12em var(--hu-shadow);
-}
-
-.hu-glyph[data-tone="ivory"]::after {
-  background: var(--hu-ivory-face);
-  -webkit-background-clip: text;
-  background-clip: text;
-}
-
-.hu-glyph[data-tone="ivory"]::before {
-  color: var(--hu-ivory-side);
-  text-shadow:
-    0.006em 0.008em 0 var(--hu-ivory-side),
-    0.012em 0.016em 0 var(--hu-ivory-side),
-    0.018em 0.024em 0 var(--hu-ivory-side),
-    0.024em 0.032em 0 var(--hu-ivory-side-deep),
-    0.03em 0.04em 0 var(--hu-ivory-side-deep),
-    0.036em 0.048em 0 var(--hu-ivory-side-deep),
-    0.07em 0.11em 0.12em var(--hu-shadow);
 }
 
 /* ------------------------------------------------------------------
@@ -836,14 +806,6 @@ html[data-refract] .lg-prominent.lg-primary {
   touch-action: pan-y;
   user-select: none;
   -webkit-user-select: none;
-  /* The row fades out at its ends instead of being cut. */
-  mask-image: linear-gradient(to right, transparent, #000 14%, #000 86%, transparent);
-}
-.course-stage {
-  cursor: grab;
-}
-.course-stage.is-dragging {
-  cursor: grabbing;
 }
 
 .course-stage-light {
@@ -865,27 +827,24 @@ html[data-refract] .lg-prominent.lg-primary {
 }
 
 .course-object {
-  --lit: 0;
   position: absolute;
   left: 50%;
   top: 50%;
+  translate: -50% -50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: clamp(6.5rem, 15vw, 11.5rem);
+  line-height: 0.9;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.course-float {
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.25rem;
-  font-family: var(--font-display);
-  font-size: clamp(6.5rem, 15vw, 11.5rem);
-  line-height: 0.9;
-  white-space: nowrap;
-  cursor: pointer;
-  will-change: transform, opacity;
-  /* The row glides and settles, as in the reference carousel: a long, soft ease-out. */
-  transition:
-    transform 0.9s cubic-bezier(0.16, 1, 0.3, 1),
-    opacity 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.course-stage.is-dragging .course-object {
-  transition: none;
 }
 .course-object-kicker {
   font-family: var(--font-sans);
@@ -895,113 +854,52 @@ html[data-refract] .lg-prominent.lg-primary {
   margin-right: -0.42em;
   color: var(--text-muted);
 }
-.course-object-face {
-  position: relative;
-  display: block;
-  /* Thick strokes give the glass body to refract and bevel; Noto Serif KR 800 is already on the page. */
-  font-family: var(--font-korean);
-  font-weight: 800;
+.course-object-glass {
   font-size: 0.86em;
   letter-spacing: -0.02em;
-  /* Unlit neighbours step back but stay legible glass. */
-  filter: brightness(calc(0.72 + var(--lit) * 0.28)) saturate(calc(0.75 + var(--lit) * 0.25));
-}
-/* Contact shadow and caustic: light gathered by the glass falls on the floor beneath it. */
-.course-object-face::before {
-  content: attr(data-text);
-  position: absolute;
-  inset: 0;
-  color: transparent;
-  text-shadow:
-    0 0.05em 0.06em var(--glass-shadow),
-    0.02em 0.11em 0.14em var(--glass-caustic);
-}
-.course-object-glass {
-  position: relative;
-  display: block;
-  color: transparent;
-  /* The clear body: faint refracted bands of the page, champagne and cool blue. Highlights slide as the piece turns. */
-  background-image: var(--glass-body);
-  background-size: 260% 100%;
-  background-position: calc(50% + var(--turn, 0) * 22%) 0;
-  -webkit-background-clip: text;
-  background-clip: text;
-  filter: url(#course-glass);
-  transition: background-position 0.9s cubic-bezier(0.16, 1, 0.3, 1);
-}
-.course-object[data-tone="ivory"] .course-object-glass {
-  background-image: var(--glass-body-cool);
-}
-[data-theme="light"] .course-object-glass {
-  filter: url(#course-glass-light);
-}
-/* Phones, coarse pointers and reduced transparency: a lighter glass drawn with a stroke instead of lighting. */
-@media (max-width: 639px), (pointer: coarse), (prefers-reduced-transparency: reduce) {
-  .course-object-glass,
-  [data-theme="light"] .course-object-glass {
-    filter: none;
-    -webkit-text-stroke: 0.012em var(--glass-stroke);
-  }
 }
 
-:root,
-[data-theme="dark"] {
-  --glass-body: linear-gradient(
-    100deg,
-    rgb(255 255 255 / 0.3) 0%,
-    rgb(214 226 246 / 0.12) 16%,
-    rgb(12 22 44 / 0.06) 30%,
-    rgb(242 214 160 / 0.28) 42%,
-    rgb(255 248 232 / 0.5) 47%,
-    rgb(120 156 214 / 0.12) 56%,
-    rgb(10 20 40 / 0.05) 70%,
-    rgb(232 204 150 / 0.22) 84%,
-    rgb(255 255 255 / 0.3) 100%
-  );
-  --glass-body-cool: linear-gradient(
-    100deg,
-    rgb(255 255 255 / 0.3) 0%,
-    rgb(150 182 232 / 0.16) 18%,
-    rgb(12 22 44 / 0.06) 32%,
-    rgb(200 220 250 / 0.3) 44%,
-    rgb(255 255 255 / 0.5) 48%,
-    rgb(232 204 150 / 0.16) 58%,
-    rgb(10 20 40 / 0.05) 72%,
-    rgb(150 182 232 / 0.2) 86%,
-    rgb(255 255 255 / 0.3) 100%
-  );
-  --glass-shadow: rgb(0 2 8 / 0.55);
-  --glass-caustic: rgb(217 180 106 / 0.16);
-  --glass-stroke: rgb(236 242 255 / 0.6);
+/*
+  One level at a time: the new piece rises into the centre while the previous
+  one recedes and dissolves (LEAVE_MS in course-showcase.tsx). Once settled,
+  the piece floats 7px on a slow 7s breath; its shadow widens and softens as
+  it rises. Reduced motion: no transitions, no float.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  .course-object.is-current {
+    animation: level-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .course-object.is-leaving {
+    animation: level-out 0.52s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  .course-object.is-current .course-float,
+  .jamo-word .course-float {
+    animation: crystal-float 7s ease-in-out 0.8s infinite both;
+  }
+  .course-object.is-current .course-shadow,
+  .jamo-word .course-shadow {
+    animation: crystal-shadow 7s ease-in-out 0.8s infinite both;
+  }
+  .jamo-word .course-float,
+  .jamo-word .course-shadow {
+    animation-delay: 2.8s;
+  }
 }
-[data-theme="light"] {
-  --glass-body: linear-gradient(
-    100deg,
-    rgb(255 255 255 / 0.7) 0%,
-    rgb(150 168 196 / 0.22) 16%,
-    rgb(255 255 255 / 0.2) 30%,
-    rgb(214 176 112 / 0.32) 42%,
-    rgb(255 255 255 / 0.85) 47%,
-    rgb(110 138 180 / 0.26) 56%,
-    rgb(255 255 255 / 0.2) 70%,
-    rgb(200 160 96 / 0.26) 84%,
-    rgb(255 255 255 / 0.7) 100%
-  );
-  --glass-body-cool: linear-gradient(
-    100deg,
-    rgb(255 255 255 / 0.7) 0%,
-    rgb(110 140 190 / 0.28) 18%,
-    rgb(255 255 255 / 0.2) 32%,
-    rgb(140 168 210 / 0.32) 44%,
-    rgb(255 255 255 / 0.85) 48%,
-    rgb(200 160 96 / 0.2) 58%,
-    rgb(255 255 255 / 0.2) 72%,
-    rgb(110 140 190 / 0.26) 86%,
-    rgb(255 255 255 / 0.7) 100%
-  );
-  --glass-shadow: rgb(20 35 58 / 0.22);
-  --glass-caustic: rgb(196 150 70 / 0.22);
-  --glass-stroke: rgb(29 53 86 / 0.45);
+@keyframes level-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes level-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-6px) scale(0.86); }
+}
+@keyframes crystal-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-7px); }
+}
+@keyframes crystal-shadow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.14, 1.2); opacity: 0.6; }
 }
 
 /* Position track with direct selection. */
@@ -1104,16 +1002,13 @@ html[data-refract] .lg-prominent.lg-primary {
   display: block;
   width: 100%;
   height: clamp(16rem, 34vw, 27rem);
-  mask-image: none;
 }
 .jamo {
   position: absolute;
   left: 50%;
   top: 50%;
   font-family: var(--font-korean);
-  font-weight: 800;
   line-height: 1;
-  color: var(--text);
 }
 .jamo {
   font-size: clamp(3.5rem, 8vw, 6.4rem);
@@ -1146,7 +1041,6 @@ html[data-refract] .lg-prominent.lg-primary {
 }
 /* 한글 in glass: the same material as the level objects, fully lit. */
 .jamo-word {
-  --lit: 1;
   position: absolute;
   left: 50%;
   top: 50%;
@@ -1576,4 +1470,10 @@ html[data-refract] .lg-prominent.lg-primary {
   background:
     var(--atm-grain),
     linear-gradient(to bottom, var(--bg-raised), color-mix(in srgb, var(--bg-raised) 55%, var(--bg)));
+}
+
+/* 한 and 글 stand side by side on one floor. */
+.jamo-word .course-float {
+  flex-direction: row;
+  gap: 0;
 }
