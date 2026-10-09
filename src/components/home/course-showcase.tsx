@@ -27,16 +27,18 @@ const fill = (text: string, values: Record<string, string | number>) =>
 */
 
 /** How long a piece takes to recede; matches .course-object.is-leaving in globals.css. */
-const LEAVE_MS = 520;
+const LEAVE_MS = 420;
 
 type StageProps = {
   items: { key: string; label: string; kicker?: string }[];
   selected: number;
+  /** Counts every selection, including choosing the level already shown, so each one gets its bounce. */
+  pulse: number;
   onSelect: (index: number) => void;
 };
 
 /** The selected level as a glass sculpture: a decorative view of the choice the controls below make. */
-const LevelStage = ({ items, selected, onSelect }: StageProps) => {
+const LevelStage = ({ items, selected, pulse, onSelect }: StageProps) => {
   const stage = useRef<HTMLDivElement>(null);
   const drag = useRef<{ x: number; y: number; id: number; horizontal: boolean | null } | null>(null);
   const [leaving, setLeaving] = useState<{ index: number; id: number }[]>([]);
@@ -82,10 +84,13 @@ const LevelStage = ({ items, selected, onSelect }: StageProps) => {
     const item = items[index];
     return (
       <div key={key} className={cn("course-object", state === "leaving" ? "is-leaving" : "is-current")}>
-        <span className="course-shadow" />
-        <div className="course-float">
-          {item.kicker ? <span className="course-object-kicker">{item.kicker}</span> : null}
-          <CrystalGlyph text={item.label} size="l" className="course-object-glass" />
+        {/* Remounting the bounce layers restarts their animation on every selection. */}
+        <span key={`s-${pulse}`} className="course-shadow" />
+        <div key={`b-${pulse}`} className="course-bounce">
+          <div className="course-float">
+            {item.kicker ? <span className="course-object-kicker">{item.kicker}</span> : null}
+            <CrystalGlyph text={item.label} size="l" className="course-object-glass" />
+          </div>
         </div>
       </div>
     );
@@ -234,6 +239,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
   const [path, setPath] = useState<PathKey>("free");
   const [levels, setLevels] = useState({ general: 0, topik: 0 });
   const [jamoRun, setJamoRun] = useState(0);
+  const [pulse, setPulse] = useState(0);
   const [announce, setAnnounce] = useState("");
   const tabs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -249,6 +255,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
     const list = t[track].levels;
     const next = Math.max(0, Math.min(list.length - 1, index));
     setLevels((current) => ({ ...current, [track]: next }));
+    setPulse((count) => count + 1);
     const level = list[next];
     const name = track === "general" ? `${t.general.title} ${level.code}` : `${t.topik.title}, ${t.topik.courseWord} ${level.code}`;
     setAnnounce(`${fill(t.selected, { name })}. ${level.price}`);
@@ -311,6 +318,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               </p>
               <LevelStage
                 selected={levels.general}
+                pulse={pulse}
                 onSelect={(index) => chooseLevel("general", index)}
                 items={t.general.levels.map((level) => ({ key: level.code, label: level.code }))}
               />
@@ -330,6 +338,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               </p>
               <LevelStage
                 selected={levels.topik}
+                pulse={pulse}
                 onSelect={(index) => chooseLevel("topik", index)}
                 items={t.topik.levels.map((level) => ({ key: level.code, label: level.code, kicker: "TOPIK" }))}
               />

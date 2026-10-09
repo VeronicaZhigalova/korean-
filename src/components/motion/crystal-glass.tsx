@@ -56,6 +56,12 @@ const CrystalFilter = ({ size }: { size: CrystalSize }) => {
       <feComposite in2="round" operator="in" result="body" />
       <feFlood style={token("--crystal-edge")} />
       <feComposite in2="thick" operator="in" result="edge" />
+      {/* Internal depth: a dark refraction line runs inside each stroke, parallel to its lit edge, as in thick glass. */}
+      <feOffset in="height" dx={n(2.5)} dy={n(3.5)} result="heightShift" />
+      <feComposite in="heightShift" in2="height" operator="arithmetic" k1="0" k2="3" k3="-3" k4="0" result="fold" />
+      <feComposite in="fold" in2="round" operator="in" result="foldIn" />
+      <feFlood style={token("--crystal-depth")} />
+      <feComposite in2="foldIn" operator="in" result="depth" />
       {/* Light caught inside the glass, rising from the lower edge. */}
       <feSpecularLighting in="height" surfaceScale={n(5)} specularConstant="0.6" specularExponent="14" style={light("--crystal-inner")} result="innerLight">
         <feDistantLight azimuth="90" elevation="24" />
@@ -78,6 +84,7 @@ const CrystalFilter = ({ size }: { size: CrystalSize }) => {
         <feMergeNode in="shadow" />
         <feMergeNode in="body" />
         <feMergeNode in="edge" />
+        <feMergeNode in="depth" />
         <feMergeNode in="caught" />
         <feMergeNode in="rim" />
         <feMergeNode in="glint" />

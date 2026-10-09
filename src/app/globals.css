@@ -216,6 +216,7 @@
   --crystal-shadow: rgb(0 3 12 / 0.5);
   --crystal-floor: rgb(0 4 14 / 0.75);
   --crystal-caustic: rgb(120 176 240 / 0.2);
+  --crystal-depth: rgb(8 30 80 / 0.7);
 }
 [data-theme="light"] {
   --crystal-body: rgb(120 170 225 / 0.2);
@@ -227,6 +228,7 @@
   --crystal-shadow: rgb(25 45 80 / 0.2);
   --crystal-floor: rgb(25 45 80 / 0.28);
   --crystal-caustic: rgb(80 140 210 / 0.18);
+  --crystal-depth: rgb(10 40 100 / 0.55);
 }
 
 .crystal {
@@ -867,23 +869,45 @@ html[data-refract] .lg-prominent.lg-primary {
 */
 @media (prefers-reduced-motion: no-preference) {
   .course-object.is-current {
-    animation: level-in 0.8s cubic-bezier(0.16, 1, 0.3, 1) both;
+    animation: level-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
   }
   .course-object.is-leaving {
-    animation: level-out 0.52s cubic-bezier(0.4, 0, 0.2, 1) both;
+    animation: level-out 0.42s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  /* Every selection: lift with a slight turn, a controlled drop, one small rebound, a soft landing. */
+  .course-object.is-current .course-bounce {
+    animation: level-bounce 1.15s cubic-bezier(0.33, 0, 0.25, 1) both;
+  }
+  .course-object.is-current .course-shadow {
+    animation:
+      level-shadow 1.15s cubic-bezier(0.33, 0, 0.25, 1) both,
+      crystal-shadow 7s ease-in-out 1.15s infinite;
   }
   .course-object.is-current .course-float,
   .jamo-word .course-float {
-    animation: crystal-float 7s ease-in-out 0.8s infinite both;
+    animation: crystal-float 7s ease-in-out 1.15s infinite both;
   }
-  .course-object.is-current .course-shadow,
   .jamo-word .course-shadow {
-    animation: crystal-shadow 7s ease-in-out 0.8s infinite both;
+    animation: crystal-shadow 7s ease-in-out 2.8s infinite both;
   }
-  .jamo-word .course-float,
-  .jamo-word .course-shadow {
+  .jamo-word .course-float {
     animation-delay: 2.8s;
   }
+}
+@keyframes level-bounce {
+  0% { transform: translateY(0) rotate(0) scale(1, 1); }
+  30% { transform: translateY(-34px) rotate(-3.5deg) scale(0.985, 1.015); }
+  58% { transform: translateY(0) rotate(0.8deg) scale(1.025, 0.97); }
+  74% { transform: translateY(-7px) rotate(-0.4deg) scale(1, 1); }
+  88% { transform: translateY(0) rotate(0) scale(1.008, 0.992); }
+  100% { transform: translateY(0) rotate(0) scale(1, 1); }
+}
+@keyframes level-shadow {
+  0% { transform: scale(1); opacity: 1; }
+  30% { transform: scale(0.72, 0.6); opacity: 0.35; }
+  58% { transform: scale(1.08, 1.1); opacity: 1; }
+  74% { transform: scale(0.94); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
 }
 @keyframes level-in {
   from { opacity: 0; transform: translateY(14px) scale(0.92); }
@@ -1476,4 +1500,29 @@ html[data-refract] .lg-prominent.lg-primary {
 .jamo-word .course-float {
   flex-direction: row;
   gap: 0;
+}
+
+.course-bounce {
+  transform-origin: 50% 100%;
+}
+
+/* Feedback: level chips and arrows answer hover, press and selection. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-canvas .course-chip,
+  .home-canvas .course-arrow,
+  .home-canvas .course-tab {
+    transition: background-color 0.2s ease-out, color 0.2s ease-out, border-color 0.2s ease-out, transform 0.15s ease-out;
+  }
+  .home-canvas .course-chip:active,
+  .home-canvas .course-arrow:active:not(:disabled),
+  .home-canvas .course-tab:active {
+    transform: scale(0.94);
+  }
+  .home-canvas .course-chip[aria-pressed="true"] {
+    animation: chip-select 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+@keyframes chip-select {
+  from { transform: scale(0.9); }
+  to { transform: scale(1); }
 }
