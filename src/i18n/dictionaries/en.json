@@ -40,76 +40,158 @@
     "copyright": "© {year} SAID IN KOREAN"
   },
   "home": {
-    "eyebrow": "Learn Korean online · A1⁠–⁠C2 · TOPIK",
-    "title": "Learn Korean with online courses",
+    "eyebrow": "Korean, taught online",
+    "title": "Learn Korean, step by step",
     "titleBefore": "Learn ",
     "titleAccent": "Korean",
-    "titleAfter": " with online courses",
-    "lede": "Choose General Korean or TOPIK preparation. New learners can start with a free alphabet course; the level quiz is optional.",
+    "titleAfter": ", step by step",
+    "lede": "Courses from your first Hangul letters to advanced Korean and TOPIK preparation. Begin with the alphabet, or take the optional level quiz to find your place.",
     "primaryCta": "Explore courses",
-    "secondaryCta": "Take level quiz",
-    "facts": [
-      {
-        "value": "A1⁠–⁠C2",
-        "label": "General Korean"
-      },
-      {
-        "value": "I⁠–⁠VI",
-        "label": "TOPIK preparation"
-      },
-      {
-        "value": "한글",
-        "label": "Free alphabet course"
-      }
-    ],
-    "factsLabel": "At a glance",
     "paths": {
-      "eyebrow": "Learning paths",
-      "title": "Choose your learning path",
-      "lede": "Choose a General Korean or TOPIK course directly. Paid lessons are available for six months after purchase; the level quiz is optional.",
+      "title": "Find your way into Korean",
+      "pathsLabel": "Learning paths",
+      "previous": "Previous",
+      "next": "Next",
+      "position": "{n} of {total}",
+      "selected": "{name} selected",
+      "lessonsLabel": "Lessons",
+      "accessLabel": "Access",
+      "forLabel": "For",
+      "aboutLabel": "What you'll learn",
+      "pending": "A description will follow once the teacher has approved it.",
+      "free": {
+        "tab": "The alphabet",
+        "badge": "Free",
+        "kicker": "Your first step",
+        "title": "Start with Hangul",
+        "name": "Free alphabet course",
+        "price": "€0",
+        "body": "Get to know the Korean alphabet, learn how its letters come together, and begin reading your first Korean words.",
+        "includesLabel": "Inside the course",
+        "includes": [
+          "Video lesson",
+          "Alphabet reference",
+          "Practice quiz"
+        ],
+        "materials": "Materials in English and German are in preparation.",
+        "how": "No payment needed.",
+        "cta": "Explore the free course",
+        "continue": "Continue to General Korean",
+        "visualLabel": "ㅎ + ㅏ + ㄴ = 한 · 한글",
+        "replay": "Form 한 again",
+        "kind": "Alphabet"
+      },
       "general": {
+        "tab": "General Korean",
         "title": "General Korean",
-        "levelsLabel": "Six levels",
-        "meta": "Six courses · 15 lessons of 40 minutes each",
-        "access": "Six months of access",
-        "price": "€39–€59",
-        "cta": "View General Korean"
+        "korean": "일반 한국어",
+        "levelsLabel": "General Korean levels",
+        "lessons": "15 lessons · 40 minutes each",
+        "access": "Six months from payment",
+        "cta": "View the {code} course",
+        "levels": [
+          {
+            "code": "A1",
+            "name": "Beginner",
+            "price": "€39",
+            "for": "Complete beginners. New to Hangul? Start with the alphabet course.",
+            "about": "You’ll learn to introduce yourself and describe people, things and places; use the core particles; talk about past, present and future; tell the time and dates; count with both number systems; and link sentences with “and”, “so” and “but”.",
+            "points": [
+              "Introduce yourself and describe people, things and places",
+              "Use the core particles",
+              "Talk about past, present and future",
+              "Tell the time and dates, and count with both number systems",
+              "Link sentences with “and”, “so” and “but”"
+            ]
+          },
+          {
+            "code": "A2",
+            "name": "Elementary",
+            "price": "€39",
+            "for": "Learners whose level quiz result suggests A2.",
+            "about": ""
+          },
+          {
+            "code": "B1",
+            "name": "Intermediate",
+            "price": "€39",
+            "for": "Learners whose level quiz result suggests B1.",
+            "about": ""
+          },
+          {
+            "code": "B2",
+            "name": "Upper intermediate",
+            "price": "€49",
+            "for": "Learners whose level quiz result suggests B2.",
+            "about": ""
+          },
+          {
+            "code": "C1",
+            "name": "Advanced",
+            "price": "€59",
+            "for": "Learners whose level quiz result suggests C1.",
+            "about": ""
+          },
+          {
+            "code": "C2",
+            "name": "Proficient",
+            "price": "€59",
+            "for": "Learners whose level quiz result suggests C2.",
+            "about": ""
+          }
+        ]
       },
       "topik": {
+        "tab": "TOPIK preparation",
         "title": "TOPIK preparation",
-        "levelsLabel": "Six courses",
-        "meta": "Six separate courses · 10 lessons of 50 minutes each",
-        "price": "€59–€69",
-        "cta": "View TOPIK courses"
+        "korean": "TOPIK 대비",
+        "levelsLabel": "TOPIK preparation courses",
+        "courseWord": "Course",
+        "lessons": "10 lessons · 50 minutes each",
+        "access": "Six months from payment",
+        "cta": "View course {code}",
+        "for": "Learners preparing for the official TOPIK exam.",
+        "note": "Courses I–VI are our preparation pathway; their names are working titles. The official exam has two tests: TOPIK I (levels 1–2) and TOPIK II (levels 3–6).",
+        "levels": [
+          {
+            "code": "I",
+            "price": "€59"
+          },
+          {
+            "code": "II",
+            "price": "€59"
+          },
+          {
+            "code": "III",
+            "price": "€59"
+          },
+          {
+            "code": "IV",
+            "price": "€69"
+          },
+          {
+            "code": "V",
+            "price": "€69"
+          },
+          {
+            "code": "VI",
+            "price": "€69"
+          }
+        ]
       },
       "quiz": {
-        "title": "Not sure where to start?",
-        "body": "Check reading, listening and writing across six levels.",
-        "meta": "Optional · A1⁠–⁠C2",
-        "cta": "Start optional quiz"
+        "eyebrow": "Not sure about your level?",
+        "title": "Find your starting point",
+        "body": "An optional quiz on reading, listening and writing across six levels. Your results suggest where you could begin.",
+        "cta": "Take the level quiz",
+        "note": "Optional · No commitment"
       }
     },
-    "alphabet": {
-      "eyebrow": "Free course",
-      "title": "Start with the Korean alphabet",
-      "body": "A free video lesson, alphabet reference and practice quiz for everyone. Materials in English and German are being prepared.",
-      "badge": "Free for everyone",
-      "steps": [
-        "Video lesson",
-        "Alphabet reference",
-        "Practice quiz"
-      ],
-      "stepsLabel": "What the course includes",
-      "cta": "Explore free alphabet course",
-      "visualCaption": "ㅎ + ㅏ + ㄴ = 한"
-    },
     "services": {
-      "eyebrow": "With the teacher",
-      "title": "Learn with the teacher",
-      "lede": "Coaching supports an active purchased course. Speaking Chat is a separate conversation service.",
+      "title": "Time with the teacher",
       "coaching": {
         "title": "Course coaching",
-        "body": "For an active purchased course. Sold separately.",
+        "body": "Sessions with the teacher to support a course you’ve bought. You can book them while your course access is active.",
         "options": [
           {
             "label": "3 × 50 min",
@@ -121,22 +203,29 @@
           }
         ],
         "requirement": "Requires an active course",
-        "cta": "Explore coaching"
+        "cta": "About coaching"
       },
       "chat": {
         "title": "Speaking Chat",
-        "body": "A 50-minute informal conversation. No course purchase needed.",
+        "body": "An informal conversation with the teacher. Anyone can book it, with or without a course.",
         "duration": "50 min",
         "price": "€25",
         "requirement": "No course needed",
-        "cta": "Explore Speaking Chat"
+        "cta": "About Speaking Chat"
       }
     },
     "teacher": {
-      "eyebrow": "About",
       "title": "Meet the teacher",
-      "body": "Verified biography and qualifications will appear after approval. Contact email is being created.",
-      "cta": "View teacher profile",
+      "status": "Profile in preparation",
+      "photo": "Teacher photo awaiting approval",
+      "nameLabel": "Name",
+      "name": "To be confirmed",
+      "bioLabel": "Biography",
+      "bio": "A short biography will appear here once approved.",
+      "qualificationsLabel": "Qualifications",
+      "qualifications": "Qualifications will appear here once verified.",
+      "contact": "A contact email will be added soon.",
+      "cta": "Teacher profile",
       "glyphCaption": "말 · mal · words, speech"
     }
   },

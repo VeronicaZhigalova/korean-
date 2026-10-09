@@ -194,141 +194,287 @@
 }
 
 /* ------------------------------------------------------------------
-   Motion primitives (DESIGN.md §5)
+   Hangul universe (HangulUniverse / hangul-universe.ts places each
+   character; its material is drawn here)
    ------------------------------------------------------------------ */
 
-/* Section reveal: hidden only after RevealObserver has hydrated. */
-html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
-  opacity: 0;
-  transform: translate3d(0, 28px, 0);
-}
-
-[data-reveal] {
-  transition:
-    opacity 0.7s var(--ease-out-soft) var(--reveal-delay, 0ms),
-    transform 0.7s var(--ease-out-soft) var(--reveal-delay, 0ms);
-}
-
-@keyframes enter-up {
-  from {
-    opacity: 0;
-    transform: translate3d(0, 22px, 0);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .enter-up {
-    animation: enter-up 0.75s var(--ease-out-soft) both;
-    animation-delay: var(--enter-delay, 0ms);
-  }
-}
-
-/* ------------------------------------------------------------------
-   Living Hangul field (HangulField drives transform/opacity per frame)
-   ------------------------------------------------------------------ */
-
+/*
+  Crystal Blue Glass (9 Oct 2026): one material for every sculptural letter on
+  Home. The SVG filter in crystal-glass.tsx builds the volume from the letter's
+  outline; these tokens colour it. Thick, rounded, nearly clear glass lit from
+  the upper left: bright edges facing the light, deep blue refraction on the
+  far side, a faint caustic where the light lands behind it.
+*/
 :root,
 [data-theme="dark"] {
-  --hf-near: #f5f0e6;
-  --hf-far: #8fa6c4;
-  --hf-gold: #f2ddaa;
-  --hf-gold-glow: rgb(217 180 106 / 0.75);
-  --hf-light: rgb(217 180 106 / 0.075);
-  --hf-light-cool: rgb(217 180 106 / 0.03);
+  --crystal-body: rgb(170 205 245 / 0.1);
+  --crystal-edge: rgb(78 140 232 / 0.5);
+  --crystal-inner: #a6d0ff;
+  --crystal-key: #ffffff;
+  --crystal-glint: #f0d39a;
+  --crystal-rim: rgb(236 246 255 / 0.85);
+  --crystal-shadow: rgb(0 3 12 / 0.55);
+  --crystal-floor: rgb(0 4 14 / 0.75);
+  --crystal-caustic: rgb(110 165 238 / 0.13);
+  --crystal-depth: rgb(6 26 78 / 0.6);
 }
-
 [data-theme="light"] {
-  --hf-near: #14233a;
-  --hf-far: #6f84a3;
-  --hf-gold: #8a5a1c;
-  --hf-gold-glow: rgb(217 180 106 / 0.55);
-  --hf-light: rgb(217 180 106 / 0.14);
-  --hf-light-cool: rgb(255 255 255 / 0.3);
+  --crystal-body: rgb(150 190 235 / 0.1);
+  --crystal-edge: rgb(40 100 185 / 0.5);
+  --crystal-inner: #e8f5ff;
+  --crystal-key: #ffffff;
+  --crystal-glint: #d1a356;
+  --crystal-rim: rgb(255 255 255 / 0.95);
+  --crystal-shadow: rgb(25 45 80 / 0.22);
+  --crystal-floor: rgb(25 45 80 / 0.28);
+  --crystal-caustic: rgb(70 130 210 / 0.16);
+  --crystal-depth: rgb(12 44 110 / 0.75);
 }
 
-.hangul-field {
+.crystal {
+  display: block;
+  font-family: var(--font-korean);
+  font-weight: 800;
+  line-height: 1;
+  white-space: nowrap;
+  /* Only the outline is used by the filter; this colour shows only if filters are unavailable. */
+  color: #a8cdf0;
+  filter: url(#crystal-m) blur(var(--crystal-blur, 0px));
+}
+.crystal[data-crystal="s"] {
+  filter: url(#crystal-s) blur(var(--crystal-blur, 0px));
+}
+.crystal[data-crystal="l"] {
+  filter: url(#crystal-l) blur(var(--crystal-blur, 0px));
+}
+
+/* Soft floor shadow under a standing piece, with a faint blue caustic. */
+.course-shadow {
+  position: absolute;
+  left: 50%;
+  bottom: -0.06em;
+  width: 72%;
+  height: 0.14em;
+  translate: -50% 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, var(--crystal-floor), transparent),
+    radial-gradient(closest-side, var(--crystal-caustic), transparent) 0 0.04em / 100% 100% no-repeat;
+  filter: blur(3px);
+  pointer-events: none;
+}
+
+/* Sits under every section's content. */
+.hangul-universe {
   position: absolute;
   inset: 0;
-  overflow: hidden;
+  z-index: -1;
+  overflow: clip;
   pointer-events: none;
   user-select: none;
-  contain: strict;
 }
 
-.hf-light {
-  /* Soft atmospheric light, no hard edge: two wide falloffs layered. */
+/* Moved by the engine; the glass inside is drawn once. */
+.hu-glyph {
   position: absolute;
   left: 0;
   top: 0;
-  width: 46rem;
-  height: 46rem;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+/* The light a hero piece stands in: a soft cool pool behind its upper left, dimming as it recedes. */
+.hu-light {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 1.6em;
+  height: 1.6em;
+  translate: -62% -60%;
+  z-index: -1;
   border-radius: 50%;
-  background:
-    radial-gradient(closest-side, var(--hf-light), transparent 72%),
-    radial-gradient(closest-side, var(--hf-light-cool), transparent);
-  opacity: 0;
-  will-change: transform, opacity;
+  background: radial-gradient(closest-side, rgb(120 170 240 / 0.12), transparent);
+  pointer-events: none;
 }
-
-.hangul-field-quiet .hf-light {
-  width: 34rem;
-  height: 34rem;
+[data-theme="light"] .hu-light {
+  background: radial-gradient(closest-side, rgb(255 255 255 / 0.55), transparent);
 }
-
-.hf-glyph {
+/* A character built from its jamo: a square block, each part placed from its centre. */
+.hu-glyph.is-modular {
+  width: 1em;
+  height: 1em;
+}
+.hu-part {
   position: absolute;
-  transform: translate(-50%, -50%);
-  font-family: var(--font-korean);
-  font-weight: 600;
+  left: 50%;
+  top: 50%;
   line-height: 1;
-  white-space: nowrap;
-  color: color-mix(in srgb, var(--hf-near) calc(var(--d, 0.5) * 100%), var(--hf-far));
-  will-change: transform, opacity;
-}
-
-.hf-ink,
-.hf-glow {
-  display: block;
-}
-
-.hf-ink::before,
-.hf-glow::before {
-  content: attr(data-g);
-}
-
-.hf-glow {
-  /* Gold, glowing copy of the glyph; only its opacity changes near the pointer. */
-  position: absolute;
-  inset: 0;
-  color: var(--hf-gold);
-  text-shadow: 0 0 0.35em var(--hf-gold-glow);
-  opacity: 0;
-}
-
-@media (max-width: 1023px) {
-  .hf-desktop-only {
-    display: none;
-  }
-}
-
-@media (max-width: 639px) {
-  .hf-no-phone {
-    display: none;
-  }
+  will-change: transform;
 }
 
 /* ------------------------------------------------------------------
    Home surfaces
    ------------------------------------------------------------------ */
 
-.surface-night {
-  background: var(--bg);
+/*
+  One continuous canvas behind the whole Home (8 Oct 2026, after review).
+  The sections themselves are transparent: an earlier version painted a
+  gradient per section, and the hero ended on a navy glow that the next
+  section did not start with, which showed as a horizontal seam. Now a single
+  background spans hero to teacher, near black at the top, deepest navy around
+  the courses, and settles into the footer colour. Static, so it reads the same
+  with motion off. A faint grain keeps the long gradient from banding.
+*/
+:root,
+[data-theme="dark"] {
+  --atm-0: #020409;
+  --atm-1: #050b19;
+  --atm-2: #091730;
+  --atm-3: #08132a;
+  --atm-end: var(--bg-raised);
+  --atm-warm: rgb(217 180 106 / 0.045);
+  --atm-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .035 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+[data-theme="light"] {
+  /* Warm ivory, a soft blue-grey depth around the courses, champagne light. */
+  --atm-0: #fcfaf5;
+  --atm-1: #f7f3ea;
+  --atm-2: #eceef0;
+  --atm-3: #f2efe8;
+  --atm-end: var(--bg-raised);
+  --atm-warm: rgb(222 192 136 / 0.14);
+  --atm-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .03 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.home-canvas {
+  /* Starts under the header, so the header sits on the same background as the hero. */
+  margin-top: calc(-1 * var(--header-h));
+  background:
+    var(--atm-grain),
+    radial-gradient(70% 900px at 50% 0, var(--atm-warm), transparent),
+    linear-gradient(
+      to bottom,
+      var(--atm-0) 0,
+      var(--atm-1) 18%,
+      var(--atm-2) 34%,
+      var(--atm-2) 52%,
+      var(--atm-3) 76%,
+      var(--atm-end) 100%
+    );
 }
 
-.surface-raised {
+/* Smooth anchor scrolling; wheel, touch and keys stay native, so the Hangul universe reads the true position. */
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+/*
+  Headlines in Cinzel (8 Oct 2026): the hero and the section headlines only.
+  Body, navigation, buttons, course details and forms stay in Inter; Korean
+  text keeps Noto Serif KR. Cinzel is an inscriptional capital face, wider
+  than the previous serif, so it runs smaller, with open tracking and a little
+  more leading. It has no italic: the accent word is set apart by colour.
+*/
+.display-headline {
+  font-family: var(--font-cinzel), "Cinzel", Georgia, serif;
+  font-weight: 500;
+  font-kerning: normal;
+}
+.display-headline i {
+  font-style: normal;
+}
+.hero-headline {
+  max-width: 19ch;
+  font-size: clamp(2.05rem, 4.7vw, 3.85rem);
+  line-height: 1.12;
+  letter-spacing: 0.01em;
+}
+.section-headline {
+  font-size: clamp(1.8rem, 3.3vw, 2.85rem);
+  line-height: 1.14;
+  letter-spacing: 0.015em;
+}
+
+/* ------------------------------------------------------------------
+   Glass panels: course and service cards, the alphabet panel.
+   Mostly clear so the Hangul characters show through, a light blur, a thin
+   luminous rim and a soft inner light. .glass-lead (General Korean)
+   carries a warmer rim, more inner light and more depth.
+   ------------------------------------------------------------------ */
+
+:root,
+[data-theme="dark"] {
+  --pane-fill: rgb(13 27 48 / 0.46);
+  --pane-sheen: rgb(255 255 255 / 0.055);
+  --pane-rim: rgb(186 206 235 / 0.16);
+  --pane-rim-hover: rgb(186 206 235 / 0.28);
+  --pane-edge: rgb(255 255 255 / 0.09);
+  --pane-shadow: 0 28px 60px -34px rgb(0 0 0 / 0.75);
+  --pane-glow: rgb(217 180 106 / 0);
+  --lead-rim: rgb(217 180 106 / 0.38);
+  --lead-rim-hover: rgb(217 180 106 / 0.6);
+  --lead-glow: rgb(217 180 106 / 0.1);
+  --lead-shadow: 0 40px 80px -36px rgb(0 0 0 / 0.85), 0 0 0 1px rgb(217 180 106 / 0.05);
+}
+
+[data-theme="light"] {
+  --pane-fill: rgb(255 255 255 / 0.34);
+  --pane-sheen: rgb(255 255 255 / 0.55);
+  --pane-rim: rgb(33 58 91 / 0.13);
+  --pane-rim-hover: rgb(33 58 91 / 0.26);
+  --pane-edge: rgb(255 255 255 / 0.9);
+  --pane-shadow: 0 24px 50px -30px rgb(20 35 58 / 0.28);
+  --pane-glow: rgb(217 180 106 / 0);
+  --lead-rim: rgb(176 138 69 / 0.5);
+  --lead-rim-hover: rgb(176 138 69 / 0.75);
+  --lead-glow: rgb(217 180 106 / 0.12);
+  --lead-shadow: 0 36px 70px -34px rgb(20 35 58 / 0.36);
+}
+
+.glass-panel {
+  --glow: var(--pane-glow);
+  border: 1px solid var(--pane-rim);
   background:
-    linear-gradient(to bottom, var(--bg) 0, transparent 7rem),
-    var(--bg-raised);
+    radial-gradient(120% 70% at 0% 0%, var(--glow), transparent 60%),
+    linear-gradient(160deg, var(--pane-sheen), transparent 45%),
+    var(--pane-fill);
+  box-shadow:
+    inset 0 1px 0 var(--pane-edge),
+    var(--pane-shadow);
+  -webkit-backdrop-filter: blur(10px) saturate(125%);
+  backdrop-filter: blur(10px) saturate(125%);
+  transition: border-color 0.3s var(--ease-out-soft);
+}
+
+.glass-lead {
+  --glow: var(--lead-glow);
+  border-color: var(--lead-rim);
+  box-shadow:
+    inset 0 1px 0 var(--pane-edge),
+    var(--lead-shadow);
+}
+
+@media (hover: hover) {
+  .glass-panel:hover {
+    border-color: var(--pane-rim-hover);
+  }
+  .glass-lead:hover {
+    border-color: var(--lead-rim-hover);
+  }
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .glass-panel {
+    --pane-fill: color-mix(in srgb, var(--bg-raised) 88%, transparent);
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .glass-panel {
+    background: var(--surface);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
 }
 
 .glyph-soft {
@@ -342,160 +488,1327 @@ html[data-reveal="on"] [data-reveal]:not(.is-revealed) {
 }
 
 /* Card light follows the pointer; purely decorative and only on hover devices. */
-.card-lit {
-  position: relative;
-  isolation: isolate;
-}
-.card-lit::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  z-index: -1;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgb(242 221 170 / 0.09), transparent 70%);
-}
-@media (hover: hover) {
-  .card-lit:hover::before {
-    opacity: 1;
-  }
-}
-[data-theme="light"] .card-lit::before {
-  background: radial-gradient(260px circle at var(--mx, 50%) var(--my, 0%), rgb(27 54 87 / 0.06), transparent 70%);
-}
-
 /* ------------------------------------------------------------------
-   Button light (DESIGN.md §5 motion hierarchy)
-   .btn-beam  primary: a gold beam circles the border on hover/focus, and a
-              sheen crosses the face. .btn-beam-idle keeps a faint beam
-              circling for the one hero CTA.
-   .btn-arc   secondary: a quieter thin arc on hover/focus only.
-   Colour and border still say "button" without any of this.
+   Liquid glass buttons (material after the Jiro liquid-glass reference)
+   .lg            shared material: translucent fill, top sheen, thin luminous
+                  rim, bright upper edge, soft depth, a specular highlight
+   .lg-primary    gold glass (navy in light mode), the strongest treatment
+   .lg-secondary  clear, quieter glass
+   .lg-prominent  the one hero CTA: background refraction (Chromium) and a
+                  highlight that follows the pointer (GlassLight)
+   Buttons never move with the pointer: hover adds light and depth, press
+   compresses, focus shows the ring. Without refraction (Safari, Firefox)
+   the blur, rim, highlight and shadow carry the glass on their own.
    ------------------------------------------------------------------ */
 
-@property --beam {
-  syntax: "<angle>";
+@property --gx {
+  syntax: "<percentage>";
   inherits: false;
-  initial-value: 0deg;
+  initial-value: 50%;
+}
+
+@property --gy {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+
+@property --gs {
+  syntax: "<number>";
+  inherits: false;
+  initial-value: 0.5;
 }
 
 :root,
 [data-theme="dark"] {
-  --beam-core: #fff4d6;
-  --beam-edge: #f2ddaa;
-  --beam-arc: rgb(242 221 170 / 0.9);
-  --beam-sheen: rgb(255 255 255 / 0.38);
-  --beam-glow: rgb(217 180 106 / 0.45);
+  --lg-p-fill: rgb(217 180 106 / 0.93);
+  --lg-p-fill-refract: rgb(217 180 106 / 0.86);
+  --lg-p-sheen: rgb(255 248 228 / 0.46);
+  --lg-p-sheen-mid: rgb(255 248 228 / 0.08);
+  --lg-p-deep: rgb(110 74 18 / 0.12);
+  --lg-p-rim: rgb(255 236 196 / 0.78);
+  --lg-p-rim-hover: rgb(255 246 222 / 0.95);
+  --lg-p-edge: rgb(255 255 255 / 0.9);
+  --lg-p-under: rgb(92 60 10 / 0.38);
+  --lg-p-glow: rgb(217 180 106 / 0.34);
+  --lg-p-glow-hover: rgb(217 180 106 / 0.5);
+  --lg-p-spec: 255 252 240;
+  --lg-p-caustic: rgb(255 244 214 / 0.42);
+
+  --lg-s-fill: rgb(22 42 70 / 0.32);
+  --lg-s-fill-hover: rgb(34 58 92 / 0.42);
+  --lg-s-sheen: rgb(255 255 255 / 0.12);
+  --lg-s-rim: rgb(245 240 230 / 0.26);
+  --lg-s-rim-hover: rgb(245 240 230 / 0.46);
+  --lg-s-edge: rgb(255 255 255 / 0.32);
+  --lg-s-spec: 242 221 170;
+  --lg-s-shadow: rgb(0 0 0 / 0.5);
+
+  --lg-drop: rgb(0 0 0 / 0.35);
+  --lg-press: rgb(0 0 0 / 0.26);
 }
 
 [data-theme="light"] {
-  --beam-core: #ffe7b0;
-  --beam-edge: #d9b46a;
-  --beam-arc: rgb(166 124 53 / 0.95);
-  --beam-sheen: rgb(255 255 255 / 0.22);
-  --beam-glow: rgb(27 54 87 / 0.35);
+  --lg-p-fill: rgb(27 54 87 / 0.93);
+  --lg-p-fill-refract: rgb(27 54 87 / 0.86);
+  --lg-p-sheen: rgb(255 255 255 / 0.26);
+  --lg-p-sheen-mid: rgb(255 255 255 / 0.05);
+  --lg-p-deep: rgb(6 14 28 / 0.22);
+  --lg-p-rim: rgb(14 32 56 / 0.95);
+  --lg-p-rim-hover: rgb(10 24 44 / 1);
+  --lg-p-edge: rgb(255 255 255 / 0.42);
+  --lg-p-under: rgb(0 0 0 / 0.3);
+  --lg-p-glow: rgb(27 54 87 / 0.32);
+  --lg-p-glow-hover: rgb(27 54 87 / 0.45);
+  --lg-p-spec: 255 255 255;
+  --lg-p-caustic: rgb(233 214 171 / 0.3);
+
+  --lg-s-fill: rgb(255 255 255 / 0.58);
+  --lg-s-fill-hover: rgb(255 255 255 / 0.78);
+  --lg-s-sheen: rgb(255 255 255 / 0.9);
+  --lg-s-rim: rgb(20 35 58 / 0.22);
+  --lg-s-rim-hover: rgb(20 35 58 / 0.42);
+  --lg-s-edge: rgb(255 255 255 / 1);
+  --lg-s-spec: 255 255 255;
+  --lg-s-shadow: rgb(20 35 58 / 0.2);
+
+  --lg-drop: rgb(20 35 58 / 0.12);
+  --lg-press: rgb(20 35 58 / 0.18);
 }
 
-.btn-beam,
-.btn-arc {
+.lg {
+  --gs: 0.5;
   position: relative;
   isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--lg-rim);
+  background:
+    radial-gradient(7rem 3.5rem at var(--gx) var(--gy), rgb(var(--lg-spec) / calc(var(--gs) * var(--lg-spec-max))), transparent 70%),
+    linear-gradient(180deg, var(--lg-sheen) 0%, var(--lg-sheen-mid) 45%, transparent 58%, var(--lg-deep) 100%),
+    var(--lg-fill);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0.5px var(--lg-edge),
+    inset 0 -1px 1px var(--lg-under),
+    0 1px 2px var(--lg-drop),
+    0 12px 26px -14px var(--lg-glow);
+  transition:
+    --gx 0.5s var(--ease-out-soft),
+    --gy 0.5s var(--ease-out-soft),
+    --gs 0.45s var(--ease-out-soft),
+    border-color 0.45s var(--ease-out-soft),
+    box-shadow 0.45s var(--ease-out-soft),
+    background-color 0.45s var(--ease-out-soft),
+    scale 0.45s var(--ease-out-soft);
+  -webkit-tap-highlight-color: transparent;
 }
 
-.btn-beam > *,
-.btn-arc > * {
+.lg > * {
   position: relative;
   z-index: 1;
+  transition: translate 0.45s var(--ease-out-soft);
 }
 
-.btn-beam::before,
-.btn-arc::before {
-  /* A ring: the conic gradient is masked down to the border band. */
-  content: "";
-  position: absolute;
-  inset: -1.5px;
-  border-radius: inherit;
-  padding: 1.5px;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor;
-  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
-  opacity: 0;
-  transition: opacity 0.45s var(--ease-out-soft);
-  pointer-events: none;
-}
-
-.btn-beam::before {
-  background: conic-gradient(from var(--beam), transparent 0 58%, var(--beam-edge) 74%, var(--beam-core) 82%, var(--beam-edge) 88%, transparent 96%);
-}
-
-.btn-arc::before {
-  padding: 1px;
-  inset: -1px;
-  background: conic-gradient(from var(--beam), transparent 0 72%, var(--beam-arc) 86%, transparent 97%);
-}
-
-.btn-beam::after {
-  /* Sheen: a soft diagonal light that crosses the face once per hover. */
+.lg::after {
+  /* Caustic: light gathering at the lower edge, as through a lens. */
   content: "";
   position: absolute;
   inset: 0;
   border-radius: inherit;
-  background: linear-gradient(105deg, transparent 35%, var(--beam-sheen) 50%, transparent 65%) no-repeat;
-  background-size: 250% 100%;
-  background-position: 130% 0;
+  background: radial-gradient(60% 55% at 50% 118%, var(--lg-caustic), transparent 72%);
+  opacity: 0.55;
+  transition: opacity 0.45s var(--ease-out-soft);
   pointer-events: none;
 }
 
-.btn-beam {
-  transition-property: background-color, box-shadow, color, scale;
+.lg-primary {
+  --lg-fill: var(--lg-p-fill);
+  --lg-sheen: var(--lg-p-sheen);
+  --lg-sheen-mid: var(--lg-p-sheen-mid);
+  --lg-deep: var(--lg-p-deep);
+  --lg-rim: var(--lg-p-rim);
+  --lg-edge: var(--lg-p-edge);
+  --lg-under: var(--lg-p-under);
+  --lg-glow: var(--lg-p-glow);
+  --lg-spec: var(--lg-p-spec);
+  --lg-spec-max: 0.6;
+  --lg-caustic: var(--lg-p-caustic);
 }
 
-.btn-beam:hover,
-.btn-beam:focus-visible {
-  box-shadow: 0 10px 34px -14px var(--beam-glow);
+[data-theme="light"] .lg-primary {
+  --lg-spec-max: 0.2;
 }
 
-.btn-beam:hover::before,
-.btn-beam:focus-visible::before {
+.lg-secondary {
+  --lg-fill: var(--lg-s-fill);
+  --lg-sheen: var(--lg-s-sheen);
+  --lg-sheen-mid: transparent;
+  --lg-deep: transparent;
+  --lg-rim: var(--lg-s-rim);
+  --lg-edge: var(--lg-s-edge);
+  --lg-under: transparent;
+  --lg-glow: var(--lg-s-shadow);
+  --lg-spec: var(--lg-s-spec);
+  --lg-spec-max: 0.16;
+  --lg-caustic: transparent;
+  --gs: 0;
+}
+
+/* Hover and keyboard focus: a little more light, rim and depth. */
+@media (hover: hover) {
+  .lg:hover {
+    --gs: 1;
+    box-shadow:
+      inset 0 1px 0.5px var(--lg-edge),
+      inset 0 -1px 1px var(--lg-under),
+      0 2px 4px var(--lg-drop),
+      0 16px 32px -14px var(--lg-glow);
+  }
+  .lg-primary:hover {
+    --lg-rim: var(--lg-p-rim-hover);
+    --lg-glow: var(--lg-p-glow-hover);
+  }
+  .lg-secondary:hover {
+    --lg-rim: var(--lg-s-rim-hover);
+    --lg-fill: var(--lg-s-fill-hover);
+  }
+  .lg:hover::after {
+    opacity: 1;
+  }
+  .lg:hover > :first-child {
+    translate: 0 -0.5px;
+  }
+}
+
+.lg:focus-visible {
+  --gs: 1;
+  outline-offset: 4px;
+}
+
+.lg-primary:focus-visible {
+  --lg-rim: var(--lg-p-rim-hover);
+}
+
+.lg-secondary:focus-visible {
+  --lg-rim: var(--lg-s-rim-hover);
+}
+
+/* Press (touch included): the glass compresses and the light sinks inward. */
+.lg:active {
+  --gs: 0.35;
+  scale: 0.965;
+  box-shadow:
+    inset 0 1px 0.5px var(--lg-edge),
+    inset 0 2px 7px var(--lg-press),
+    0 1px 1px var(--lg-drop),
+    0 6px 14px -10px var(--lg-glow);
+  transition-duration: 0.12s;
+}
+
+.lg:active::after {
+  opacity: 0.35;
+  transition-duration: 0.12s;
+}
+
+.lg:active > :first-child {
+  translate: 0 0.5px;
+  transition-duration: 0.12s;
+}
+
+/* Refraction: only where SVG backdrop filters render (data-refract, Chromium). */
+html[data-refract] .lg-prominent {
+  backdrop-filter: url(#lg-refract) blur(2.5px) saturate(1.35);
+}
+
+html[data-refract] .lg-prominent.lg-primary {
+  --lg-fill: var(--lg-p-fill-refract);
+}
+
+/* Glass never costs contrast. */
+@media (prefers-reduced-transparency: reduce) {
+  .lg {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+  .lg-primary {
+    --lg-fill: var(--primary-bg) !important;
+  }
+  .lg-secondary {
+    --lg-fill: var(--bg-raised) !important;
+  }
+}
+
+@media (forced-colors: active) {
+  .lg {
+    border-color: ButtonText;
+  }
+}
+
+.lg:is(:disabled, [aria-disabled="true"]) {
+  --gs: 0 !important;
+  scale: 1 !important;
+}
+
+/* ------------------------------------------------------------------
+   Course showcase (CourseShowcase). One selected level sits in the
+   centre, lit; its neighbours recede along a gentle curve. The level
+   type uses the Hangul universe material so the two belong together.
+   ------------------------------------------------------------------ */
+
+.course-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding: 0.375rem;
+  width: fit-content;
+  max-width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-raised) 70%, transparent);
+}
+
+.course-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0 1.125rem;
+  border-radius: 999px;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--text-muted);
+  transition:
+    background-color 0.3s var(--ease-out-soft),
+    color 0.3s var(--ease-out-soft),
+    box-shadow 0.3s var(--ease-out-soft);
+}
+.course-tab:hover {
+  color: var(--text);
+}
+.course-tab[aria-selected="true"] {
+  color: var(--text);
+  background: var(--surface-strong);
+  box-shadow:
+    inset 0 0 0 1px var(--border-strong),
+    0 8px 24px -14px rgb(0 0 0 / 0.6);
+}
+.course-tab:focus-visible,
+.course-chip:focus-visible,
+.course-arrow:focus-visible,
+.course-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.course-free-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #1a1206;
+  background: linear-gradient(160deg, #f6e2b0, #d9b46a 55%, #b88a45);
+}
+.course-free-badge.is-large {
+  padding: 0.3rem 0.75rem;
+  font-size: 0.75rem;
+}
+
+.course-korean {
+  font-family: var(--font-korean);
+  font-size: 0.9375rem;
+  letter-spacing: 0.32em;
+  text-align: center;
+  color: var(--accent-text);
+  opacity: 0.8;
+}
+
+/* The stage: a lit floor in the middle, levels on a curve around it. */
+.course-stage,
+.jamo-stage {
+  position: relative;
+  height: clamp(15rem, 30vw, 22rem);
+  overflow: clip;
+  touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.course-stage-light {
+  position: absolute;
+  left: 50%;
+  bottom: 8%;
+  width: min(26rem, 70%);
+  height: 38%;
+  translate: -50% 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, rgb(242 214 160 / 0.16), transparent 70%) 30% 50% / 70% 100% no-repeat,
+    radial-gradient(closest-side, rgb(140 176 230 / 0.1), transparent 70%) 72% 50% / 70% 100% no-repeat;
+  filter: blur(8px);
+  pointer-events: none;
+}
+[data-theme="light"] .course-stage-light {
+  background: radial-gradient(closest-side, rgb(176 132 58 / 0.22), rgb(27 54 87 / 0.05) 60%, transparent);
+}
+
+.course-object {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: clamp(7.5rem, 19vw, 15.5rem);
+  line-height: 0.9;
+  white-space: nowrap;
+  pointer-events: none;
+}
+.course-float {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+.course-object-kicker {
+  font-family: var(--font-sans);
+  font-size: 0.11em;
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  margin-right: -0.42em;
+  color: var(--text-muted);
+}
+.course-object-glass {
+  font-size: 0.86em;
+  letter-spacing: -0.02em;
+}
+
+/*
+  One level at a time: the new piece rises into the centre while the previous
+  one recedes and dissolves (LEAVE_MS in course-showcase.tsx). Once settled,
+  the piece floats 7px on a slow 7s breath; its shadow widens and softens as
+  it rises. Reduced motion: no transitions, no float.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  .course-object.is-current {
+    animation: level-in 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+  }
+  .course-object.is-leaving {
+    animation: level-out 0.42s cubic-bezier(0.4, 0, 0.2, 1) both;
+  }
+  /* Every selection: lift with a slight turn, a controlled drop, one small rebound, a soft landing. */
+  .course-object.is-current .course-bounce {
+    animation: level-bounce 1.15s cubic-bezier(0.33, 0, 0.25, 1) both;
+  }
+  .course-object.is-current .course-shadow {
+    animation:
+      level-shadow 1.15s cubic-bezier(0.33, 0, 0.25, 1) both,
+      crystal-shadow 10s ease-in-out 1.15s infinite;
+  }
+  .course-object.is-current .course-float,
+  .jamo-word .course-float {
+    animation: crystal-float 10s ease-in-out 1.15s infinite both;
+  }
+  .jamo-word .course-shadow {
+    animation: crystal-shadow 7s ease-in-out 2.8s infinite both;
+  }
+  .jamo-word .course-float {
+    animation-delay: 2.8s;
+  }
+}
+@keyframes level-bounce {
+  0% { transform: translateY(0) rotate(0) scale(1, 1); }
+  30% { transform: translateY(-34px) rotate(-3.5deg) scale(0.985, 1.015); }
+  58% { transform: translateY(0) rotate(0.8deg) scale(1.025, 0.97); }
+  74% { transform: translateY(-7px) rotate(-0.4deg) scale(1, 1); }
+  88% { transform: translateY(0) rotate(0) scale(1.008, 0.992); }
+  100% { transform: translateY(0) rotate(0) scale(1, 1); }
+}
+@keyframes level-shadow {
+  0% { transform: scale(1); opacity: 1; }
+  30% { transform: scale(0.72, 0.6); opacity: 0.35; }
+  58% { transform: scale(1.08, 1.1); opacity: 1; }
+  74% { transform: scale(0.94); opacity: 0.8; }
+  100% { transform: scale(1); opacity: 1; }
+}
+@keyframes level-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.92); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes level-out {
+  from { opacity: 1; transform: none; }
+  to { opacity: 0; transform: translateY(-6px) scale(0.86); }
+}
+/* After the landing the piece settles: a breath of 3 px, slow enough to read as stillness. */
+@keyframes crystal-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-3px); }
+}
+@keyframes crystal-shadow {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.05, 1.08); opacity: 0.82; }
+}
+
+/* Position track with direct selection. */
+.course-track {
+  position: relative;
+  display: flex;
+  gap: 0.125rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-raised) 60%, transparent);
+}
+.course-track-dot {
+  position: absolute;
+  bottom: -0.3rem;
+  width: 0.375rem;
+  height: 0.375rem;
+  translate: -50% 0;
+  border-radius: 50%;
+  background: var(--gold);
+  box-shadow: 0 0 10px rgb(217 180 106 / 0.7);
+  transition: left 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+.course-chip {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  padding: 0 0.5rem;
+  border-radius: 999px;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+  transition:
+    background-color 0.3s var(--ease-out-soft),
+    color 0.3s var(--ease-out-soft);
+}
+.course-chip:hover {
+  color: var(--text);
+}
+.course-chip[aria-pressed="true"] {
+  color: var(--text);
+  background: var(--surface-strong);
+  box-shadow: inset 0 0 0 1px var(--border-strong);
+}
+.course-arrow {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  transition:
+    border-color 0.3s var(--ease-out-soft),
+    opacity 0.3s var(--ease-out-soft);
+}
+.course-arrow:hover:not(:disabled) {
+  border-color: var(--gold);
+}
+.course-arrow:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.course-link {
+  min-height: 2.75rem;
+  padding: 0 0.25rem;
+  font-size: var(--text-body-sm);
+  font-weight: 600;
+  color: var(--accent-text);
+  text-underline-offset: 0.25em;
+}
+.course-link:hover {
+  text-decoration: underline;
+}
+
+/* Details change with a short masked rise, a little after the levels start moving. */
+.course-swap {
+  animation: course-rise 0.6s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.course-swap.is-late {
+  animation-delay: 0.08s;
+}
+@keyframes course-rise {
+  from {
+    opacity: 0;
+    translate: 0 0.6rem;
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    clip-path: inset(0 0 0 0);
+  }
+}
+
+/* Free alphabet: ㅎ, ㅏ and ㄴ glide into one block and become 한. */
+.jamo-stage {
+  display: block;
+  width: 100%;
+  height: clamp(16rem, 34vw, 27rem);
+}
+.jamo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  font-family: var(--font-korean);
+  line-height: 1;
+}
+.jamo {
+  font-size: clamp(3.5rem, 8vw, 6.4rem);
+  translate: -50% -50%;
+}
+/* Full shorthands: the CSS minifier drops timing longhands that have no name beside them. */
+.jamo-h {
+  animation: jamo-h 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.5s both;
+}
+.jamo-a {
+  animation: jamo-a 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.5s both;
+}
+.jamo-n {
+  animation: jamo-n 1.4s cubic-bezier(0.65, 0, 0.35, 1) 0.5s both;
+}
+@keyframes jamo-h {
+  from { transform: translateX(-2.6em); }
+  70% { transform: translate(-1.2em, -0.32em) scale(0.62); opacity: 1; }
+  to { transform: translate(-1.2em, -0.32em) scale(0.62); opacity: 0; }
+}
+@keyframes jamo-a {
+  from { transform: translateX(0); }
+  70% { transform: translate(-0.58em, -0.32em) scale(0.62); opacity: 1; }
+  to { transform: translate(-0.58em, -0.32em) scale(0.62); opacity: 0; }
+}
+@keyframes jamo-n {
+  from { transform: translateX(2.6em); }
+  70% { transform: translate(-0.9em, 0.36em) scale(0.62); opacity: 1; }
+  to { transform: translate(-0.9em, 0.36em) scale(0.62); opacity: 0; }
+}
+/* 한글 in glass: the same material as the level objects, fully lit. */
+.jamo-word {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  display: flex;
+  translate: -50% -50%;
+  font-size: clamp(7.5rem, 17vw, 13.5rem);
+  line-height: 1;
+  white-space: nowrap;
+}
+.jamo-syllable {
+  animation: jamo-form 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.45s both;
+}
+.jamo-syllable.is-late {
+  animation: jamo-form 0.9s cubic-bezier(0.16, 1, 0.3, 1) 1.9s both;
+}
+@keyframes jamo-form {
+  from { opacity: 0; scale: 0.9; }
+  to { opacity: 1; scale: 1; }
+}
+
+/* Reduced motion: the finished 한 with its parts beside it, no travel. */
+@media (prefers-reduced-motion: reduce) {
+  .jamo {
+    display: none;
+  }
+}
+
+/* Phones: the three paths stay on one row, each label may wrap. */
+@media (max-width: 639px) {
+  .course-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    width: 100%;
+    border-radius: 1.25rem;
+  }
+  .course-tab {
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.25rem;
+    min-height: 3.5rem;
+    padding: 0.5rem 0.375rem;
+    border-radius: 0.95rem;
+    font-size: 0.8125rem;
+    line-height: 1.15;
+    text-align: center;
+  }
+  .course-chip {
+    min-width: 2.25rem;
+    padding: 0 0.25rem;
+  }
+  .course-track {
+    gap: 0;
+  }
+  .course-arrow {
+    width: 2.5rem;
+    height: 2.75rem;
+  }
+}
+
+/* Level quiz call to action under the learning paths: text left, button right; stacked on phones. */
+.quiz-cta {
+  display: grid;
+  gap: 1.75rem;
+  padding: 1.75rem;
+  border-color: color-mix(in srgb, var(--gold) 38%, transparent);
+}
+@media (min-width: 640px) {
+  .quiz-cta {
+    padding: 2.25rem 2.5rem;
+  }
+}
+@media (min-width: 900px) {
+  .quiz-cta {
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 3rem;
+    padding: 2.5rem 3rem;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Editorial interface details on the Home (8 Oct 2026, after review).
+   Quieter controls: less rounding, thin rules, champagne kept for the
+   main actions, minimal hover and press, clear focus. Scoped to the Home
+   so other pages keep their approved styles until reviewed.
+   ------------------------------------------------------------------ */
+
+.home-canvas .lg {
+  border-radius: 0.5rem;
+  letter-spacing: 0.01em;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 1px 0 var(--lg-edge);
+}
+.home-canvas .lg::after {
+  content: none;
+}
+.home-canvas .lg-primary {
+  --lg-spec-max: 0.18;
+}
+.home-canvas .lg-secondary {
+  --lg-fill: transparent;
+  --lg-sheen: transparent;
+  --lg-rim: var(--border-strong);
+  --lg-edge: transparent;
+}
+@media (hover: hover) {
+  .home-canvas .lg:hover {
+    box-shadow: inset 0 1px 0 var(--lg-edge);
+  }
+  .home-canvas .lg-secondary:hover {
+    --lg-fill: color-mix(in srgb, var(--text) 5%, transparent);
+    --lg-rim: color-mix(in srgb, var(--gold) 55%, var(--border-strong));
+  }
+}
+.home-canvas .lg:active {
+  scale: 0.985;
+  box-shadow: inset 0 1px 2px var(--lg-press);
+}
+.home-canvas .lg:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+
+/* Path tabs: a thin segmented rule, the selected tab outlined in champagne. */
+.home-canvas .course-tabs {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 0.625rem;
+  background: transparent;
+}
+.home-canvas .course-tab {
+  min-height: 2.75rem;
+  padding: 0 1.25rem;
+  border-radius: 0.4375rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+.home-canvas .course-tab[aria-selected="true"] {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 50%, transparent);
+}
+.course-tab-note {
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+/* "Free" as a quiet champagne label rather than a gold pill. */
+.home-canvas .course-free-badge {
+  padding: 0.125rem 0.5rem;
+  border-radius: 0.25rem;
+  border: 1px solid color-mix(in srgb, var(--gold) 55%, transparent);
+  background: none;
+  color: var(--accent-text);
+}
+.home-canvas .course-chip {
+  border-radius: 0.375rem;
+  font-weight: 500;
+}
+.home-canvas .course-chip[aria-pressed="true"] {
+  background: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gold) 50%, transparent);
+}
+.home-canvas .course-track {
+  border-radius: 0.5rem;
+  background: none;
+}
+.home-canvas .course-track-dot {
+  box-shadow: none;
+}
+.home-canvas .course-arrow {
+  border-radius: 0.5rem;
+  border-color: var(--border);
+}
+.home-canvas .course-arrow:hover:not(:disabled) {
+  border-color: var(--border-strong);
+}
+.home-canvas .course-link {
+  font-weight: 500;
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--text) 30%, transparent);
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.2s var(--ease-out-soft);
+}
+.home-canvas .course-link:hover {
+  text-decoration-color: var(--gold);
+}
+.home-canvas .course-tab:focus-visible,
+.home-canvas .course-chip:focus-visible,
+.home-canvas .course-arrow:focus-visible,
+.home-canvas .course-link:focus-visible {
+  outline-offset: 3px;
+}
+
+/* Small labels and figures in the course panels: one sans system. */
+.course-eyebrow {
+  font-size: var(--text-caption);
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--accent-text);
+}
+.course-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+.course-item {
+  padding: 0.375rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 0.375rem;
+  font-size: var(--text-body-sm);
+  color: var(--text);
+}
+.price-figure {
+  font-family: var(--font-sans);
+  font-size: 1.75rem;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+}
+
+/* ------------------------------------------------------------------
+   Header (8 Oct 2026): quiet editorial navigation. A thin translucent
+   veil in the page's own colour, one hairline beneath, sans labels at a
+   reading size, a short underline for the current page.
+   ------------------------------------------------------------------ */
+/*
+  The header scrolls away with the page and has no surface of its own (8 Oct
+  2026): no band, blur or rule. On Home the canvas slides up behind it (see
+  .home-canvas below), so one atmosphere runs from the very top.
+*/
+:root {
+  --header-h: 5rem;
+}
+.site-header {
+  background: transparent;
+}
+.nav-link {
+  font-size: 0.875rem;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  transition: color 0.15s ease-out;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0.625rem;
+  height: 1px;
+  background: currentColor;
+  opacity: 0;
+  transition: opacity 0.15s ease-out;
+}
+.nav-link:hover::after {
+  opacity: 0.3;
+}
+.nav-link[aria-current="page"]::after {
+  background: var(--gold);
   opacity: 1;
 }
-
-.btn-arc:hover::before,
-.btn-arc:focus-visible::before {
-  opacity: 0.85;
+.nav-link:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 4px;
+}
+/* Account, theme and menu buttons share one thin outline. */
+.header-control {
+  border: 1px solid var(--border);
+  border-radius: 0.5rem;
+  color: var(--text);
+  transition:
+    border-color 0.15s ease-out,
+    background-color 0.15s ease-out;
+}
+.header-control:hover {
+  border-color: var(--border-strong);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+.header-control:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+}
+/* Solid: a backdrop filter cannot nest inside the header's own. */
+.header-panel {
+  background: var(--bg);
+  border-bottom: 1px solid var(--border);
 }
 
-.btn-beam-idle::before {
-  opacity: 0.45;
-}
-
+/* ------------------------------------------------------------------
+   Hero entrance (8 Oct 2026): the copy arrives with the Hangul universe's
+   opening dolly (INTRO_SECONDS 3.4 in hangul-universe.ts). The eyebrow
+   settles its tracking, the headline is unveiled line by line from above, the
+   lede comes into focus, then the action appears. All done by about 2.6 s,
+   while the far characters are still arriving. Full shorthands only.
+   ------------------------------------------------------------------ */
 @media (prefers-reduced-motion: no-preference) {
-  .btn-beam::before {
-    animation: beam-spin 2.6s linear infinite;
+  /* Hangul Journey: the glass letters come forward first (0.2 to 2.5 s), then the words. */
+  .hero-in-1 {
+    animation: hero-track 1.4s cubic-bezier(0.22, 1, 0.36, 1) 1.05s both;
   }
-  .btn-beam-idle::before {
-    animation-duration: 5.5s;
+  .hero-in-2 {
+    animation: hero-unveil 1.5s cubic-bezier(0.22, 1, 0.36, 1) 1.35s both;
   }
-  .btn-arc::before {
-    animation: beam-spin 3.4s linear infinite;
+  .hero-in-3 {
+    animation: hero-focus 1.2s cubic-bezier(0.22, 1, 0.36, 1) 2.05s both;
   }
-  .btn-beam::after {
-    transition: background-position 0.9s var(--ease-out-soft);
+  .hero-in-4 {
+    animation: hero-arrive 1s cubic-bezier(0.22, 1, 0.36, 1) 2.45s both;
   }
-  .btn-beam:hover::after,
-  .btn-beam:focus-visible::after {
-    background-position: -30% 0;
+  /* Scroll-linked: the copy recedes and fades with the hero's scroll progress (set by the engine). */
+  .hero-copy {
+    opacity: calc(1 - var(--hero-p, 0) * 1.25);
+    transform: translateY(calc(var(--hero-p, 0) * -3rem)) scale(calc(1 - var(--hero-p, 0) * 0.05));
+    will-change: transform, opacity;
   }
-  .btn-beam:not(:hover):not(:focus-visible)::before,
-  .btn-arc:not(:hover):not(:focus-visible)::before {
+}
+@keyframes hero-track {
+  from { opacity: 0; letter-spacing: 0.42em; }
+  to { opacity: 1; letter-spacing: 0.2em; }
+}
+@keyframes hero-unveil {
+  from {
+    opacity: 0;
+    translate: 0 0.18em;
+    letter-spacing: 0.05em;
+    clip-path: inset(-0.3em -0.3em 100% -0.3em);
+  }
+  40% { opacity: 1; }
+  to {
+    opacity: 1;
+    translate: 0 0;
+    letter-spacing: 0.01em;
+    clip-path: inset(-0.3em -0.3em -0.4em -0.3em);
+  }
+}
+@keyframes hero-focus {
+  from { opacity: 0; filter: blur(6px); }
+  to { opacity: 1; filter: blur(0); }
+}
+@keyframes hero-arrive {
+  from { opacity: 0; scale: 0.97; }
+  to { opacity: 1; scale: 1; }
+}
+
+/* ------------------------------------------------------------------
+   Information panels on the Home: crafted glass. A denser, readable body,
+   a soft blur of the atmosphere behind, a bright top edge and a shaded
+   lower one, layered shadows, and a faint highlight that follows the
+   pointer (glass-light.ts writes --px/--py). Hover lifts the panel a
+   hair and wakes the rim.
+   ------------------------------------------------------------------ */
+.home-canvas .glass-panel {
+  position: relative;
+  isolation: isolate;
+  background:
+    radial-gradient(120% 70% at 0% 0%, var(--glow), transparent 60%),
+    linear-gradient(165deg, var(--pane-sheen) 0%, transparent 38%),
+    linear-gradient(to bottom, transparent 70%, var(--pane-depth)),
+    var(--pane-body);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+  backdrop-filter: blur(18px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 var(--pane-edge),
+    inset 0 -1px 0 var(--pane-under),
+    0 1px 1px var(--pane-contact),
+    0 14px 28px -16px var(--pane-near),
+    0 44px 90px -46px var(--pane-far);
+  transition:
+    border-color 0.35s var(--ease-out-soft),
+    box-shadow 0.35s var(--ease-out-soft),
+    translate 0.35s var(--ease-out-soft);
+}
+.home-canvas .glass-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(32rem 22rem at var(--px, 20%) var(--py, 0%), var(--pane-light), transparent 70%);
+  opacity: 0.55;
+  transition: opacity 0.35s var(--ease-out-soft);
+  pointer-events: none;
+}
+@media (hover: hover) {
+  .home-canvas .glass-panel:hover {
+    translate: 0 -2px;
+    box-shadow:
+      inset 0 1px 0 var(--pane-edge),
+      inset 0 -1px 0 var(--pane-under),
+      0 2px 2px var(--pane-contact),
+      0 20px 36px -18px var(--pane-near),
+      0 56px 100px -48px var(--pane-far);
+  }
+  .home-canvas .glass-panel:hover::before {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .home-canvas .glass-panel:hover {
+    translate: none;
+  }
+}
+:root,
+[data-theme="dark"] {
+  --pane-body: rgb(14 28 52 / 0.62);
+  --pane-depth: rgb(2 6 16 / 0.28);
+  --pane-under: rgb(0 0 0 / 0.35);
+  --pane-contact: rgb(0 0 0 / 0.35);
+  --pane-near: rgb(0 0 0 / 0.55);
+  --pane-far: rgb(0 0 0 / 0.8);
+  --pane-light: rgb(214 228 255 / 0.07);
+}
+[data-theme="light"] {
+  --pane-body: rgb(255 255 255 / 0.62);
+  --pane-depth: rgb(20 35 58 / 0.04);
+  --pane-under: rgb(20 35 58 / 0.06);
+  --pane-contact: rgb(20 35 58 / 0.08);
+  --pane-near: rgb(20 35 58 / 0.14);
+  --pane-far: rgb(20 35 58 / 0.24);
+  --pane-light: rgb(255 255 255 / 0.7);
+}
+
+/* Footer: no rules; it continues the page's atmosphere and settles darker. */
+/* The footer carries the canvas grain too: without it the canvas ends a few levels brighter and shows a seam. */
+.site-footer {
+  background:
+    var(--atm-grain),
+    linear-gradient(to bottom, var(--bg-raised), color-mix(in srgb, var(--bg-raised) 55%, var(--bg)));
+}
+
+/* 한 and 글 stand side by side on one floor. */
+.jamo-word .course-float {
+  flex-direction: row;
+  gap: 0;
+}
+
+.course-bounce {
+  transform-origin: 50% 100%;
+}
+
+/* Feedback: level chips and arrows answer hover, press and selection. */
+@media (prefers-reduced-motion: no-preference) {
+  .home-canvas .course-chip,
+  .home-canvas .course-arrow,
+  .home-canvas .course-tab {
+    transition: background-color 0.2s ease-out, color 0.2s ease-out, border-color 0.2s ease-out, transform 0.15s ease-out;
+  }
+  .home-canvas .course-chip:active,
+  .home-canvas .course-arrow:active:not(:disabled),
+  .home-canvas .course-tab:active {
+    transform: scale(0.94);
+  }
+  .home-canvas .course-chip[aria-pressed="true"] {
+    animation: chip-select 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+}
+@keyframes chip-select {
+  from { transform: scale(0.9); }
+  to { transform: scale(1); }
+}
+
+/*
+  Learning paths composition (9 Oct 2026): the selected level is the focal
+  sculpture, as tall as the course card beside it, with its selector directly
+  under it; the card leads with the level, then who it is for, what you learn,
+  one line of practical facts, price and action. Fewer outlines.
+*/
+.course-stage {
+  height: clamp(13rem, 34vw, 27rem);
+}
+.home-canvas .course-info {
+  border-color: transparent;
+}
+.course-points {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  font-size: var(--text-body-sm);
+  color: var(--text);
+}
+.course-points li {
+  position: relative;
+  padding-left: 1.1rem;
+}
+.course-points li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.68em;
+  width: 0.45rem;
+  height: 1px;
+  background: var(--accent-text);
+}
+.course-meta {
+  font-size: var(--text-body-sm);
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+}
+@media (max-width: 639px) {
+  .course-stage {
+    height: 10.5rem;
+  }
+  .course-object {
+    font-size: 6.6rem;
+  }
+  .course-korean {
+    font-size: 0.8125rem;
+  }
+}
+
+/*
+  Learning Paths as one object (9 Oct 2026, art direction): the sculpture, its
+  level controls and the course information share a single glass surface and
+  a single light from the upper left, divided only by a fading hairline. The
+  stage and the information column align on the same top and bottom lines:
+  the Korean title with the course title, the level controls with the price.
+*/
+.home-canvas .course-unit {
+  overflow: clip;
+}
+@media (hover: hover) {
+  .home-canvas .course-unit:hover {
+    translate: none;
+  }
+}
+.course-unit-light {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(70% 90% at 22% 18%, rgb(140 180 240 / 0.09), transparent 70%);
+  pointer-events: none;
+}
+[data-theme="light"] .course-unit-light {
+  background: radial-gradient(70% 90% at 22% 18%, rgb(255 255 255 / 0.5), transparent 70%);
+}
+.course-unit-stage {
+  justify-content: space-between;
+  padding: 1.75rem 0.75rem 1.5rem;
+}
+.course-unit-info {
+  position: relative;
+  padding: 1.5rem 1.25rem 1.75rem;
+}
+.course-unit-info::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--pane-rim-hover), transparent);
+}
+@media (min-width: 640px) {
+  .course-unit-stage {
+    padding: 2.5rem 2rem 2rem;
+  }
+  .course-unit-info {
+    padding: 2.5rem 2.5rem 2.75rem;
+  }
+}
+@media (min-width: 1024px) {
+  .course-unit-stage {
+    padding: 3rem 2.5rem 2.75rem;
+  }
+  .course-unit-info {
+    display: flex;
+    align-items: stretch;
+    padding: 3rem 3.25rem 2.75rem 3rem;
+  }
+  .course-unit-info > .course-info {
+    flex: 1;
+  }
+  /* Title and outcomes read from the top; facts, price and action sit on the controls' line. */
+  .course-unit-info .course-meta {
+    margin-top: auto;
+  }
+  .course-unit-info::before {
+    left: 0;
+    right: auto;
+    top: 10%;
+    bottom: 10%;
+    width: 1px;
+    height: auto;
+    background: linear-gradient(to bottom, transparent, var(--pane-rim-hover), transparent);
+  }
+}
+.course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+}
+.course-meta li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.course-meta li::before {
+  content: "";
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: var(--accent-text);
+  opacity: 0.7;
+}
+
+/* Phone typography (9 Oct 2026): balanced breaks, a shorter measure, and a steadier rhythm. */
+@media (max-width: 639px) {
+  [data-story="hero"] p,
+  [data-story="hero"] h1,
+  .course-info h3,
+  .course-info p,
+  .course-tab span {
+    text-wrap: balance;
+  }
+  [data-story="hero"] .hero-in-3 {
+    max-width: 32ch;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .course-tab {
+    gap: 0.125rem;
+  }
+  .course-tab-note {
+    font-size: 0.625rem;
+  }
+  .course-points {
+    gap: 0.7rem;
+  }
+}
+
+/*
+  Hangul Journey section entrances (9 Oct 2026). scroll-reveal.ts marks
+  below-the-fold [data-reveal] elements "pending" and then "in" once seen; with
+  no JavaScript or reduced motion nothing is ever pending. Each kind moves
+  differently, so the page reads as a progression rather than a row of fade-ups:
+  - heading: the line is uncovered from below, like type set into place;
+  - card: tilts up out of depth into the reading plane;
+  - unit (Learning Paths): the glass piece rises dimensionally, the level
+    controls follow, then the course information slides in from the right.
+*/
+@media (prefers-reduced-motion: no-preference) {
+  [data-reveal="heading"] {
+    transition:
+      clip-path 1s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-reveal="heading"][data-reveal-state="pending"] {
+    clip-path: inset(-15% -5% 100% -5%);
+    transform: translateY(0.35em);
+  }
+  [data-reveal="heading"][data-reveal-state="in"] {
+    clip-path: inset(-15% -5% -15% -5%);
+  }
+
+  /* Glass panels keep their own hover transitions alongside the entrance. */
+  .home-canvas [data-reveal="card"] {
+    transition:
+      opacity 0.9s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 120ms + 80ms),
+      transform 1.1s cubic-bezier(0.22, 1, 0.36, 1) calc(var(--i, 0) * 120ms + 80ms),
+      border-color 0.35s var(--ease-out-soft),
+      box-shadow 0.35s var(--ease-out-soft),
+      translate 0.35s var(--ease-out-soft);
+  }
+  [data-reveal="card"][data-reveal-state="pending"] {
+    opacity: 0;
+    transform: perspective(1000px) translateY(1.75rem) rotateX(7deg) scale(0.98);
+  }
+
+  [data-reveal="unit"] .course-tabs,
+  [data-reveal="unit"] .course-unit,
+  [data-reveal="unit"] .course-stage,
+  [data-reveal="unit"] .jamo-stage,
+  [data-reveal="unit"] .course-unit-stage > :last-child,
+  [data-reveal="unit"] .course-unit-info {
+    transition:
+      opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 1.1s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  [data-reveal="unit"] .course-stage,
+  [data-reveal="unit"] .jamo-stage {
+    transition-delay: 0.15s;
+  }
+  [data-reveal="unit"] .course-unit-stage > :last-child {
+    transition-delay: 0.5s;
+  }
+  [data-reveal="unit"] .course-unit-info {
+    transition-delay: 0.65s;
+  }
+  [data-reveal="unit"][data-reveal-state="pending"] .course-tabs,
+  [data-reveal="unit"][data-reveal-state="pending"] .course-unit-stage > :last-child {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  [data-reveal="unit"][data-reveal-state="pending"] .course-unit {
+    opacity: 0.4;
+  }
+  [data-reveal="unit"][data-reveal-state="pending"] .course-stage,
+  [data-reveal="unit"][data-reveal-state="pending"] .jamo-stage {
+    opacity: 0;
+    transform: perspective(900px) translateY(1.5rem) rotateX(16deg) scale(0.9);
+  }
+  [data-reveal="unit"][data-reveal-state="pending"] .course-unit-info {
+    opacity: 0;
+    transform: translateX(1.25rem);
+  }
+  /* The alphabet's ㅎ ㅏ ㄴ → 한글 waits until it is seen. */
+  [data-reveal="unit"][data-reveal-state="pending"] .jamo-stage * {
     animation-play-state: paused;
   }
-  .btn-beam-idle:not(:hover):not(:focus-visible)::before {
-    animation-play-state: running;
-  }
-}
-
-@keyframes beam-spin {
-  to { --beam: 360deg; }
 }

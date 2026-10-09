@@ -1,0 +1,52 @@
+<title>Home Motion Preview</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Instrument+Serif:ital@0;1&display=swap">
+<style>
+/* Review shell: a thin control bar over the real Home rendered in a resizable frame. */
+:root{--bg:#060b16;--bar:#0b1729;--line:#38506b;--text:#f5f0e6;--muted:#b2bccb;--gold:#d9b46a;--on-gold:#060b16;--sans:"Inter",system-ui,sans-serif;--serif:"Instrument Serif",Georgia,serif;color-scheme:dark}
+@media (prefers-color-scheme: light){:root:not([data-theme="dark"]){--bg:#efece4;--bar:#f8f7f3;--line:#c9c3b4;--text:#14233a;--muted:#47566a;--gold:#7a531b;--on-gold:#f8f7f3;color-scheme:light}}
+:root[data-theme="light"]{--bg:#efece4;--bar:#f8f7f3;--line:#c9c3b4;--text:#14233a;--muted:#47566a;--gold:#7a531b;--on-gold:#f8f7f3;color-scheme:light}
+html,body{height:100%}
+body{background:var(--bg);color:var(--text);font:14px/1.4 var(--sans);display:flex;flex-direction:column}
+.bar{display:flex;flex-wrap:wrap;align-items:center;gap:10px 18px;padding:10px 16px;background:var(--bar);border-bottom:1px solid var(--line)}
+.name{font-family:var(--serif);font-size:20px;margin-right:auto}
+.name small{font:500 11px var(--sans);letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-left:8px}
+.group{display:flex;align-items:center;gap:6px}
+.group>span{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:2px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:999px;padding:2px}
+.seg button,.plain{font:600 12.5px var(--sans);color:var(--muted);background:none;border:0;border-radius:999px;padding:6px 12px;cursor:pointer;min-height:32px}
+.seg button[aria-pressed="true"]{background:var(--gold);color:var(--on-gold)}
+.plain{border:1px solid var(--line);color:var(--text)}
+button:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.stage{flex:1;min-height:0;display:flex;justify-content:center;align-items:flex-start;overflow:hidden;padding:16px}
+.device{position:relative;flex:none;transform-origin:top center;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#060b16;box-shadow:0 30px 80px -40px rgba(0,0,0,.6)}
+.device iframe{display:block;border:0;width:100%;height:100%}
+.meta{font-size:12px;color:var(--muted);padding:0 16px 10px;text-align:center}
+@media (max-width:700px){.name{width:100%}}
+</style>
+<div class="bar">
+  <div class="name">SAID IN KOREAN<small>Home motion preview</small></div>
+  <div class="group"><span>View</span><div class="seg" id="dev"><button data-w="1440" data-h="900">Desktop</button><button data-w="834" data-h="1112">Tablet</button><button data-w="390" data-h="844">Mobile</button></div></div>
+  <div class="group"><span>Theme</span><div class="seg" id="theme"><button data-v="dark">Dark</button><button data-v="light">Light</button></div></div>
+  <div class="group"><span>Motion</span><div class="seg" id="motion"><button data-v="full">Full</button><button data-v="reduced">Reduced</button></div></div>
+  <button class="plain" id="replay" type="button">Replay from top</button>
+</div>
+<div class="stage" id="stage"><div class="device" id="device"><iframe id="frame" title="SAID IN KOREAN Home"></iframe></div></div>
+<p class="meta" id="meta"></p>
+<script>
+/*DOCS*/
+var state={w:1440,h:900,theme:'dark',motion:'full'};
+var frame=document.getElementById('frame'),device=document.getElementById('device'),stage=document.getElementById('stage');
+window.__theme=state.theme;
+function press(id,match){document.querySelectorAll('#'+id+' button').forEach(function(b){b.setAttribute('aria-pressed',match(b)?'true':'false')})}
+function fit(){var availW=stage.clientWidth-32,availH=stage.clientHeight-32;var s=Math.min(1,availW/state.w);var h=Math.max(availH/s,Math.min(state.h,availH/s));device.style.width=state.w+'px';device.style.height=h+'px';device.style.transform='scale('+s+')';device.style.marginBottom=(-(1-s)*h)+'px';document.getElementById('meta').textContent=state.w+' px wide, shown at '+Math.round(s*100)+'%. Links stay on this page; other pages are not built yet.'}
+function load(){window.__theme=state.theme;frame.srcdoc=DOCS[state.motion]}
+document.getElementById('dev').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;state.w=+b.dataset.w;state.h=+b.dataset.h;press('dev',function(x){return x===b});fit();load()});
+document.getElementById('theme').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;state.theme=b.dataset.v;window.__theme=state.theme;press('theme',function(x){return x===b});frame.contentWindow&&frame.contentWindow.postMessage({theme:state.theme},'*')});
+document.getElementById('motion').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;state.motion=b.dataset.v;press('motion',function(x){return x===b});load()});
+document.getElementById('replay').addEventListener('click',load);
+addEventListener('message',function(e){if(e.data&&e.data.themeChanged){state.theme=e.data.themeChanged;window.__theme=state.theme;press('theme',function(x){return x.dataset.v===state.theme})}});
+press('dev',function(x){return x.dataset.w==='1440'});press('theme',function(x){return x.dataset.v==='dark'});press('motion',function(x){return x.dataset.v==='full'});
+if(innerWidth<700){state.w=390;state.h=844;press('dev',function(x){return x.dataset.w==='390'})}
+addEventListener('resize',fit);fit();load();
+</script>
+

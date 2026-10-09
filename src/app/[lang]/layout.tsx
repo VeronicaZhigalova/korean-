@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Instrument_Serif, Noto_Serif_KR } from "next/font/google";
+import { Cinzel, Inter, Instrument_Serif, Noto_Serif_KR } from "next/font/google";
 import { SiteFooter } from "@/components/layout/site-footer";
 import { SiteHeader } from "@/components/layout/site-header";
-import { themeInitScript } from "@/components/layout/theme-toggle";
+import { glassRefractScript, themeInitScript } from "@/components/layout/head-scripts";
+import { GlassFilter, GlassLight } from "@/components/ui/liquid-glass";
 import { locales } from "@/i18n/config";
 import { getDictionary, getLocale } from "@/i18n/dictionaries";
 import "../globals.css";
@@ -14,6 +15,14 @@ const instrumentSerif = Instrument_Serif({
   weight: "400",
   style: ["normal", "italic"],
   variable: "--font-instrument-serif",
+  display: "swap",
+});
+
+// Cinzel (SIL Open Font License) for the hero and section headlines: one variable
+// file, preloaded because the hero headline is the first thing on the page.
+const cinzel = Cinzel({
+  subsets: ["latin", "latin-ext"],
+  variable: "--font-cinzel",
   display: "swap",
 });
 
@@ -50,11 +59,12 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
     <html
       lang={locale}
       data-theme="dark"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
-      className={`${inter.variable} ${instrumentSerif.variable} ${notoSerifKr.variable}`}
+      className={`${inter.variable} ${instrumentSerif.variable} ${notoSerifKr.variable} ${cinzel.variable}`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript + glassRefractScript }} />
       </head>
       <body className="flex min-h-svh flex-col">
         <a
@@ -68,6 +78,8 @@ export default async function RootLayout({ children }: LayoutProps<"/[lang]">) {
           {children}
         </main>
         <SiteFooter />
+        <GlassFilter />
+        <GlassLight />
       </body>
     </html>
   );

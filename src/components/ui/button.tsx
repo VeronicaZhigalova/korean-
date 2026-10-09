@@ -14,8 +14,8 @@ type CommonProps = {
   icon?: ReactNode;
   /** Trailing arrow that nudges forward on hover (DESIGN.md §5). */
   arrow?: boolean;
-  /** Keeps a faint light beam circling at rest. Reserve for the one hero CTA. */
-  beamIdle?: boolean;
+  /** Full liquid glass: refraction and a pointer-led highlight. Reserve for the one hero CTA. */
+  prominent?: boolean;
   className?: string;
   children: ReactNode;
 };
@@ -24,10 +24,9 @@ type ButtonAsButton = CommonProps & Omit<ComponentProps<"button">, keyof CommonP
 type ButtonAsLink = CommonProps & Omit<ComponentProps<typeof Link>, keyof CommonProps> & { href: string };
 
 const variants: Record<Variant, string> = {
-  primary:
-    "btn-beam bg-primary text-on-primary hover:bg-primary-hover active:bg-primary-pressed",
-  secondary:
-    "btn-arc bg-transparent text-text shadow-[inset_0_0_0_1px_var(--border-strong)] hover:shadow-[inset_0_0_0_1px_var(--text)]",
+  // Liquid glass material and states live in globals.css (.lg).
+  primary: "lg lg-primary text-on-primary",
+  secondary: "lg lg-secondary text-text",
   ghost: "bg-transparent text-text-muted hover:text-text",
 };
 
@@ -50,8 +49,8 @@ const Spinner = () => (
 );
 
 export const Button = (props: ButtonAsButton | ButtonAsLink) => {
-  const { variant = "primary", size = "md", loading = false, loadingLabel, icon, arrow = false, beamIdle = false, className, children, ...rest } = props;
-  const classes = cn(base, variants[variant], sizes[size], beamIdle && "btn-beam-idle", loading && "pointer-events-none", className);
+  const { variant = "primary", size = "md", loading = false, loadingLabel, icon, arrow = false, prominent = false, className, children, ...rest } = props;
+  const classes = cn(base, variants[variant], sizes[size], prominent && "lg-prominent", loading && "pointer-events-none", className);
   const content = (
     <>
       {loading ? <Spinner /> : icon}
@@ -67,6 +66,15 @@ export const Button = (props: ButtonAsButton | ButtonAsLink) => {
   );
 
   if ("href" in rest && rest.href !== undefined) {
+    // In-page anchors stay plain links, so the browser scrolls and moves keyboard focus to the target.
+    if (rest.href.startsWith("#")) {
+      const { href, prefetch: _prefetch, replace: _replace, scroll: _scroll, ...anchorProps } = rest as Omit<ButtonAsLink, keyof CommonProps>;
+      return (
+        <a {...(anchorProps as ComponentProps<"a">)} href={href} className={classes}>
+          {content}
+        </a>
+      );
+    }
     return (
       <Link {...(rest as Omit<ButtonAsLink, keyof CommonProps>)} className={classes}>
         {content}
