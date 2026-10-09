@@ -265,7 +265,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
   const tabLabel: Record<PathKey, string> = { free: t.free.tab, general: t.general.tab, topik: t.topik.tab };
 
   return (
-    <div data-course-showcase className="course-showcase flex flex-col gap-6 lg:gap-12">
+    <div data-course-showcase className="course-showcase flex flex-col gap-6 lg:gap-8">
       <div role="tablist" aria-label={t.pathsLabel} className="course-tabs">
         {PATHS.map((key, index) => (
           <button
@@ -293,9 +293,12 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
         id={`${id}-panel`}
         role="tabpanel"
         aria-labelledby={`${id}-tab-${path}`}
-        className="course-layout grid items-center gap-6 lg:grid-cols-12 lg:gap-12"
+        data-atmo-glass
+        className="glass-panel course-unit grid rounded-(--radius-card) lg:grid-cols-12"
       >
-        <div className="flex min-w-0 flex-col gap-3 sm:gap-5 lg:col-span-6">
+        {/* One light, upper left, falls across the sculpture and the information alike. */}
+        <span aria-hidden="true" className="course-unit-light" />
+        <div className="course-unit-stage flex min-w-0 flex-col gap-3 sm:gap-4 lg:col-span-6">
           {path === "free" ? (
             <JamoStage label={t.free.visualLabel} replay={t.free.replay} run={jamoRun} onReplay={() => setJamoRun((run) => run + 1)} />
           ) : path === "general" ? (
@@ -341,9 +344,9 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
           )}
         </div>
 
-        <div className="min-w-0 lg:col-span-6">
+        <div className="course-unit-info min-w-0 lg:col-span-6">
           {path === "free" ? (
-            <article key="free" data-atmo-glass className="glass-panel glass-lead course-info flex flex-col gap-7 rounded-(--radius-card) p-6 sm:p-9">
+            <article key="free" className="course-info flex flex-col gap-7">
               <header className="flex flex-col gap-3">
                 <p className="course-eyebrow">{t.free.kicker}</p>
                 <h3 className="course-swap display-headline text-[clamp(1.75rem,2.6vw,2.25rem)] leading-tight text-text">{t.free.title}</h3>
@@ -376,7 +379,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               </footer>
             </article>
           ) : path === "general" ? (
-            <article key="general" data-atmo-glass className="glass-panel course-info flex flex-col gap-7 rounded-(--radius-card) p-6 sm:p-10">
+            <article key="general" className="course-info flex flex-col gap-6">
               <header key={general.code} className="course-swap flex flex-col gap-3">
                 <h3 className="display-headline text-[clamp(1.9rem,2.8vw,2.5rem)] leading-[1.05] text-text">
                   {general.code} <span className="text-text-muted">{general.name}</span>
@@ -387,7 +390,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                 <p className="course-label">{t.aboutLabel}</p>
                 {general.points ? (
                   <ul className="course-points">
-                    {general.points.map((point) => (
+                    {general.points.slice(0, 3).map((point) => (
                       <li key={point}>{point}</li>
                     ))}
                   </ul>
@@ -395,9 +398,10 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                   <p className={cn("text-body-sm", general.about ? "text-text" : "text-text-muted")}>{general.about || t.pending}</p>
                 )}
               </div>
-              <p className="course-meta">
-                {t.general.lessons} · {t.general.access}
-              </p>
+              <ul className="course-meta">
+                <li>{t.general.lessons}</li>
+                <li>{t.general.access}</li>
+              </ul>
               <footer className="flex flex-wrap items-center justify-between gap-4">
                 <span key={general.price + general.code} className="course-swap price-figure">
                   {general.price}
@@ -408,7 +412,7 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
               </footer>
             </article>
           ) : (
-            <article key="topik" data-atmo-glass className="glass-panel course-info flex flex-col gap-7 rounded-(--radius-card) p-6 sm:p-10">
+            <article key="topik" className="course-info flex flex-col gap-6">
               <header key={topik.code} className="course-swap flex flex-col gap-3">
                 <h3 className="display-headline text-[clamp(1.9rem,2.8vw,2.5rem)] leading-[1.05] text-text">
                   {t.topik.courseWord} {topik.code}
@@ -419,9 +423,10 @@ export const CourseShowcase = ({ t, base }: { t: Paths; base: string }) => {
                 <p className="course-label">{t.aboutLabel}</p>
                 <p className="text-body-sm text-text-muted">{t.pending}</p>
               </div>
-              <p className="course-meta">
-                {t.topik.lessons} · {t.topik.access}
-              </p>
+              <ul className="course-meta">
+                <li>{t.topik.lessons}</li>
+                <li>{t.topik.access}</li>
+              </ul>
               <p className="text-caption text-text-muted">{t.topik.note}</p>
               <footer className="flex flex-wrap items-center justify-between gap-4">
                 <span key={topik.price + topik.code} className="course-swap price-figure">

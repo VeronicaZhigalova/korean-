@@ -9,12 +9,12 @@ import type { CSSProperties } from "react";
   - the outline is softened and re-cut sharply, which rounds corners while
     keeping a crisp silhouette;
   - a blurred copy becomes a height map, so strokes read as thick, domed glass;
-  - the body is a clear ice-blue tint, deeper towards the edges where light
-    travels further through the glass;
-  - a cool key light from the upper left gives the polished bevel, light
-    caught inside rises from the lower edge, a small champagne glint answers
-    from the right, and a fine rim keeps the edge crisp;
-  - a soft contact shadow sits under the piece.
+  - the body is almost clear, so the background reads through it; colour
+    gathers only where the glass is thick;
+  - one key light from the upper left: faces turned to it catch a fine bright
+    edge and a crisp highlight, faces turned away refract deep blue, and the
+    light that passes through lands behind the piece as a faint caustic;
+  - a tight contact shadow ties the piece to its surroundings.
   Colours come from --crystal-* tokens, so dark and light themes share it.
   Three sizes keep the bevel in proportion from small to very large letters.
   Rasterised once per element: animate the transform of a wrapper, never the
@@ -35,59 +35,60 @@ const CrystalFilter = ({ size }: { size: CrystalSize }) => {
   const k = SCALE[size];
   const n = (value: number) => +(value * k).toFixed(2);
   return (
-    <filter id={`crystal-${size}`} x="-12%" y="-12%" width="124%" height="140%" colorInterpolationFilters="sRGB">
-      {/* Inflated, rounded outline: thin serifs and corners swell into soft glass. */}
+    <filter id={`crystal-${size}`} x="-20%" y="-15%" width="150%" height="160%" colorInterpolationFilters="sRGB">
+      {/* Rounded outline: corners soften, the silhouette stays sharp. */}
       <feGaussianBlur in="SourceAlpha" stdDeviation={n(1.1)} result="soft" />
       <feComponentTransfer in="soft" result="round">
-        <feFuncA type="linear" slope="12" intercept="-3.6" />
+        <feFuncA type="linear" slope="14" intercept="-4.2" />
       </feComponentTransfer>
-      {/* Height map and the thin outer band. */}
-      <feGaussianBlur in="round" stdDeviation={n(3.2)} result="height" />
-      <feMorphology in="round" operator="erode" radius={n(0.7)} result="inner" />
-      <feComposite in="round" in2="inner" operator="out" result="band" />
+      <feGaussianBlur in="round" stdDeviation={n(3)} result="height" />
       <feComposite in="round" in2="height" operator="arithmetic" k1="-1" k2="1" k3="0" k4="0" result="thick" />
-      {/* Contact shadow. */}
-      <feGaussianBlur in="round" stdDeviation={n(3.5)} result="shadowSoft" />
-      <feOffset in="shadowSoft" dy={n(5)} result="shadowDrop" />
+      {/* Light passes through the glass and lands behind it, down and to the right of the light. */}
+      <feGaussianBlur in="round" stdDeviation={n(7)} result="castSoft" />
+      <feOffset in="castSoft" dx={n(9)} dy={n(16)} result="castDrop" />
+      <feFlood style={token("--crystal-caustic")} />
+      <feComposite in2="castDrop" operator="in" result="caustic" />
+      {/* A tight contact shadow keeps the piece from floating free of its world. */}
+      <feGaussianBlur in="round" stdDeviation={n(2.2)} result="shadowSoft" />
+      <feOffset in="shadowSoft" dx={n(2)} dy={n(4)} result="shadowDrop" />
       <feFlood style={token("--crystal-shadow")} />
-      <feComposite in2="shadowDrop" operator="in" result="shadow" />
-      {/* Clear body, deeper at the edges. */}
+      <feComposite in2="shadowDrop" operator="in" result="shadowAll" />
+      <feComposite in="shadowAll" in2="round" operator="out" result="shadow" />
+      {/* Clear body: barely tinted, so the background reads through; colour gathers only where the glass is thick. */}
       <feFlood style={token("--crystal-body")} />
       <feComposite in2="round" operator="in" result="body" />
       <feFlood style={token("--crystal-edge")} />
       <feComposite in2="thick" operator="in" result="edge" />
-      {/* Internal depth: a dark refraction line runs inside each stroke, parallel to its lit edge, as in thick glass. */}
-      <feOffset in="height" dx={n(2.5)} dy={n(3.5)} result="heightShift" />
-      <feComposite in="heightShift" in2="height" operator="arithmetic" k1="0" k2="3" k3="-3" k4="0" result="fold" />
-      <feComposite in="fold" in2="round" operator="in" result="foldIn" />
+      {/* Directional edges: faces turned to the light (upper left) catch a fine bright line,
+          faces turned away refract deep blue. No uniform outline. */}
+      <feOffset in="round" dx={n(1.6)} dy={n(1.6)} result="towardShade" />
+      <feComposite in="round" in2="towardShade" operator="out" result="litFace" />
+      <feGaussianBlur in="litFace" stdDeviation={n(0.35)} result="litSoft" />
+      <feFlood style={token("--crystal-rim")} />
+      <feComposite in2="litSoft" operator="in" result="rim" />
+      <feOffset in="round" dx={n(-2.4)} dy={n(-2.4)} result="towardLight" />
+      <feComposite in="round" in2="towardLight" operator="out" result="shadeFace" />
+      <feGaussianBlur in="shadeFace" stdDeviation={n(0.8)} result="shadeSoft" />
       <feFlood style={token("--crystal-depth")} />
-      <feComposite in2="foldIn" operator="in" result="depth" />
-      {/* Light caught inside the glass, rising from the lower edge. */}
-      <feSpecularLighting in="height" surfaceScale={n(5)} specularConstant="0.6" specularExponent="14" style={light("--crystal-inner")} result="innerLight">
-        <feDistantLight azimuth="90" elevation="24" />
+      <feComposite in2="shadeSoft" operator="in" result="depth" />
+      {/* Transmitted light: a soft glow inside the lower edge, where light exits the glass. */}
+      <feSpecularLighting in="height" surfaceScale={n(5)} specularConstant="0.8" specularExponent="14" style={light("--crystal-inner")} result="innerLight">
+        <feDistantLight azimuth="60" elevation="22" />
       </feSpecularLighting>
       <feComposite in="innerLight" in2="round" operator="in" result="caught" />
-      {/* Polished key light from the upper left. */}
-      <feSpecularLighting in="height" surfaceScale={n(6)} specularConstant="1.6" specularExponent="70" style={light("--crystal-key")} result="keyLight">
-        <feDistantLight azimuth="225" elevation="46" />
+      {/* One key light from the upper left: a crisp highlight on the crown of each stroke. */}
+      <feSpecularLighting in="height" surfaceScale={n(7)} specularConstant="2.1" specularExponent="60" style={light("--crystal-key")} result="keyLight">
+        <feDistantLight azimuth="225" elevation="50" />
       </feSpecularLighting>
       <feComposite in="keyLight" in2="round" operator="in" result="key" />
-      {/* Small champagne glint from the right. */}
-      <feSpecularLighting in="height" surfaceScale={n(6)} specularConstant="0.8" specularExponent="110" style={light("--crystal-glint")} result="glintLight">
-        <feDistantLight azimuth="345" elevation="20" />
-      </feSpecularLighting>
-      <feComposite in="glintLight" in2="round" operator="in" result="glint" />
-      {/* Crisp rim. */}
-      <feFlood style={token("--crystal-rim")} />
-      <feComposite in2="band" operator="in" result="rim" />
       <feMerge>
+        <feMergeNode in="caustic" />
         <feMergeNode in="shadow" />
         <feMergeNode in="body" />
         <feMergeNode in="edge" />
         <feMergeNode in="depth" />
         <feMergeNode in="caught" />
         <feMergeNode in="rim" />
-        <feMergeNode in="glint" />
         <feMergeNode in="key" />
       </feMerge>
     </filter>

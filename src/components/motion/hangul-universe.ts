@@ -12,7 +12,10 @@
   - Scrolling away from the hero, they recede into depth: they drift back
     towards the centre, shrink a little and fade, far ones first. Nothing
     travels across the rest of the page.
-  - Reduced motion: the composition is drawn once and stays still.
+  - A character can be built from its jamo (parts), the way Hangul composes
+    a syllable block: the parts arrive a little apart and settle into their
+    cells, then the finished block floats as one piece.
+  - Reduced motion: the composition is drawn once, assembled, and stays still.
   The material (filter, tokens) lives in crystal-glass.tsx and globals.css.
 */
 
@@ -26,7 +29,12 @@ export type HeroGlyph = {
   /** Height as a fraction of the smaller viewport side. */
   size: number;
   rot: number;
+  /** Built from its jamo instead of drawn whole: each part in its cell of the syllable block. */
+  parts?: GlyphPart[];
 };
+
+/** One jamo of a modular character: offset from the block's centre and size, in fractions of the block's height. */
+export type GlyphPart = { g: string; x: number; y: number; s: number };
 
 export type UniverseOptions = {
   /** data-story key of the section the characters surround. */
@@ -70,6 +78,7 @@ type Item = {
   delay: number;
   period: number;
   seed: number;
+  parts: { el: HTMLElement; part: GlyphPart }[];
 };
 
 /** Seconds a character takes to appear. */
@@ -123,16 +132,29 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
       const x = clear(hero.left + glyph.x * hero.width, y, px, side);
       const outer = document.createElement("span");
       outer.className = "hu-glyph";
-      const inner = document.createElement("span");
-      inner.className = "crystal";
-      inner.dataset.crystal = sizeClass(px);
-      inner.textContent = glyph.g;
       const blur = blurFor(glyph.z);
-      if (blur) inner.style.setProperty("--crystal-blur", `${blur}px`);
+      const crystal = (text: string, sizePx: number) => {
+        const inner = document.createElement("span");
+        inner.className = "crystal";
+        inner.dataset.crystal = sizeClass(sizePx);
+        inner.textContent = text;
+        if (blur) inner.style.setProperty("--crystal-blur", `${blur}px`);
+        return inner;
+      };
+      const parts = (glyph.parts ?? []).map((part) => {
+        const el = document.createElement("span");
+        el.className = "hu-part";
+        el.style.fontSize = `${part.s}em`;
+        el.appendChild(crystal(part.g, px * part.s));
+        return { el, part };
+      });
       outer.style.fontSize = `${px.toFixed(1)}px`;
       outer.style.zIndex = String(Math.round(glyph.z * 10));
-      outer.appendChild(inner);
-      return { outer, glyph, x, y, px, delay: 0.2 + rank * 0.12, period: 9 + ((i * 7) % 6), seed: i * 1.7 };
+      if (parts.length) {
+        outer.classList.add("is-modular");
+        parts.forEach(({ el }) => outer.appendChild(el));
+      } else outer.appendChild(crystal(glyph.g, px));
+      return { outer, glyph, x, y, px, delay: 0.2 + rank * 0.35, period: 9 + ((i * 7) % 6), seed: i * 1.7, parts };
     });
     field.replaceChildren(...items.map((item) => item.outer));
   };
@@ -155,6 +177,12 @@ export const startHangulUniverse = (layer: HTMLElement, root: HTMLElement, optio
     const scale = (0.9 + 0.1 * appear) * (1 - r * 0.32);
     const opacity = brightnessFor(g.z) * appear * (1 - r);
     item.outer.style.opacity = opacity < 0.004 ? "0" : opacity.toFixed(3);
+    // Jamo settle into their cells: from a little apart to the closed block.
+    const assemble = smooth(clamp01((t - item.delay - 0.2) / 2.2));
+    for (const { el, part } of item.parts) {
+      const spread = 1 + (1 - assemble) * 0.45;
+      el.style.transform = `translate(-50%, -50%) translate(${(part.x * spread).toFixed(3)}em, ${(part.y * spread).toFixed(3)}em)`;
+    }
     item.outer.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) translate(-50%, -50%) rotate(${(g.rot + turn).toFixed(2)}deg) scale(${scale.toFixed(3)})`;
   };
 

@@ -201,34 +201,34 @@
 /*
   Crystal Blue Glass (9 Oct 2026): one material for every sculptural letter on
   Home. The SVG filter in crystal-glass.tsx builds the volume from the letter's
-  outline; these tokens colour it. Thick, rounded ice-blue glass with deeper
-  blue edges (the E reference), clear body with crisp white highlights and
-  light caught inside (the S reference), a small champagne glint.
+  outline; these tokens colour it. Thick, rounded, nearly clear glass lit from
+  the upper left: bright edges facing the light, deep blue refraction on the
+  far side, a faint caustic where the light lands behind it.
 */
 :root,
 [data-theme="dark"] {
-  --crystal-body: rgb(150 198 248 / 0.24);
-  --crystal-edge: rgb(66 136 242 / 0.85);
-  --crystal-inner: #9ccbff;
+  --crystal-body: rgb(170 205 245 / 0.1);
+  --crystal-edge: rgb(78 140 232 / 0.5);
+  --crystal-inner: #a6d0ff;
   --crystal-key: #ffffff;
   --crystal-glint: #f0d39a;
-  --crystal-rim: rgb(226 240 255 / 0.55);
-  --crystal-shadow: rgb(0 3 12 / 0.5);
+  --crystal-rim: rgb(236 246 255 / 0.85);
+  --crystal-shadow: rgb(0 3 12 / 0.55);
   --crystal-floor: rgb(0 4 14 / 0.75);
-  --crystal-caustic: rgb(120 176 240 / 0.08);
-  --crystal-depth: rgb(8 30 80 / 0.7);
+  --crystal-caustic: rgb(110 165 238 / 0.13);
+  --crystal-depth: rgb(6 26 78 / 0.6);
 }
 [data-theme="light"] {
-  --crystal-body: rgb(120 170 225 / 0.2);
-  --crystal-edge: rgb(34 96 176 / 0.66);
+  --crystal-body: rgb(150 190 235 / 0.1);
+  --crystal-edge: rgb(40 100 185 / 0.5);
   --crystal-inner: #e8f5ff;
   --crystal-key: #ffffff;
   --crystal-glint: #d1a356;
-  --crystal-rim: rgb(22 62 120 / 0.42);
-  --crystal-shadow: rgb(25 45 80 / 0.2);
+  --crystal-rim: rgb(255 255 255 / 0.95);
+  --crystal-shadow: rgb(25 45 80 / 0.22);
   --crystal-floor: rgb(25 45 80 / 0.28);
-  --crystal-caustic: rgb(80 140 210 / 0.18);
-  --crystal-depth: rgb(10 40 100 / 0.55);
+  --crystal-caustic: rgb(70 130 210 / 0.16);
+  --crystal-depth: rgb(12 44 110 / 0.75);
 }
 
 .crystal {
@@ -281,6 +281,18 @@
   top: 0;
   opacity: 0;
   will-change: transform, opacity;
+}
+/* A character built from its jamo: a square block, each part placed from its centre. */
+.hu-glyph.is-modular {
+  width: 1em;
+  height: 1em;
+}
+.hu-part {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  line-height: 1;
+  will-change: transform;
 }
 
 /* ------------------------------------------------------------------
@@ -1573,5 +1585,125 @@ html[data-refract] .lg-prominent.lg-primary {
   }
   .course-korean {
     font-size: 0.8125rem;
+  }
+}
+
+/*
+  Learning Paths as one object (9 Oct 2026, art direction): the sculpture, its
+  level controls and the course information share a single glass surface and
+  a single light from the upper left, divided only by a fading hairline. The
+  stage and the information column align on the same top and bottom lines:
+  the Korean title with the course title, the level controls with the price.
+*/
+.home-canvas .course-unit {
+  overflow: clip;
+}
+@media (hover: hover) {
+  .home-canvas .course-unit:hover {
+    translate: none;
+  }
+}
+.course-unit-light {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: radial-gradient(70% 90% at 22% 18%, rgb(140 180 240 / 0.09), transparent 70%);
+  pointer-events: none;
+}
+[data-theme="light"] .course-unit-light {
+  background: radial-gradient(70% 90% at 22% 18%, rgb(255 255 255 / 0.5), transparent 70%);
+}
+.course-unit-stage {
+  justify-content: space-between;
+  padding: 1.75rem 0.75rem 1.5rem;
+}
+.course-unit-info {
+  position: relative;
+  padding: 1.5rem 1.25rem 1.75rem;
+}
+.course-unit-info::before {
+  content: "";
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 0;
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--pane-rim-hover), transparent);
+}
+@media (min-width: 640px) {
+  .course-unit-stage {
+    padding: 2.5rem 2rem 2rem;
+  }
+  .course-unit-info {
+    padding: 2.5rem 2.5rem 2.75rem;
+  }
+}
+@media (min-width: 1024px) {
+  .course-unit-stage {
+    padding: 3rem 2.5rem 2.75rem;
+  }
+  .course-unit-info {
+    display: flex;
+    align-items: stretch;
+    padding: 3rem 3.25rem 2.75rem 3rem;
+  }
+  .course-unit-info > .course-info {
+    flex: 1;
+  }
+  /* Title and outcomes read from the top; facts, price and action sit on the controls' line. */
+  .course-unit-info .course-meta {
+    margin-top: auto;
+  }
+  .course-unit-info::before {
+    left: 0;
+    right: auto;
+    top: 10%;
+    bottom: 10%;
+    width: 1px;
+    height: auto;
+    background: linear-gradient(to bottom, transparent, var(--pane-rim-hover), transparent);
+  }
+}
+.course-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem 1.5rem;
+}
+.course-meta li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+.course-meta li::before {
+  content: "";
+  width: 0.3rem;
+  height: 0.3rem;
+  border-radius: 50%;
+  background: var(--accent-text);
+  opacity: 0.7;
+}
+
+/* Phone typography (9 Oct 2026): balanced breaks, a shorter measure, and a steadier rhythm. */
+@media (max-width: 639px) {
+  [data-story="hero"] p,
+  [data-story="hero"] h1,
+  .course-info h3,
+  .course-info p,
+  .course-tab span {
+    text-wrap: balance;
+  }
+  [data-story="hero"] .hero-in-3 {
+    max-width: 32ch;
+    font-size: 1.0625rem;
+    line-height: 1.6;
+  }
+  .course-tab {
+    gap: 0.125rem;
+  }
+  .course-tab-note {
+    font-size: 0.625rem;
+  }
+  .course-points {
+    gap: 0.7rem;
   }
 }
